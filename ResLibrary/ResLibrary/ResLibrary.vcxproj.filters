@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Image Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{388681b3-70aa-4fb9-9024-794c934af9a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResLibrary Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="IDE Files">
+      <UniqueIdentifier>{0a70317b-39ee-4249-82b7-f6345fec1593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files">
+      <UniqueIdentifier>{608fe2f1-67ce-48b5-91e5-5c5fcd3ba7d1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>IDE Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>IDE Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResLibrary.h">
+      <Filter>ResLibrary Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\LinkList.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\SLUniversal.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ResLibrary.cpp">
+      <Filter>ResLibrary Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>IDE Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>IDE Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\menu\backDown.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\backOver.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\backUp.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\creditsDown.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\creditsOver.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\creditsUp.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\level1Down.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\level1Over.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\level1Up.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\quitDown.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\quitOver.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\quitUp.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\startDown.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\startOver.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\startUp.png">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\creditsMenu.jpg">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\loadingMenu.jpg">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\mainMenu.jpg">
+      <Filter>Image Files</Filter>
+    </Image>
+    <Image Include="res\menu\startMenu.jpg">
+      <Filter>Image Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ResLibrary.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

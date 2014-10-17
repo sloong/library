@@ -3,9 +3,9 @@
 /************************************************************************/
 //--- 2013/7/5 --- WCB --- Add
 #include "StdAfx.h"
-#include "SLUniversal.h"
+#include "Universal/IUniversal.h"
 #include "SLoongError.h"
-#include "tinyxml.h"
+#include "Universal/TinyXML/tinyxml.h"
 
 using namespace SoaringLoong;
 

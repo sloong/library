@@ -3,7 +3,7 @@
 /************************************************************************/
 //--- 2013/06/07 --- WCB --- Add
 #include "StdAfx.h"
-#include "SLUniversal.h"
+#include "IUniversal.h"
 
 using namespace SoaringLoong;
 

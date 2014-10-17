@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "SLoongError.h"
-#include "SLUniversal.h"
+#include "IUniversal.h"
 
 #include <map>
 using std::map;
@@ -969,7 +969,7 @@ BOOL XMLProc::SelectElement(LPCTSTR tag, IXMLDOMElement** node)
 
 
 
-	_tcscat(usetag, tag);
+	_tcscat_s(usetag,MAX_STRING, tag);
 
 	hr = readFile->selectSingleNode(_bstr_t(usetag), (IXMLDOMNode**)node);
 
@@ -983,7 +983,7 @@ BOOL XMLProc::SelectElement(LPCTSTR tag, IXMLDOMElement** node)
 
 
 
-BOOL XMLProc::GetText(IXMLDOMElement *elem, LPTSTR text, int* tlen)
+BOOL XMLProc::GetText(IXMLDOMElement *elem, LPTSTR text, int nBufferSize, int* tlen)
 
 {
 
@@ -1007,7 +1007,7 @@ BOOL XMLProc::GetText(IXMLDOMElement *elem, LPTSTR text, int* tlen)
 
 		*tlen = (int)_tcslen((LPCTSTR)bt) > *tlen ? *tlen : (int)_tcslen((LPCTSTR)bt);
 
-		_tcsncpy(text, (LPCTSTR)bt, *tlen);
+		_tcsncpy_s(text, nBufferSize, (LPCTSTR)bt, *tlen);
 
 		text[*tlen] = 0;
 

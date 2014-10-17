@@ -181,7 +181,7 @@ namespace SoaringLoong
 		virtual LPCTSTR _stdcall HelloWorld() = 0;
 	};
 
-	class CLinkList : public IUnknown
+	class CLinkList
 	{
 	public:
 		CLinkList(void);
@@ -319,7 +319,7 @@ namespace SoaringLoong
 		LPCTSTR m_szDataType;
 	};
 
-	class CLogSystem : public IUnknown
+	class CLogSystem
 	{
 	public:
 		typedef enum _emLogType
@@ -444,7 +444,7 @@ namespace SoaringLoong
 		bool		m_bIsCoverPrev;
 	};
 
-	class CException : public IUnknown
+	class CException
 	{
 	public:
 		CException();
@@ -461,7 +461,7 @@ namespace SoaringLoong
 		HRESULT m_lResult;
 	};
 
-	class CXMLParser : public IUnknown
+	class CXMLParser
 	{
 	public:
 		TiXmlDocument*	m_pDoc;
@@ -509,7 +509,7 @@ namespace SoaringLoong
 		BOOL SaveCreateFile(LPCTSTR dfile);
 		IXMLDOMDocumentPtr Read(LPCTSTR sfile);
 		BOOL SelectElement(LPCTSTR tag, IXMLDOMElement** node);
-		BOOL GetText(IXMLDOMElement* elem, LPTSTR text, int* tlen);
+		BOOL GetText(IXMLDOMElement* elem, LPTSTR text, int nBufferSize, int* tlen);
 		BOOL SaveReadFile(LPCTSTR dfile);
 		BOOL ChangeText(IXMLDOMElement* elem, LPCTSTR text);
 		BOOL GetParent(IXMLDOMElement* childElem, IXMLDOMElement** parentElem);
@@ -527,7 +527,7 @@ namespace SoaringLoong
 
 	};
 
-	class CTokenParser : public IUnknown
+	class CTokenParser
 	{
 	public:
 		CTokenParser(void);
@@ -592,7 +592,7 @@ namespace SoaringLoong
 		LPTSTR m_strData;
 	};
 
-	class CCMDParser : public IUnknown
+	class CCMDParser
 	{
 	public:
 		CCMDParser();

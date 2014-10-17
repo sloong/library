@@ -95,9 +95,6 @@
     <ClCompile Include="PropertyScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SLUniversal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TokenParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

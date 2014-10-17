@@ -3,7 +3,7 @@
 /************************************************************************/
 #include "stdafx.h"
 #include "SLoongError.h"
-#include "SLUniversal.h"
+#include "IUniversal.h"
 
 using namespace SoaringLoong;
 

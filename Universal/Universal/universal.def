@@ -1,6 +1,6 @@
 LIBRARY	Universal
 EXPORTS
-DllCanUnloadNow
-DllGetClassObject
-DllUnregisterServer
-DllRegisterServer
+DllCanUnloadNow			PRIVATE
+DllGetClassObject		PRIVATE
+DllUnregisterServer		PRIVATE
+DllRegisterServer		PRIVATE

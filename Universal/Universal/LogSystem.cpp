@@ -2,7 +2,7 @@
 /* 				StrandedError.cpp --- Error Message                     */
 /************************************************************************/
 #include "stdafx.h"
-#include "SLUniversal.h"
+#include "IUniversal.h"
 
 using namespace SoaringLoong;
 

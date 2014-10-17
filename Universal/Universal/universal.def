@@ -1,0 +1,6 @@
+LIBRARY	Universal
+EXPORTS
+DllCanUnloadNow
+DllGetClassObject
+DllUnregisterServer
+DllRegisterServer

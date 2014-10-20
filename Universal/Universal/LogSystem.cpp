@@ -2,6 +2,7 @@
 /* 				StrandedError.cpp --- Error Message                     */
 /************************************************************************/
 #include "stdafx.h"
+#include "IUniversal.h"
 #include "LogSystem.h"
 
 using namespace SoaringLoong;
@@ -25,7 +26,7 @@ HRESULT SoaringLoong::g_hRes = S_OK;
 // 	}
 // }
 
-CLogSystem::CLogSystem( LPCTSTR szPathName /* = TEXT("Log.log") */,LOGLEVEL emLevel /* = LOGLEVEL::All */ , LOGTYPE emType /* = ONEFILE */, bool bIsCoverPrev /* = false */ )
+CLogSystem::CLogSystem( IUniversal* pUniversal, LPCTSTR szPathName /* = TEXT("Log.log") */,LOGLEVEL emLevel /* = LOGLEVEL::All */ , LOGTYPE emType /* = ONEFILE */, bool bIsCoverPrev /* = false */ )
 {
 	// All value init
 	g_hRes = S_OK;
@@ -40,7 +41,7 @@ CLogSystem::CLogSystem( LPCTSTR szPathName /* = TEXT("Log.log") */,LOGLEVEL emLe
 	::InitializeCriticalSection(&m_csLock);
 	m_emType = emType;
 	m_bIsCoverPrev = bIsCoverPrev;
-
+	m_pUniversal = pUniversal;
 	if ( emType != LOGTYPE::ONEFILE )
 	{
 		SetConfiguration( NULL, szPathName, NULL, NULL );
@@ -69,11 +70,11 @@ LPCTSTR CLogSystem::FormatFatalMessage( DWORD dwCode, LPCTSTR strErrorText, bool
 		LPCTSTR strTmp = NULL;
 		if ( ERROR_SUCCESS == g_hRes && false == bJustFailedWrite )
 		{
-			strTmp = Format( TEXT("[SUCCESS];[FATAL %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
+			strTmp = m_pUniversal->Format( TEXT("[SUCCESS];[FATAL %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
 		}
 		else
 		{
-			strTmp = Format( TEXT("[FAILED];[FATAL %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
+			strTmp = m_pUniversal->Format(TEXT("[FAILED];[FATAL %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes);
 		}
 		return  strTmp;
 	}
@@ -90,11 +91,11 @@ LPCTSTR CLogSystem::FormatErrorMessage( DWORD dwCode, LPCTSTR strErrorText, bool
 		LPCTSTR strTmp = NULL;
 		if ( ERROR_SUCCESS == g_hRes && false == bJustFailedWrite )
 		{
-			strTmp = Format( TEXT("[SUCCESS];[ERROR %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
+			strTmp = m_pUniversal->Format(TEXT("[SUCCESS];[ERROR %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes);
 		}
 		else
 		{
-			strTmp = Format( TEXT("[FAILED];[ERROR %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
+			strTmp = m_pUniversal->Format(TEXT("[FAILED];[ERROR %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes);
 		}
 		return strTmp;
 	}
@@ -111,11 +112,11 @@ LPCTSTR CLogSystem::FormatWarningMessage( DWORD dwCode, LPCTSTR strErrorText, bo
 		LPCTSTR strTmp = NULL;
 		if ( ERROR_SUCCESS == g_hRes && false == bJustFailedWrite )
 		{
-			strTmp = Format( TEXT("[SUCCESS];[WARN %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
+			strTmp = m_pUniversal->Format(TEXT("[SUCCESS];[WARN %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes);
 		}
 		else
 		{
-			strTmp = Format( TEXT("[FAILED];[WARN %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes );
+			strTmp = m_pUniversal->Format(TEXT("[FAILED];[WARN %05d : %s];[RETURN %d]"), dwCode, strErrorText, g_hRes);
 		}
 		return strTmp;
 	}
@@ -129,7 +130,7 @@ LPCTSTR CLogSystem::FormatInformationMessage( DWORD dwCode, LPCTSTR strErrorText
 {
 	if ( INF <= m_emLevel )
 	{
-		return Format( TEXT("[INF %05d] : [%s]"), dwCode, strErrorText );
+		return m_pUniversal->Format(TEXT("[INF %05d] : [%s]"), dwCode, strErrorText);
 	}
 	else
 	{
@@ -183,7 +184,7 @@ void _stdcall CLogSystem::ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErro
 				_stprintf_s( szWinErrText, MAX_STRING, TEXT("Unknow error. Code = %d"), dwWinErrCode );
 			}
 			// Add WINDOWS MSG in head.
-			WriteLog(Format(TEXT("[WINDOWS MESSAGE] : [%s]"),szWinErrText));
+			WriteLog(m_pUniversal->Format(TEXT("[WINDOWS MESSAGE] : [%s]"), szWinErrText));
 		}
 	}
 }
@@ -224,7 +225,23 @@ HRESULT CLogSystem::FormatWindowsErrorMessage( LPTSTR szErrText, DWORD dwSize, D
 }
 
 
-DWORD _stdcall CLogSystem::WriteLog( LPCTSTR szMessage )
+DWORD _stdcall CLogSystem::WriteLog( LPCTSTR szLog )
+{
+	if (NULL == szLog)
+		return 0;
+
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	LPCTSTR szCurrentTime = m_pUniversal->Format(TEXT("[%d/%d/%d - %.2d:%.2d:%.2d:%.4d] : "), st.wYear, st.wMonth, st.wDay, 
+																st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	Write(szCurrentTime);
+	Write(szLog);
+	Write(TEXT("\r\n"));
+
+	return 0;
+}
+
+DWORD _stdcall CLogSystem::Write(LPCTSTR szMessage)
 {
 	DWORD dwWriteLength = 0;
 
@@ -236,7 +253,7 @@ DWORD _stdcall CLogSystem::WriteLog( LPCTSTR szMessage )
 	}
 
 	Unlock();
-		
+
 	return dwWriteLength;
 }
 
@@ -293,7 +310,7 @@ bool CLogSystem::IsOpen()
 			_tcscat_s(szTmpPath,MAX_PATH, szCurrentDate);
 			_tcscat_s(szTmpPath,MAX_PATH, TEXT(".log"));
 			SetConfiguration( szTmpPath, NULL, NULL, NULL );
-			CopyStringToPoint( m_szLastDate, szCurrentDate);
+			m_pUniversal->CopyStringToPoint(m_szLastDate, szCurrentDate);
 			Close();
 		}
 	}
@@ -316,30 +333,6 @@ void CLogSystem::Close()
 		CloseHandle(m_hFileHandle);
 		m_hFileHandle = INVALID_HANDLE_VALUE;
 	}
-}
-
-void _stdcall CLogSystem::Write(LPCTSTR szLog)
-{
-	if( NULL == szLog)
-		return;
-
-	time_t now;
-	tm tmNow;
-	time(&now);
-	localtime_s( &tmNow, &now );
-	TCHAR temp[21];
-	_tcsftime(temp, 20, TEXT("[%Y-%m-%d %H:%M:%S]"), &tmNow);
-
-	TCHAR szCurrentTime[32] = {0};     
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	_stprintf_s(szCurrentTime,32, TEXT("[%.2d:%.2d:%.2d:%.4d] : "),st.wHour, st.wMinute, st.wSecond, st.wMilliseconds );
-
-	Write( szCurrentTime );
-	Write( szLog );
-	Write( TEXT("\r\n"));
-
-	FlushFileBuffers(m_hFileHandle);
 }
 
 
@@ -366,7 +359,7 @@ void CLogSystem::SetConfiguration( LPCTSTR szFileName, LPCTSTR szFilePath, LOGTY
 		assert( szFileName );
 		SAFE_DELETE_ARR( m_szFileName );
 		Close();
-		CopyStringToPoint( m_szFileName, szFileName );
+		m_pUniversal->CopyStringToPoint(m_szFileName, szFileName);
 	}
 
 	if ( szFilePath )
@@ -384,7 +377,7 @@ void CLogSystem::SetConfiguration( LPCTSTR szFileName, LPCTSTR szFilePath, LOGTY
 		{
 			GetFullPathName( szFilePath, MAX_PATH, temp, NULL);
 			SAFE_DELETE_ARR(m_szFilePath);
-			CopyStringToPoint( m_szFilePath , temp );
+			m_pUniversal->CopyStringToPoint(m_szFilePath, temp);
 		}
 	}
 

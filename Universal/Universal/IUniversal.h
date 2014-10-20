@@ -39,8 +39,8 @@ static const GUID IID_IUniversal =
 static const GUID IID_ILogSystem =
 { 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc5 } };
 
-const LPCTSTR g_GUID = TEXT("{3D8C5798-69C0-B18C-7EE8-E6C99BEBC8C4}");
-const LPCTSTR g_CLSID = TEXT("COMCTL.SLoongUniversal");
+const LPCTSTR CLSID_Universal = TEXT("{3D8C5798-69C0-B18C-7EE8-E6C99BEBC8C4}");
+const LPCTSTR ProgID_Universal = TEXT("COMCTL.SLoongUniversal");
 
 #pragma region SLUniversal Defines
 
@@ -165,17 +165,15 @@ namespace SoaringLoong
 	class CSize;
 	class CPoint;
 	class CRect;
-
-
-	UNIVERSAL_API void CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
-
-	UNIVERSAL_API LPCTSTR Format(LPCTSTR strString, ...);
-
+	class ILogSystem;
 
 	class IUniversal : public IUnknown
 	{
 	public:
 		virtual LPCTSTR _stdcall HelloWorld() = 0;
+		virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...) = 0;
+		virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
+		virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog) = 0;
 	};
 
 	typedef enum _emLogType
@@ -199,8 +197,14 @@ namespace SoaringLoong
 	{
 	public:
 		virtual DWORD _stdcall WriteLog(LPCTSTR szMessage) = 0;
-		virtual void _stdcall Write(LPCTSTR szLog) = 0;
+		virtual DWORD _stdcall Write(LPCTSTR szLog) = 0;
 		virtual void _stdcall ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
+	};
+
+	class IException : public IUnknown
+	{
+	public: 
+		virtual LPCTSTR _stdcall Message() = 0;
 	};
 
 	class CLinkList
@@ -341,7 +345,7 @@ namespace SoaringLoong
 		LPCTSTR m_szDataType;
 	};
 
-	class CException
+	class CException : public IException
 	{
 	public:
 		CException();
@@ -588,7 +592,7 @@ namespace SoaringLoong
 	};
 
 
-
+#pragma region Windows Define
 	/////////////////////////////////////////////////////////////////////////////
 	// CSize - An extent, similar to Windows SIZE structure.
 	class UNIVERSAL_API CSize : public tagSIZE
@@ -853,6 +857,8 @@ namespace SoaringLoong
 			_In_ int nMultiplier,
 			_In_ int nDivisor) const throw();
 	};
+#pragma endregion
+
 
 	typedef enum _emParseType
 	{
@@ -867,4 +873,3 @@ namespace SoaringLoong
 }
 
 UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal);
-UNIVERSAL_API HRESULT _stdcall CreateLogSystem(LPVOID* pLog);

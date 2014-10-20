@@ -5,11 +5,12 @@
 using SoaringLoong::LOGLEVEL;
 using SoaringLoong::LOGTYPE;
 using SoaringLoong::ILogSystem;
+using SoaringLoong::IUniversal;
 
 class CLogSystem : public ILogSystem
 {
 public:
-	CLogSystem(LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+	CLogSystem( IUniversal* pUniversal, LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 
 	~CLogSystem();
 
@@ -39,7 +40,7 @@ public:
 	//			The string for you add to log file. it will add "time" begin string and "\n" in string last.
 	// Remarks:
 	//		WriteLog szMessage to log file.
-	void _stdcall Write(LPCTSTR szLog);
+	DWORD _stdcall Write(LPCTSTR szLog);
 
 	//--- ResLog Function annotation ---
 	// Parameters:
@@ -117,4 +118,5 @@ protected:
 	int			m_emType;
 	ULONG m_Ref;
 	bool		m_bIsCoverPrev;
+	IUniversal*	m_pUniversal;
 };

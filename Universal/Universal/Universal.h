@@ -20,6 +20,9 @@ public:
 
 
 	virtual LPCTSTR _stdcall HelloWorld();
+	virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...);
+	virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
+	virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog);
 protected:
 	CLogSystem* pLog;
 	static ULONG m_objNum;

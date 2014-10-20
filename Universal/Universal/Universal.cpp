@@ -28,9 +28,8 @@ LPCTSTR g_SoaringLoong = TEXT("Copyright (C) 2014 Soaring Loong Corp");
 
 UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
 {
-	IUnknown* pUnknown = NULL;
 	GUID CLSID_Universal;
-	LRESULT hResult = CLSIDFromProgID(g_CLSID, &CLSID_Universal);
+	LRESULT hResult = CLSIDFromProgID(ProgID_Universal, &CLSID_Universal);
 	if (S_OK != hResult)
 	{
 		_tprintf(TEXT("Can't find CLSID!\n"));
@@ -43,49 +42,9 @@ UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
 		CoTaskMemFree(szCLSID);
 	}
 
-	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUnknown, (void **)&pUnknown);
-
-	if (S_OK != hResult || NULL == pUnknown)
-	{
-		printf("Create Object Failed!\n");
-		return S_FALSE;
-	}
-
-	hResult = pUnknown->QueryInterface(IID_IUniversal, pUniversal);
-
-	return S_OK;
+	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUniversal, pUniversal);
+	return hResult;
 }
-
-UNIVERSAL_API HRESULT _stdcall CreateLogSystem(LPVOID* pLog)
-{
-	IUnknown* pUnknown = NULL;
-	GUID CLSID_Universal;
-	LRESULT hResult = CLSIDFromProgID(g_CLSID, &CLSID_Universal);
-	if (S_OK != hResult)
-	{
-		_tprintf(TEXT("Can't find CLSID!\n"));
-		return S_FALSE;
-	}
-	else
-	{
-		LPOLESTR szCLSID;
-		StringFromCLSID(CLSID_Universal, &szCLSID);
-		CoTaskMemFree(szCLSID);
-	}
-
-	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_ILogSystem, (void **)&pUnknown);
-
-	if (S_OK != hResult || NULL == pUnknown)
-	{
-		printf("Create Object Failed!\n");
-		return S_FALSE;
-	}
-
-	hResult = pUnknown->QueryInterface(IID_ILogSystem, pLog);
-
-	return S_OK;
-}
-
 
 
 CUniversal::CUniversal()
@@ -113,10 +72,6 @@ HRESULT _stdcall CUniversal::QueryInterface(const IID &riid, void **ppvObject)
 		*ppvObject = (IUniversal*)this;
 		((IUniversal*)(*ppvObject))->AddRef();
 	}
-// 	else if (IID_ILogSystem == riid)
-// 	{
-// 		*ppvObject = new CLogSystem();
-// 	}
 	else{
 		*ppvObject = NULL;
 		return E_NOINTERFACE;
@@ -135,8 +90,8 @@ ULONG _stdcall CUniversal::Release()
 	m_Ref--;
 	if (0 == m_Ref)
 	{
-		DeleteCriticalSection(&m_cs);
 		delete this;
+		DeleteCriticalSection(&m_cs);
 		return 0;
 	}
 	return m_Ref;
@@ -224,7 +179,7 @@ HRESULT FormatErrorMessage(LPTSTR szErrText, DWORD dwSize, HRESULT nErrorCode)
 	}
 }
 
-LPCTSTR SoaringLoong::Format(LPCTSTR strString, ...)
+LPCTSTR _stdcall CUniversal::Format(LPCTSTR strString, ...)
 {
 	va_list args;
 	va_start(args, strString);
@@ -264,13 +219,19 @@ LPCTSTR SoaringLoong::Format(LPCTSTR strString, ...)
 	return strTarget;
 }
 
-void SoaringLoong::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
+void _stdcall CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
 {
 	SAFE_DELETE_ARR(lpTarget);
 	UINT nLength = (UINT)_tcslen(lpFrom);
 	lpTarget = new TCHAR[nLength + 1];
 	assert(lpTarget);
 	_tcscpy_s(lpTarget, nLength + 1, lpFrom);
+}
+
+HRESULT _stdcall CUniversal::CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog)
+{
+	pLog = new CLogSystem(pUniversal);
+	return S_OK;
 }
 
 
@@ -311,7 +272,7 @@ CException::~CException()
 
 void CException::SetExceptionText(LPCTSTR strMessage)
 {
-	SoaringLoong::CopyStringToPoint(m_strMessage, strMessage);
+	//CopyStringToPoint(m_strMessage, strMessage);
 }
 
 LPCTSTR CException::GetExceptionText()

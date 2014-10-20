@@ -2,7 +2,6 @@
 #include <iostream>
 #include <windows.h>
 #include <winerror.h>
-
 #include "factory.h"
 #include "IUniversal.h"
 
@@ -21,43 +20,39 @@ HRESULT RegisterCOMLibrary(LPCWSTR lpPath)
 	HRESULT hRes;
 
 	hRes = RegOpenKey(HKEY_CLASSES_ROOT, L"CLSID", &thk);
-	if (ERROR_SUCCESS == hRes)
-	{
-		hRes = RegCreateKey(thk, g_GUID, &tclsidk);
-		if (ERROR_SUCCESS == hRes)
-		{
-			HKEY tinps32k;
-			if (ERROR_SUCCESS == RegCreateKey(tclsidk, L"InprocServer32", &tinps32k))
-			{
+	if (FAILED(hRes))
+		return hRes;
 
-				if (ERROR_SUCCESS == RegSetValue(tinps32k, NULL, REG_SZ, lpPath, wcslen(lpPath) * 2))
-				{
+	hRes = RegCreateKey(thk, CLSID_Universal, &tclsidk);
+	if (FAILED(hRes))
+		return hRes;
 
-				}
-				RegCloseKey(tinps32k);
-			}
-			RegCloseKey(tclsidk);
-		}
+	HKEY tinps32k;
+	hRes = RegCreateKey(tclsidk, L"InprocServer32", &tinps32k);
+	if (FAILED(hRes))
+		return hRes;
 
-		RegCloseKey(thk);
-	}
+	hRes = RegSetValue(tinps32k, NULL, REG_SZ, lpPath, wcslen(lpPath) * 2);
+	if (FAILED(hRes))
+		return hRes;
 
-	if (ERROR_SUCCESS == RegCreateKey(HKEY_CLASSES_ROOT, g_CLSID, &thk))
-	{
-		if (ERROR_SUCCESS == RegCreateKey(thk, L"CLSID", &tclsidk))
-		{
-			if (ERROR_SUCCESS == RegSetValue(tclsidk,
-				NULL,
-				REG_SZ,
-				g_GUID,
-				wcslen(g_GUID)*sizeof(TCHAR)))
-			{
-				MessageBox(NULL, L"Register Succeeded.", L"", MB_OK);
-			}
-		}
-	}
+	RegCloseKey(tinps32k);
+	RegCloseKey(tclsidk);
+	RegCloseKey(thk);
 
-	return 0;
+	hRes = RegCreateKey(HKEY_CLASSES_ROOT, ProgID_Universal, &thk);
+	if (FAILED(hRes))
+		return hRes;
+
+	hRes = RegCreateKey(thk, L"CLSID", &tclsidk);
+	if (FAILED(hRes))
+		return hRes;
+
+	hRes = RegSetValue(tclsidk, NULL, REG_SZ, CLSID_Universal, wcslen(CLSID_Universal)*sizeof(TCHAR));
+	if (FAILED(hRes))
+		return hRes;
+
+	return S_OK;
 }
 
 extern "C" HRESULT _stdcall DllRegisterServer()
@@ -68,28 +63,28 @@ extern "C" HRESULT _stdcall DllRegisterServer()
 	{
 		return -1;
 	}
-	RegisterCOMLibrary(szModule);
-	return 0;
+	HRESULT hRes = RegisterCOMLibrary(szModule);
+	return hRes;
 }
 
 HRESULT UnregisterCOMLibrary()
 {
 	HKEY thk;
 	TCHAR szPath[MAX_PATH] = { 0 };
-	swprintf_s(szPath, MAX_PATH, TEXT("%s\\InprocServer32"), g_GUID);
+	swprintf_s(szPath, MAX_PATH, TEXT("%s\\InprocServer32"), CLSID_Universal);
 
 	if (ERROR_SUCCESS == RegOpenKey(HKEY_CLASSES_ROOT, L"CLSID", &thk))
 	{
 		RegDeleteKey(thk, szPath);
-		RegDeleteKey(thk, g_GUID);
+		RegDeleteKey(thk, CLSID_Universal);
 
 		RegCloseKey(thk);
 	}
-	if (ERROR_SUCCESS == RegOpenKey(HKEY_CLASSES_ROOT, g_CLSID, &thk))
+	if (ERROR_SUCCESS == RegOpenKey(HKEY_CLASSES_ROOT, ProgID_Universal, &thk))
 	{
 		RegDeleteKey(thk, L"CLSID");
 	}
-	RegDeleteKey(HKEY_CLASSES_ROOT, g_CLSID);
+	RegDeleteKey(HKEY_CLASSES_ROOT, ProgID_Universal);
 	return S_OK;
 }
 

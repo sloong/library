@@ -11,11 +11,13 @@ int main()
 	IUniversal* pTest = NULL;
 	CreateUniversal((LPVOID*)&pTest);
 	ILogSystem* pLog = NULL;
-	CreateLogSystem((LPVOID*)&pLog);
+	pTest->CreateLogSystem(pTest, pLog);
 	pLog->WriteLog(TEXT("TestLog"));
 	LPCTSTR str = pTest->HelloWorld();
 	wcout << str << endl;
+	pLog->Release();
 	pTest->Release();	
+	
 	CoUninitialize();	
 	
 	return 0;

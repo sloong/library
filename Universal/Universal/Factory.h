@@ -2,12 +2,11 @@
 
 #include <unknwn.h>
 
-class UniversalFactory :
-	public IClassFactory
+class CFactory : public IClassFactory
 {
 public:
-	UniversalFactory();
-	~UniversalFactory();
+	CFactory();
+	~CFactory();
 
 	//要实现IUnknown接口
 	virtual HRESULT _stdcall QueryInterface(const IID& riid, void** ppvObject);

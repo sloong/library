@@ -2,7 +2,7 @@
 /* 				StrandedError.cpp --- Error Message                     */
 /************************************************************************/
 #include "stdafx.h"
-#include "IUniversal.h"
+#include "LogSystem.h"
 
 using namespace SoaringLoong;
 
@@ -11,20 +11,19 @@ const TCHAR g_szEnd[]		= {TEXT("----------------------------------End-----------
 
 HRESULT SoaringLoong::g_hRes = S_OK;
 
-CLogSystem SoaringLoong::g_oLog;
+//CLogSystem SoaringLoong::g_oLog;
 
-void CLogSystem::Create( CLogSystem*& pLog )
-{
-	try
-	{
-		pLog = new CLogSystem();
-	}
-	catch(std::bad_alloc)
-	{
-		pLog = NULL;
-	}
-}
-
+// void CLogSystem::Create( CLogSystem*& pLog )
+// {
+// 	try
+// 	{
+// 		pLog = new CLogSystem();
+// 	}
+// 	catch(std::bad_alloc)
+// 	{
+// 		pLog = NULL;
+// 	}
+// }
 
 CLogSystem::CLogSystem( LPCTSTR szPathName /* = TEXT("Log.log") */,LOGLEVEL emLevel /* = LOGLEVEL::All */ , LOGTYPE emType /* = ONEFILE */, bool bIsCoverPrev /* = false */ )
 {
@@ -51,13 +50,13 @@ CLogSystem::CLogSystem( LPCTSTR szPathName /* = TEXT("Log.log") */,LOGLEVEL emLe
 		SetConfiguration( szPathName, NULL, NULL, NULL );
 	}
 
-	Log(g_szStart);
+	WriteLog(g_szStart);
 }
 
 
 CLogSystem::~CLogSystem()
 {
-	Log( g_szEnd );
+	WriteLog( g_szEnd );
 	Close();
 	::DeleteCriticalSection(&m_csLock);
 	SAFE_DELETE_ARR(m_szFilePath);
@@ -139,7 +138,7 @@ LPCTSTR CLogSystem::FormatInformationMessage( DWORD dwCode, LPCTSTR strErrorText
 }
 
 
-void CLogSystem::ResLog( LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */ )
+void _stdcall CLogSystem::ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
 	LPCTSTR strLogText = NULL;
 
@@ -167,7 +166,7 @@ void CLogSystem::ResLog( LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, b
 	
 	if ( NULL != strLogText )
 	{
-		Log(strLogText);
+		WriteLog(strLogText);
 	}
 
 	if ( ERROR_SUCCESS != g_hRes && true == bFormatWinMsg )
@@ -184,9 +183,27 @@ void CLogSystem::ResLog( LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, b
 				_stprintf_s( szWinErrText, MAX_STRING, TEXT("Unknow error. Code = %d"), dwWinErrCode );
 			}
 			// Add WINDOWS MSG in head.
-			Log(Format(TEXT("[WINDOWS MESSAGE] : [%s]"),szWinErrText));
+			WriteLog(Format(TEXT("[WINDOWS MESSAGE] : [%s]"),szWinErrText));
 		}
 	}
+}
+
+ULONG _stdcall CLogSystem::AddRef()
+{
+	m_Ref++;
+	return m_Ref;
+}
+
+ULONG _stdcall CLogSystem::Release()
+{
+	m_Ref--;
+	if (0 == m_Ref)
+	{
+//		DeleteCriticalSection(&m_cs);
+		delete this;
+		return 0;
+	}
+	return m_Ref;
 }
 
 // Remarks:
@@ -207,23 +224,19 @@ HRESULT CLogSystem::FormatWindowsErrorMessage( LPTSTR szErrText, DWORD dwSize, D
 }
 
 
-DWORD CLogSystem::Write( LPCTSTR szMessage )
+DWORD _stdcall CLogSystem::WriteLog( LPCTSTR szMessage )
 {
 	DWORD dwWriteLength = 0;
-	__try
+
+	Lock();
+	if (IsOpen())
 	{
-		Lock();
-		if(IsOpen())
-		{
-			WriteFile(m_hFileHandle, szMessage, _tcslen(szMessage)*sizeof(TCHAR) , &dwWriteLength, NULL);
-			FlushFileBuffers(m_hFileHandle);
-		}
+		WriteFile(m_hFileHandle, szMessage, _tcslen(szMessage)*sizeof(TCHAR), &dwWriteLength, NULL);
+		FlushFileBuffers(m_hFileHandle);
 	}
-	__finally
-	{
-		Unlock();
-	}
-	
+
+	Unlock();
+		
 	return dwWriteLength;
 }
 
@@ -305,7 +318,7 @@ void CLogSystem::Close()
 	}
 }
 
-void CLogSystem::Log( LPCTSTR szLog )
+void _stdcall CLogSystem::Write(LPCTSTR szLog)
 {
 	if( NULL == szLog)
 		return;
@@ -384,6 +397,23 @@ void CLogSystem::SetConfiguration( LPCTSTR szFileName, LPCTSTR szFilePath, LOGTY
 	{
 		m_emLevel = *pLevel;
 	}
+}
+
+HRESULT _stdcall CLogSystem::QueryInterface(const IID& riid, void** ppvObject)
+{
+	if (IID_IUnknown == riid){
+		*ppvObject = (IUnknown*)this;
+		((IUnknown*)(*ppvObject))->AddRef();
+	}
+	else if (IID_ILogSystem == riid){
+		*ppvObject = (IUniversal*)this;
+		((IUniversal*)(*ppvObject))->AddRef();
+	}
+	else{
+		*ppvObject = NULL;
+		return E_NOINTERFACE;
+	}
+	return S_OK;
 }
 
 // namespace YaoUtil {

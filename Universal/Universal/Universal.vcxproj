@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Factory.h" />
+    <ClInclude Include="LogSystem.h" />
     <ClInclude Include="PropertyScript.h" />
     <ClInclude Include="ScriptParsing.h" />
     <ClInclude Include="SLoongError.h" />
@@ -102,11 +103,12 @@
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
     <ClInclude Include="TokenParser.h" />
-    <ClInclude Include="UniversalClass.h" />
+    <ClInclude Include="Universal.h" />
     <ClInclude Include="XMLParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMDParser.cpp" />
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="LinkList.cpp" />
     <ClCompile Include="LogSystem.cpp" />
@@ -121,7 +123,6 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="TokenParser.cpp" />
     <ClCompile Include="Universal.cpp" />
-    <ClCompile Include="UniversalClass.cpp" />
     <ClCompile Include="XMLParser.cpp" />
   </ItemGroup>
   <ItemGroup>

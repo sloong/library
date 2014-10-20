@@ -4,13 +4,13 @@
 
 using namespace SoaringLoong;
 
-class UniversalClass :
-	public IUniversal
+class CLogSystem;
+class CUniversal : public IUniversal
 {
 public:
 
-	UniversalClass();
-	~UniversalClass();
+	CUniversal();
+	~CUniversal();
 
 	virtual HRESULT _stdcall QueryInterface(const IID& riid, void** ppvObject);
 	virtual ULONG _stdcall AddRef();
@@ -21,6 +21,7 @@ public:
 
 	virtual LPCTSTR _stdcall HelloWorld();
 protected:
+	CLogSystem* pLog;
 	static ULONG m_objNum;
 	static CRITICAL_SECTION m_cs;
 	ULONG m_Ref;

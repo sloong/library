@@ -1,18 +1,19 @@
 #include "stdafx.h"
 #include "factory.h"
-#include "UniversalClass.h"
+#include "Universal.h"
+#include "LogSystem.h"
 
-UniversalFactory::UniversalFactory()
+CFactory::CFactory()
 {
 	m_Ref = 0;
 }
 
-UniversalFactory::~UniversalFactory()
+CFactory::~CFactory()
 {
 
 }
 
-HRESULT _stdcall UniversalFactory::QueryInterface(const IID &riid, void **ppvObject)
+HRESULT _stdcall CFactory::QueryInterface(const IID &riid, void **ppvObject)
 {
 	if (IID_IUnknown == riid){
 		*ppvObject = (IUnknown*)this;
@@ -29,13 +30,13 @@ HRESULT _stdcall UniversalFactory::QueryInterface(const IID &riid, void **ppvObj
 	return S_OK;
 }
 
-ULONG _stdcall UniversalFactory::AddRef()
+ULONG _stdcall CFactory::AddRef()
 {
 	m_Ref++;
 	return m_Ref;
 }
 
-ULONG _stdcall UniversalFactory::Release()
+ULONG _stdcall CFactory::Release()
 {
 	m_Ref--;
 	if (0 == m_Ref)
@@ -46,26 +47,44 @@ ULONG _stdcall UniversalFactory::Release()
 	return m_Ref;
 }
 
-HRESULT _stdcall UniversalFactory::CreateInstance(IUnknown *pUnkOuter, const IID &riid, void **ppvObject)//最重要的函数，这个函数创建CompTestClass对象，并返回所需接口
+HRESULT _stdcall CFactory::CreateInstance(IUnknown *pUnkOuter, const IID &riid, void **ppvObject)//最重要的函数，这个函数创建CompTestClass对象，并返回所需接口
 {
-	if (NULL != pUnkOuter){
+	if (NULL != pUnkOuter)
+	{
 		return CLASS_E_NOAGGREGATION;
 	}
-	HRESULT hr = E_OUTOFMEMORY;
-	UniversalClass::Init();
-	UniversalClass* pObj = new UniversalClass();
-	if (NULL == pObj){
-		return hr;
-	}
 
-	hr = pObj->QueryInterface(riid, ppvObject);
-	if (S_OK != hr){
-		delete pObj;
+	HRESULT hr = E_OUTOFMEMORY;
+	if (riid == IID_ILogSystem)
+	{
+		CLogSystem* pObj = new CLogSystem();
+		if (NULL == pObj)
+		{
+			return hr;
+		}
+		hr = pObj->QueryInterface(riid, ppvObject);
+		if (S_OK != hr){
+			delete pObj;
+		}
 	}
+	else if (riid == IID_IUniversal || riid == IID_IUnknown)
+	{
+		CUniversal::Init();
+		CUniversal* pObj = new CUniversal();
+		if (NULL == pObj)
+		{
+			return hr;
+		}
+		hr = pObj->QueryInterface(riid, ppvObject);
+		if (S_OK != hr){
+			delete pObj;
+		}
+	}
+	
 	return hr;
 }
 
-HRESULT _stdcall UniversalFactory::LockServer(BOOL fLock)
+HRESULT _stdcall CFactory::LockServer(BOOL fLock)
 {
 	return NOERROR;
 }

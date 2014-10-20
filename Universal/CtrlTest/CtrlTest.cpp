@@ -9,11 +9,13 @@ int main()
 {
 	CoInitialize(NULL);
 	IUniversal* pTest = NULL;
-	CreateComper((LPVOID*)&pTest);
+	CreateUniversal((LPVOID*)&pTest);
+	ILogSystem* pLog = NULL;
+	CreateLogSystem((LPVOID*)&pLog);
+	pLog->WriteLog(TEXT("TestLog"));
 	LPCTSTR str = pTest->HelloWorld();
 	wcout << str << endl;
 	pTest->Release();	
-	//pUnknown->Release();
 	CoUninitialize();	
 	
 	return 0;

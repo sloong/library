@@ -36,6 +36,9 @@
 static const GUID IID_IUniversal =
 { 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc4 } };
 
+static const GUID IID_ILogSystem =
+{ 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc5 } };
+
 const LPCTSTR g_GUID = TEXT("{3D8C5798-69C0-B18C-7EE8-E6C99BEBC8C4}");
 const LPCTSTR g_CLSID = TEXT("COMCTL.SLoongUniversal");
 
@@ -159,11 +162,6 @@ class TiXmlAttribute;
 
 namespace SoaringLoong
 {
-	class CException;
-	class CLinkList;
-	class CLogSystem;
-	class CTokenParser;
-	class CXMLParser;
 	class CSize;
 	class CPoint;
 	class CRect;
@@ -174,11 +172,35 @@ namespace SoaringLoong
 	UNIVERSAL_API LPCTSTR Format(LPCTSTR strString, ...);
 
 
-	class IUniversal :
-		public IUnknown
+	class IUniversal : public IUnknown
 	{
 	public:
 		virtual LPCTSTR _stdcall HelloWorld() = 0;
+	};
+
+	typedef enum _emLogType
+	{
+		YEAR = 0,
+		MONTH = 1,
+		DAY = 2,
+		ONEFILE = 3
+	}LOGTYPE;
+
+	typedef enum _emLogLevel
+	{
+		FATAL,
+		ERR,
+		WARN,
+		INF,
+		All,
+	}LOGLEVEL;
+
+	class ILogSystem : public IUnknown
+	{
+	public:
+		virtual DWORD _stdcall WriteLog(LPCTSTR szMessage) = 0;
+		virtual void _stdcall Write(LPCTSTR szLog) = 0;
+		virtual void _stdcall ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
 	};
 
 	class CLinkList
@@ -317,131 +339,6 @@ namespace SoaringLoong
 		UINT m_nIndex;
 		// The data type mark
 		LPCTSTR m_szDataType;
-	};
-
-	class CLogSystem
-	{
-	public:
-		typedef enum _emLogType
-		{
-			YEAR = 0,
-			MONTH = 1,
-			DAY = 2,
-			ONEFILE = 3
-		}LOGTYPE;
-
-		typedef enum _emLogLevel
-		{
-			FATAL,
-			ERR,
-			WARN,
-			INF,
-			All,
-		}LOGLEVEL;
-
-		CLogSystem(LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = ONEFILE, bool bIsCoverPrev = false);
-
-		~CLogSystem();
-
-		//--- Create Function annotation ---
-		// Parameters:
-		//		pLog:
-		//			The point and Pointer to NULL.
-		// Remarks:
-		//		Create the LogSystem object.
-		static void Create(CLogSystem*& pLog);
-
-		//--- Write Function annotation ---
-		// Parameters:
-		//		szMessage
-		//			The string for you add to log file.
-		// Remarks:
-		//		Write szMessage to log file.
-		DWORD Write(LPCTSTR szMessage);
-
-		//--- WriteLog Function annotation ---
-		// Parameters:
-		//		szMessage
-		//			The string for you add to log file. it will add "time" begin string and "\n" in string last.
-		// Remarks:
-		//		WriteLog szMessage to log file.
-		void Log(LPCTSTR szLog);
-
-		//--- ResLog Function annotation ---
-		// Parameters:
-		//		lpstrErrText
-		//			The Error text, if g_hRes is not S_OK, the error text will append to log file.
-		// Remarks:
-		//		Check result function, if no error, function return ,
-		//		if error, the error text will append to log file.
-		void ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
-
-		//--- FormatWindowsErrorMessage Function annotation ---
-		// Parameters:
-		//		szErrText:
-		//			A string buffer.
-		//		dwSize:
-		//			The size of buffer.
-		//		dwErrCode:
-		//			The Error code of windows.
-		// Remarks:
-		//		Format the Windows error string.
-		HRESULT FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode);
-
-		//--- SetConfiguration Function annotation ---
-		// Parameters:
-		//		szFileName:
-		//			The new file name, the log system will create it and used it to write string after call log function.
-		//			if no need change it, set to NULL.
-		//		szFilePath:
-		//			The new file path, it just used without LOG_TYPE::ONEFILE mode, the log system will create the directory.
-		//			if no need change it, set to NULL.
-		//		pType:
-		//			The new log type.
-		//		pLevel:
-		//			The new level value.
-		// Remarks:
-		//		Set the log system configuration.
-		void SetConfiguration(LPCTSTR szFileName, LPCTSTR szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
-
-		//--- IsOpen Function annotation ---
-		// Remarks:
-		//		Check the current log file is not opened.
-		bool IsOpen();
-
-		//--- Close Function annotation ---
-		// Remarks:
-		//		Close current log file.
-		void Close();
-
-		//--- GetFileName Function annotation ---
-		// Remarks:
-		//		Get current log file name with path.
-		LPCTSTR GetFileName();
-
-		//--- GetPath Function annotation ---
-		// Remarks:
-		//		Get current log file path, it used without LOG_TYPE::ONEFILE mode.
-		LPCTSTR GetPath();
-
-	protected:
-		LPCTSTR FormatFatalMessage(DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-		LPCTSTR FormatErrorMessage(DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-		LPCTSTR FormatWarningMessage(DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-		LPCTSTR FormatInformationMessage(DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-		HRESULT OpenFile();
-		void	Lock();
-		void	Unlock();
-
-	protected:
-		LOGLEVEL	m_emLevel;
-		HANDLE		m_hFileHandle;
-		LPTSTR		m_szFilePath;
-		LPTSTR		m_szFileName;
-		CRITICAL_SECTION m_csLock;
-		LPTSTR		m_szLastDate;
-		int			m_emType;
-		bool		m_bIsCoverPrev;
 	};
 
 	class CException
@@ -967,10 +864,7 @@ namespace SoaringLoong
 	HRESULT UNIVERSAL_API CreateScriptParsing(LPVOID& pParsing, PARSETYPE emType);
 
 	UNIVERSAL_API extern HRESULT g_hRes;
-
-	UNIVERSAL_API extern CLogSystem g_oLog;
 }
 
-
-
-UNIVERSAL_API HRESULT _stdcall CreateComper(LPVOID* pComper);
+UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal);
+UNIVERSAL_API HRESULT _stdcall CreateLogSystem(LPVOID* pLog);

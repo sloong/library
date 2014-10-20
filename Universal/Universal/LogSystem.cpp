@@ -51,13 +51,13 @@ CLogSystem::CLogSystem( IUniversal* pUniversal, LPCTSTR szPathName /* = TEXT("Lo
 		SetConfiguration( szPathName, NULL, NULL, NULL );
 	}
 
-	WriteLog(g_szStart);
+	WriteLine(g_szStart);
 }
 
 
 CLogSystem::~CLogSystem()
 {
-	WriteLog( g_szEnd );
+	WriteLine(g_szEnd);
 	Close();
 	::DeleteCriticalSection(&m_csLock);
 	SAFE_DELETE_ARR(m_szFilePath);
@@ -139,7 +139,7 @@ LPCTSTR CLogSystem::FormatInformationMessage( DWORD dwCode, LPCTSTR strErrorText
 }
 
 
-void _stdcall CLogSystem::ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
+void _stdcall CLogSystem::Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
 	LPCTSTR strLogText = NULL;
 
@@ -167,7 +167,7 @@ void _stdcall CLogSystem::ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErro
 	
 	if ( NULL != strLogText )
 	{
-		WriteLog(strLogText);
+		WriteLine(strLogText);
 	}
 
 	if ( ERROR_SUCCESS != g_hRes && true == bFormatWinMsg )
@@ -184,7 +184,7 @@ void _stdcall CLogSystem::ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErro
 				_stprintf_s( szWinErrText, MAX_STRING, TEXT("Unknow error. Code = %d"), dwWinErrCode );
 			}
 			// Add WINDOWS MSG in head.
-			WriteLog(m_pUniversal->Format(TEXT("[WINDOWS MESSAGE] : [%s]"), szWinErrText));
+			WriteLine(m_pUniversal->Format(TEXT("[WINDOWS MESSAGE] : [%s]"), szWinErrText));
 		}
 	}
 }
@@ -225,10 +225,10 @@ HRESULT CLogSystem::FormatWindowsErrorMessage( LPTSTR szErrText, DWORD dwSize, D
 }
 
 
-DWORD _stdcall CLogSystem::WriteLog( LPCTSTR szLog )
+void _stdcall CLogSystem::WriteLine( LPCTSTR szLog )
 {
 	if (NULL == szLog)
-		return 0;
+		return;
 
 	SYSTEMTIME st;
 	GetLocalTime(&st);
@@ -237,8 +237,6 @@ DWORD _stdcall CLogSystem::WriteLog( LPCTSTR szLog )
 	Write(szCurrentTime);
 	Write(szLog);
 	Write(TEXT("\r\n"));
-
-	return 0;
 }
 
 DWORD _stdcall CLogSystem::Write(LPCTSTR szMessage)
@@ -399,8 +397,8 @@ HRESULT _stdcall CLogSystem::QueryInterface(const IID& riid, void** ppvObject)
 		((IUnknown*)(*ppvObject))->AddRef();
 	}
 	else if (IID_ILogSystem == riid){
-		*ppvObject = (IUniversal*)this;
-		((IUniversal*)(*ppvObject))->AddRef();
+		*ppvObject = (ILogSystem*)this;
+		((ILogSystem*)(*ppvObject))->AddRef();
 	}
 	else{
 		*ppvObject = NULL;

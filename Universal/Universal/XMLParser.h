@@ -5,6 +5,8 @@
 
 #define CHAR_SWAP_SIZE	2048
 
+using SoaringLoong::ILinkList;
+
 class TiXmlDocument;
 class TiXmlElement;
 class TiXmlAttribute;
@@ -19,13 +21,19 @@ public:
 	CXMLParser(void);
 	~CXMLParser(void);
 
-	LRESULT Initialize( LPCTSTR strPathe);
-	LRESULT GetNodeByName(TiXmlElement* pRoot, LPCTSTR strNodeName, TiXmlElement*& pNode);
-	LRESULT FindAllChildName( TiXmlElement* pNode, CLinkList*& pList );
-	LRESULT FindAllChildText( TiXmlElement* pNode, CLinkList*& pList );
+	LPCTSTR GetAttribute(LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParentNode = NULL, bool bFindParent = false);
+	LPCTSTR GetNodeText(LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParentNode = NULL);
+	int GetAttributeInt(LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
+	ULONG GetAttributeARGB(LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
+	HRESULT FindAllChildName(LPCTSTR szParentNodeName, ILinkList* pChildList, LPCTSTR szRootNodeName = NULL);
+	HRESULT FindAllChildText(LPCTSTR szParentNodeName, ILinkList* pChildList, LPCTSTR szRootNodeName = NULL);
+	HRESULT Initialize(LPCTSTR strPathe);
+	HRESULT GetNodeByName(TiXmlElement* pRoot, LPCTSTR strNodeName, TiXmlElement*& pNode);
+	HRESULT FindAllChildName(TiXmlElement* pNode, ILinkList* pList);
+	HRESULT FindAllChildText(TiXmlElement* pNode, ILinkList* pList);
 	void Shutdown();
-	LPCTSTR GetAttribute( TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName ,LRESULT& lResult);
-	LPCTSTR GetAttribute( TiXmlElement* pNode, LPCTSTR strAttributeName, LRESULT& lResult );
-	LPCTSTR GetNodeText( TiXmlElement* pNode, LRESULT& lResult );
-	LRESULT GetParentNode( TiXmlElement* pChildNode, TiXmlElement*& pParentNode );
+	LPCTSTR GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName, HRESULT& hRes);
+	LPCTSTR GetAttribute(TiXmlElement* pNode, LPCTSTR strAttributeName, HRESULT& hRes);
+	LPCTSTR GetNodeText(TiXmlElement* pNode, HRESULT& hRes);
+	HRESULT GetParentNode(TiXmlElement* pChildNode, TiXmlElement*& pParentNode);
 };

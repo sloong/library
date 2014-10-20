@@ -159,22 +159,11 @@ class TiXmlAttribute;
 #define MAX_PARAM_SIZE						2048
 #define CHAR_SWAP_SIZE						2048
 
-
 namespace SoaringLoong
 {
 	class CSize;
 	class CPoint;
 	class CRect;
-	class ILogSystem;
-
-	class IUniversal : public IUnknown
-	{
-	public:
-		virtual LPCTSTR _stdcall HelloWorld() = 0;
-		virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...) = 0;
-		virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
-		virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog) = 0;
-	};
 
 	typedef enum _emLogType
 	{
@@ -193,12 +182,41 @@ namespace SoaringLoong
 		All,
 	}LOGLEVEL;
 
+	typedef enum _emParseType
+	{
+		PARSE_CMD,
+		PARSE_XML,
+		PARSE_TOKEN,
+	}PARSETYPE;
+	class ILogSystem;
+	class ILinkList;
+	class IScriptParser;
+	class IUniversal : public IUnknown
+	{
+	public:
+		virtual LPCTSTR _stdcall HelloWorld() = 0;
+		virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...) = 0;
+		virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
+		virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog) = 0;
+		virtual HRESULT _stdcall CreateLinkList(ILinkList*& pLinkList) = 0;
+		virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser*& pParser) = 0;
+	};
+
 	class ILogSystem : public IUnknown
 	{
 	public:
-		virtual DWORD _stdcall WriteLog(LPCTSTR szMessage) = 0;
 		virtual DWORD _stdcall Write(LPCTSTR szLog) = 0;
-		virtual void _stdcall ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
+		virtual void _stdcall WriteLine(LPCTSTR szMessage) = 0;
+		virtual void _stdcall Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
+	};
+
+	class ILinkList : public IUnknown
+	{
+	public:
+		virtual int _stdcall Add( LPVOID pData, LPCTSTR szMarkName, LPCTSTR szDataFormat ) = 0;
+		virtual void _stdcall Remove(int nIndex) = 0;
+		virtual int _stdcall Count() = 0;
+		virtual ILinkList* _stdcall GetListHeader() = 0;
 	};
 
 	class IException : public IUnknown
@@ -207,391 +225,11 @@ namespace SoaringLoong
 		virtual LPCTSTR _stdcall Message() = 0;
 	};
 
-	class CLinkList
+	class IScriptParser : public IUnknown
 	{
 	public:
-		CLinkList(void);
-
-		//--- ~CLinkList Function annotation ---
-		// Remarks:
-		//		User cannot call it. and when list delete, this function don't call the destroy function. 
-		~CLinkList(void);
-
-		//--- Locate Function annotation ---
-		// Parameters:
-		//		nIndex:
-		//			A unsigned int value, it is the node index in this list.
-		//		szMarkName:
-		//			This node mark name, if have more than one, it always return the first node.
-		//			So, don't use same mark to Insert the node. 
-		// Return value:
-		//		If function succeeds, return the node pointer, else return NULL.
-		// Remarks:
-		// 		Find node with the mark for index or name. this function have two, one is find with
-		//		Index number, other one is find with mark name.
-		CLinkList* Locate(UINT nIndex);
-		CLinkList* Locate(LPCTSTR szMarkName);
-
-		//--- GetLast Function annotation ---
-		// Return value:
-		//		A Pointer, point to the Last node.
-		// Remarks:
-		//		Get last node.
-		CLinkList* GetLast();
-
-		//--- Insert function annotation ---
-		// Parameters:
-		//		pData:		
-		//			a void type pointer, it must used the new operator create in the Heap.
-		//		szMarkName: 
-		//			This data mark in this list, if have other node have same mark,
-		//			we not sure when find time, it return which one, only when used the index number.
-		//			but, we still don't recommend used the same mark in one list.
-		//			This param default value is "UsdIndex". if user use index, user can use this value.
-		//		szDataType: 
-		//			this data type mark in this list, it have the default value, so it just 
-		//			used help you this data isn't you want data.
-		// Return Value:
-		//		This node's index in list.
-		// Remarks: 
-		//		Insert the data to this node back, the param is the marks of the data.
-		//		and the data must is a pointer with new memory.
-		int Insert(LPVOID pData, LPCTSTR szMarkName = TEXT("UseIndex"), LPCTSTR szDataType = TEXT("LPVOID"));
-
-		//--- AddToList Function annotation ---
-		// Parameters:
-		//		pData:
-		//			A void type pointer, it must used the new operator create in the Heap.
-		//		szMarkName:
-		//			This data mark in this list, if have other node have same mark,
-		//			we not sure when find time, it return which one, only when used the index number.
-		//			but, we still don't recommend used the same mark in one list.
-		//			This param default value is "UsdIndex". if user use index, user can use this value.
-		//		szDataType:
-		//			This data type mark, default is "void*".
-		//	Return value:
-		//		This node's index in list.
-		//	Remarks:
-		//		Insert node at the list last.
-		int AddToList(LPVOID pData, LPCTSTR szMarkName = TEXT("UseIndex"), LPCTSTR szDataType = TEXT("LPVOID"));
-
-		//--- GetData Function annotation ---		
-		// Return value:
-		//		This node data, this is A void pointer, so you should translate it to your type, if you 
-		//		don't know, see the member variable: m_szDataType.
-		// Remarks:
-		//		Get the data pointer, it return the void pointer, so you should change the type, if you don't know 
-		//		it type, see the member variable: m_szDataType 
-		LPVOID GetData();
-
-		//--- SetData Function annotation ---
-		// Parameters:
-		//		pData:
-		//			A void type pointer, it point to the new data as you want set.
-		//		ulSize:
-		//			Size of pData, LinkList will copy this data to list.
-		//		bDelPrevData;
-		//			If user was delete the data, the data pointer is invalid point. so 
-		//			in this case, no delete the data.
-		//	Remarks:
-		//		Set node data.
-		void SetData(LPVOID pData, bool bDelPrevData = true);
-
-		//--- Delete Function annotation ---
-		// Parameters:
-		//		nIndex:
-		//			Target node index number.
-		// Remarks:
-		//		Delete this node or other node in list, if no have param 1, it is delete this self.
-		void Delete();
-		void Delete(int nIndex);
-
-		//--- Destroy Function annotation ---
-		// Remarks:
-		//		Delete this list.
-		void Destroy();
-
-
-	private:
-		// Set list last node, if the pLast is not a true node, maybe the list will chaos, so this 
-		// function just can used in the self.
-		void SetListLast(CLinkList* pLast);
-		// Set the link list all node Numbers
-		void SetListNum(UINT nNum);
-		// Refresh the link list index, form head to last, refresh the index, 
-		void RefreshIndex();
-
-
-	public:
-		// Member variable.
-		// Pointer to this list head node.
-		CLinkList* m_pListHead;
-		// Pointer to this list last node.
-		CLinkList* m_pListLast;
-		// Pointer to this node previous node.
-		CLinkList* m_pPrevious;
-		// Pointer to this node next node.
-		CLinkList* m_pNext;
-		// Name mark
-		LPCTSTR m_szMarkName;
-		// Pointer to the node data with the void,
-		// if you want used is, please change the type
-		void* m_pData;
-		// the list all numbers.
-		long m_nNum;
-		// The index of this list.
-		UINT m_nIndex;
-		// The data type mark
-		LPCTSTR m_szDataType;
 	};
-
-	class CException : public IException
-	{
-	public:
-		CException();
-		~CException();
-
-		void SetExceptionText(LPCTSTR strMessage);
-		LPCTSTR GetExceptionText();
-
-		void SetExceptionCode(HRESULT lCode);
-		HRESULT GetExceptionCode();
-
-	private:
-		LPTSTR m_strMessage;
-		HRESULT m_lResult;
-	};
-
-	class CXMLParser
-	{
-	public:
-		TiXmlDocument*	m_pDoc;
-		TiXmlElement*	m_pRootNode;
-
-	public:
-		CXMLParser(void);
-		~CXMLParser(void);
-
-		LPCTSTR GetAttribute(LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParentNode = NULL, bool bFindParent = false);
-		LPCTSTR GetNodeText(LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParentNode = NULL);
-		int GetAttributeInt(LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
-		ULONG GetAttributeARGB(LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
-		HRESULT FindAllChildName(LPCTSTR szParentNodeName, CLinkList* pChildList, LPCTSTR szRootNodeName = NULL);
-		HRESULT FindAllChildText(LPCTSTR szParentNodeName, CLinkList* pChildList, LPCTSTR szRootNodeName = NULL);
-		HRESULT Initialize(LPCTSTR strPathe);
-		HRESULT GetNodeByName(TiXmlElement* pRoot, LPCTSTR strNodeName, TiXmlElement*& pNode);
-		HRESULT FindAllChildName(TiXmlElement* pNode, CLinkList* pList);
-		HRESULT FindAllChildText(TiXmlElement* pNode, CLinkList* pList);
-		void Shutdown();
-		LPCTSTR GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName, HRESULT& hRes);
-		LPCTSTR GetAttribute(TiXmlElement* pNode, LPCTSTR strAttributeName, HRESULT& hRes);
-		LPCTSTR GetNodeText(TiXmlElement* pNode, HRESULT& hRes);
-		HRESULT GetParentNode(TiXmlElement* pChildNode, TiXmlElement*& pParentNode);
-	};
-
-	class XMLProc
-	{
-	public:
-
-		IXMLDOMDocumentPtr createFile;
-		IXMLDOMDocumentPtr readFile;
-		IXMLDOMElementPtr createRoot;
-		IXMLDOMElementPtr readRoot;
-		IXMLDOMProcessingInstructionPtr pPI;
-		HRESULT hr;
-
-	public:
-		XMLProc();
-		~XMLProc(){}
-		IXMLDOMDocumentPtr Create(LPCTSTR rootTag);
-		BOOL NewElement(LPCTSTR tag, LPCTSTR text, IXMLDOMElement** newNode);
-		BOOL NewElement(LPCTSTR tag, IXMLDOMElement** newNode);
-		BOOL AddChild(IXMLDOMElement* childElem, IXMLDOMElement* parentElem);
-		BOOL SaveCreateFile(LPCTSTR dfile);
-		IXMLDOMDocumentPtr Read(LPCTSTR sfile);
-		BOOL SelectElement(LPCTSTR tag, IXMLDOMElement** node);
-		BOOL GetText(IXMLDOMElement* elem, LPTSTR text, int nBufferSize, int* tlen);
-		BOOL SaveReadFile(LPCTSTR dfile);
-		BOOL ChangeText(IXMLDOMElement* elem, LPCTSTR text);
-		BOOL GetParent(IXMLDOMElement* childElem, IXMLDOMElement** parentElem);
-		BOOL GetChild(IXMLDOMElement** childElem, IXMLDOMElement* parentElem);
-		BOOL RemoveChild(IXMLDOMElement* childElem, IXMLDOMElement* parentElem);
-		BOOL SetAttribute(IXMLDOMElement* node, LPCTSTR attr, LPCTSTR value);
-		IXMLDOMDocumentPtr GetCreateFile();
-		IXMLDOMDocumentPtr GetReadFile();
-		IXMLDOMElement* GetCreateRoot();
-		IXMLDOMElement* GetReadRoot();
-
-		void Fail();
-
-		void Exit();
-
-	};
-
-	class CTokenParser
-	{
-	public:
-		CTokenParser(void);
-		~CTokenParser(void);
-		HRESULT Initialize(LPCTSTR strFilePath);
-		void Shutdown();
-		//--- Reset Function annotation ---
-		// Parameters:
-		//		
-		// Return value:
-		//		
-		// Remarks:
-		//		It just used in TokenStream Mode.
-		void Reset();
-
-		//--- SetTokenStream Function annotation ---
-		// Parameters:
-		//		
-		// Return value:
-		//		
-		// Remarks:
-		//		It just used in TokenStream mode
-		HRESULT SetTokenStream(LPTSTR strData);
-
-		//--- GetNextToken Function annotation ---
-		// Parameters:
-		//		
-		// Return value:
-		//		
-		// Remarks:
-		//		It just used in TokenStream Mode.
-		HRESULT GetNextToken(LPTSTR buffer, UINT BufSize);
-		HRESULT GetNextToken(LPTSTR token, LPTSTR buffer, UINT nBufSize);
-
-		//--- IsValidIdentifier Function annotation ---
-		// Parameters:
-		//		
-		// Return value:
-		//		
-		// Remarks:
-		//		Just used in TokenStream Mode.
-		bool IsValidIdentifier(TCHAR c);
-
-		//--- MoveToNextLine Function annotation ---
-		// Parameters:
-		//		
-		// Return value:
-		//		
-		// Remarks:
-		//		Just used in TokenStream
-		bool MoveToNextLine(LPTSTR buffer, int BufSize);
-		//--- 0000014 --- 2013/10/24 --- WCB --- Add
-		// Just used in TokenStream Mode.
-		//--- 0000017 --- 2013/10/25 --- WCB --- Modify
-
-		int GetTotalLine();
-	protected:
-		UINT m_unTotalTokens;
-		UINT m_unStartIndex, m_unEndIndex;
-		UINT m_unLength;
-
-		LPTSTR m_strData;
-	};
-
-	class CCMDParser
-	{
-	public:
-		CCMDParser();
-		~CCMDParser();
-
-		//--- Initialize Function annotation ---
-		// Parameters:
-		//		strFilePath:
-		//			the command file path name.
-		// Return value:
-		//		If function succeeds, return S_OK. else return no zero value.
-		// Remarks:
-		//		Initialize CMD parser, Load the command file, and read the command to m_pStrScript.
-		HRESULT Initialize(LPCTSTR strFilePath);
-
-		//--- ParseCommand Function annotation ---
-		// Parameters:
-		//		strCommand:
-		//			A char array buffer, it is the command line first string.
-		//			Such as a command "AddText 10 20 'test text'", it will is "AddText"
-		// Remarks:
-		//		Parse the command type, it look like the command name.
-		void	ParseCommand(LPTSTR strCommand);
-
-		//--- ParseStringParam Function annotation ---
-		// Parameters:
-		//		strString:
-		//			A char array buffer, it will the command line second string.
-		//			Such as a command "PopupMsg 'test message'", it will is "test message"
-		// Remarks:
-		//		Parse the command string, it look like the attribute.
-		void	ParseStringParam(LPTSTR strString);
-
-		//--- ParseBoolParam Function annotation ---
-		// Return value:
-		//		This line bool type attribute
-		// Remarks:
-		//		Parse the command value, it is a bool type value.
-		bool	ParseBoolParam();
-
-		//--- ParseIntParam Function annotation ---
-		// Return value:
-		//		This line int type attribute value.
-		// Remarks:
-		//		Parse the command value, it is a int type value.
-		int		ParseIntParam();
-
-		//--- ParseFloatParam Function annotation ---
-		// Return value:
-		//		This line float type attribute value.
-		// Remarks:
-		//		Parse the command value, it is a float type value.
-		float	ParseFloatParam();
-
-		//--- Shutdown Function annotation ---
-		// Remarks:
-		//		Clear the resource memory.
-		void	Shutdown();
-
-		//--- MoveToStart Function annotation ---
-		// Remarks:
-		//		Move current line to file start point.
-		void	MoveToStart();
-
-		//--- MoveToNextLine Function annotation ---
-		// Remarks:
-		//		Move current line to next line.
-		void	MoveToNextLine();
-
-		//--- GetCurrentLineNum Function annotation ---
-		// Return value:
-		//		Now line number.
-		// Remarks:
-		//		Get now current line number.
-		int		GetCurrentLineNum();
-
-		//--- GetTotalLine Function annotation ---
-		// Return value:
-		//		This file total line number.
-		// Remarks:
-		//		Get this file total line number.
-		int GetTotalLines();
-		//--- IsLineComment Function annotation ---
-		// Return value:
-		//		If this line is comment line, return true.
-		//		else return false.
-		// Remarks:
-		//		Check this line is not a comment line.
-		bool	IsLineComment();
-
-	private:
-		int		m_nTotalScriptLines;
-		int		m_nCurrentLine;
-		int		m_nCurrentLineChar;
-		LPTSTR*	m_pStrScript;
-	};
-
-
+	
 #pragma region Windows Define
 	/////////////////////////////////////////////////////////////////////////////
 	// CSize - An extent, similar to Windows SIZE structure.
@@ -858,16 +496,6 @@ namespace SoaringLoong
 			_In_ int nDivisor) const throw();
 	};
 #pragma endregion
-
-
-	typedef enum _emParseType
-	{
-		PARSE_CMD,
-		PARSE_XML,
-		PARSE_TOKEN,
-	}PARSETYPE;
-
-	HRESULT UNIVERSAL_API CreateScriptParsing(LPVOID& pParsing, PARSETYPE emType);
 
 	UNIVERSAL_API extern HRESULT g_hRes;
 }

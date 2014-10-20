@@ -23,6 +23,8 @@ public:
 	virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...);
 	virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
 	virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog);
+	virtual HRESULT _stdcall CreateLinkList(ILinkList*& pLinkList);
+	virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser*& pParser);
 protected:
 	CLogSystem* pLog;
 	static ULONG m_objNum;

@@ -92,7 +92,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CMDParser.h" />
+    <ClInclude Include="Exception.h" />
     <ClInclude Include="Factory.h" />
+    <ClInclude Include="LinkList.h" />
     <ClInclude Include="LogSystem.h" />
     <ClInclude Include="PropertyScript.h" />
     <ClInclude Include="ScriptParsing.h" />
@@ -105,10 +108,12 @@
     <ClInclude Include="TokenParser.h" />
     <ClInclude Include="Universal.h" />
     <ClInclude Include="XMLParser.h" />
+    <ClInclude Include="XMLPro.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMDParser.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="LinkList.cpp" />
     <ClCompile Include="LogSystem.cpp" />
@@ -124,6 +129,7 @@
     <ClCompile Include="TokenParser.cpp" />
     <ClCompile Include="Universal.cpp" />
     <ClCompile Include="XMLParser.cpp" />
+    <ClCompile Include="XMLPro.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="universal.def" />

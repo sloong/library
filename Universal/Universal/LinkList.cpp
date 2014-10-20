@@ -4,6 +4,7 @@
 //--- 2013/06/07 --- WCB --- Add
 #include "StdAfx.h"
 #include "IUniversal.h"
+#include "LinkList.h"
 
 using namespace SoaringLoong;
 
@@ -34,6 +35,41 @@ CLinkList::CLinkList(void)
 CLinkList::~CLinkList(void)
 {
 	//Delete();
+}
+
+HRESULT _stdcall CLinkList::QueryInterface(const IID& riid, void** ppvObject)
+{
+	if (IID_IUnknown == riid){
+		*ppvObject = (IUnknown*)this;
+		((IUnknown*)(*ppvObject))->AddRef();
+	}
+	else if (IID_ILogSystem == riid){
+		*ppvObject = (ILinkList*)this;
+		((ILinkList*)(*ppvObject))->AddRef();
+	}
+	else{
+		*ppvObject = NULL;
+		return E_NOINTERFACE;
+	}
+	return S_OK;
+}
+
+ULONG _stdcall CLinkList::AddRef()
+{
+	m_Ref++;
+	return m_Ref;
+}
+
+ULONG _stdcall CLinkList::Release()
+{
+	m_Ref--;
+	if (0 == m_Ref)
+	{
+		//		DeleteCriticalSection(&m_cs);
+		delete this;
+		return 0;
+	}
+	return m_Ref;
 }
 
 
@@ -286,7 +322,7 @@ void CLinkList::SetListLast(CLinkList* pLast)
 //--- 2013/06/07 --- WCB --- Add
 //* Remarks: 
 //*		Insert a node in the list last, many time you should used this function not the Insert() function .
-int CLinkList::AddToList( LPVOID pData, LPCTSTR szMarkName /* = TEXT("UseIndex") */, LPCTSTR szDataType /* = TEXT("LPVOID") */ )
+int _stdcall CLinkList::Add( LPVOID pData, LPCTSTR szMarkName /* = TEXT("UseIndex") */, LPCTSTR szDataType /* = TEXT("LPVOID") */ )
 {
 	// empty list
 	int nIndex = 0;
@@ -363,7 +399,7 @@ void CLinkList::Delete()
 //--- 2013/7/2 --- WCB --- Add
 // Remarks:
 //		Delete the appointed node with index number
-void CLinkList::Delete( int nIndex )
+void _stdcall CLinkList::Remove( int nIndex )
 {
 	// Checking value
 	if ( nIndex < 0 || nIndex > m_nNum )
@@ -397,4 +433,14 @@ void CLinkList::RefreshIndex()
 		nIndex++;
 		pTmp = pTmp->m_pNext;
 	}
+}
+
+int _stdcall CLinkList::Count()
+{
+	return m_nNum;
+}
+
+ILinkList* _stdcall CLinkList::GetListHeader()
+{
+	return m_pListHead;
 }

@@ -12,7 +12,9 @@ int main()
 	CreateUniversal((LPVOID*)&pTest);
 	ILogSystem* pLog = NULL;
 	pTest->CreateLogSystem(pTest, pLog);
-	pLog->WriteLog(TEXT("TestLog"));
+	ILinkList* pLinkList = NULL;
+	pTest->CreateLinkList(pLinkList);
+	pLog->WriteLine(TEXT("TestLog"));
 	LPCTSTR str = pTest->HelloWorld();
 	wcout << str << endl;
 	pLog->Release();

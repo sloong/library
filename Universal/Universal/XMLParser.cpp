@@ -3,9 +3,10 @@
 /************************************************************************/
 //--- 2013/7/5 --- WCB --- Add
 #include "StdAfx.h"
-#include "Universal/IUniversal.h"
+#include "IUniversal.h"
 #include "SLoongError.h"
 #include "Universal/TinyXML/tinyxml.h"
+#include "XMLParser.h"
 
 using namespace SoaringLoong;
 
@@ -193,7 +194,7 @@ int CXMLParser::GetAttributeInt( LPCTSTR szNodeName, LPCTSTR szAttributeName , H
 //		Find in a node all child node name, result save in a link list.
 //	The List is a new object and the List head is null. so it is a empty list.
 //	The Root node name is the find Starting point, if is NULL, find from the root.
-HRESULT CXMLParser::FindAllChildName( LPCTSTR szParentNodeName, CLinkList* pChildList, LPCTSTR szRootNodeName /* = NULL */ )
+HRESULT CXMLParser::FindAllChildName( LPCTSTR szParentNodeName, ILinkList* pChildList, LPCTSTR szRootNodeName /* = NULL */ )
 {
 	TiXmlElement* pNode = NULL;
 	TiXmlElement* pRootNode = NULL;
@@ -267,7 +268,7 @@ ULONG CXMLParser::GetAttributeARGB( LPCTSTR szNodeName, HRESULT& hRes , LPCTSTR 
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get the node all child node text value,
-HRESULT CXMLParser::FindAllChildText( LPCTSTR szParentNodeName, CLinkList* pChildList, LPCTSTR szRootNodeName /* = NULL */ )
+HRESULT CXMLParser::FindAllChildText(LPCTSTR szParentNodeName, ILinkList* pChildList, LPCTSTR szRootNodeName /* = NULL */)
 {
 	TiXmlElement* pNode = NULL;
 	TiXmlElement* pRootNode = NULL;
@@ -385,10 +386,10 @@ HRESULT CXMLParser::Initialize( LPCTSTR strPath )
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Node Name, search result is save in MarkName.
-HRESULT CXMLParser::FindAllChildName( TiXmlElement* pNode, CLinkList* pList )
+HRESULT CXMLParser::FindAllChildName(TiXmlElement* pNode, ILinkList* pList)
 {
 	// check the into value
-	if ( NULL == pNode || NULL != pList->m_pListHead )
+	if ( NULL == pNode || NULL != pList->GetListHeader() )
 	{
 		return S_ERROR_PARAM_VALUE;
 	}
@@ -406,7 +407,7 @@ HRESULT CXMLParser::FindAllChildName( TiXmlElement* pNode, CLinkList* pList )
 		return S_ERROR_FIND_OBJECT;
 	}
 
-	pList->AddToList( NULL, str, TEXT("LPCTSTR") );
+	pList->Add( NULL, str, TEXT("LPCTSTR") );
 	
 	// Get other node
 	TiXmlElement* pTmp = pFirst->NextSiblingElement();
@@ -418,7 +419,7 @@ HRESULT CXMLParser::FindAllChildName( TiXmlElement* pNode, CLinkList* pList )
 		{
 			// add to list
 			str = pTmp->Value();
-			pList->AddToList( NULL, str, TEXT("LPCTSTR") );
+			pList->Add( NULL, str, TEXT("LPCTSTR") );
 			// Get next node
 			pTmp = pTmp->NextSiblingElement();
 		}
@@ -433,10 +434,10 @@ HRESULT CXMLParser::FindAllChildName( TiXmlElement* pNode, CLinkList* pList )
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Node text value
-HRESULT CXMLParser::FindAllChildText(TiXmlElement* pNode, CLinkList* pList)
+HRESULT CXMLParser::FindAllChildText(TiXmlElement* pNode, ILinkList* pList)
 {
 	// check the into value
-	if ( NULL == pNode || NULL != pList->m_pListHead )
+	if ( NULL == pNode || NULL != pList->GetListHeader() )
 	{
 		return S_ERROR_PARAM_VALUE;
 	}
@@ -454,7 +455,7 @@ HRESULT CXMLParser::FindAllChildText(TiXmlElement* pNode, CLinkList* pList)
 		return S_ERROR_FIND_OBJECT;
 	}
 
-	pList->AddToList( NULL, str, TEXT("LPCTSTR"));
+	pList->Add( NULL, str, TEXT("LPCTSTR"));
 	
 	// Get other node
 	TiXmlElement* pTmp = pFirst->NextSiblingElement();
@@ -465,7 +466,7 @@ HRESULT CXMLParser::FindAllChildText(TiXmlElement* pNode, CLinkList* pList)
 		{
 			// add to list
 			str = pTmp->GetText();
-			pList->AddToList( NULL, str, TEXT("LPCTSTR"));
+			pList->Add( NULL, str, TEXT("LPCTSTR"));
 			// Get next node
 			pTmp = pTmp->NextSiblingElement();
 		}

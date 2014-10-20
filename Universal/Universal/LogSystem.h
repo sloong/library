@@ -18,21 +18,13 @@ public:
 	virtual ULONG _stdcall AddRef();
 	virtual ULONG _stdcall Release();
 
-	//--- Create Function annotation ---
-	// Parameters:
-	//		pLog:
-	//			The point and Pointer to NULL.
-	// Remarks:
-	//		Create the LogSystem object.
-	static void Create(CLogSystem*& pLog);
-
 	//--- Write Function annotation ---
 	// Parameters:
 	//		szMessage
 	//			The string for you add to log file.
 	// Remarks:
 	//		Write szMessage to log file.
-	DWORD _stdcall WriteLog(LPCTSTR szMessage);
+	DWORD _stdcall Write(LPCTSTR szMessage);
 
 	//--- WriteLog Function annotation ---
 	// Parameters:
@@ -40,7 +32,7 @@ public:
 	//			The string for you add to log file. it will add "time" begin string and "\n" in string last.
 	// Remarks:
 	//		WriteLog szMessage to log file.
-	DWORD _stdcall Write(LPCTSTR szLog);
+	void _stdcall WriteLine(LPCTSTR szLog);
 
 	//--- ResLog Function annotation ---
 	// Parameters:
@@ -49,7 +41,7 @@ public:
 	// Remarks:
 	//		Check result function, if no error, function return ,
 	//		if error, the error text will append to log file.
-	void _stdcall ResLog(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
+	void _stdcall Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
 
 	//--- FormatWindowsErrorMessage Function annotation ---
 	// Parameters:
@@ -116,7 +108,7 @@ protected:
 	CRITICAL_SECTION m_csLock;
 	LPTSTR		m_szLastDate;
 	int			m_emType;
-	ULONG m_Ref;
+	ULONG		m_Ref;
 	bool		m_bIsCoverPrev;
 	IUniversal*	m_pUniversal;
 };

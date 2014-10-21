@@ -8,15 +8,29 @@ using namespace SoaringLoong;
 int main()
 {
 	CoInitialize(NULL);
-	IUniversal* pTest = NULL;
-	CreateUniversal((LPVOID*)&pTest);
-	ILogSystem* pLog = NULL;
-	pTest->CreateLogSystem(pTest, &pLog);
-	pLog->WriteLine(TEXT("TestLog"));
-	LPCTSTR str = pTest->HelloWorld();
+
+	// Test IUniversal interface.
+	IUniversal* pUniversal = NULL;
+	CreateUniversal((LPVOID*)&pUniversal);
+	LPCTSTR str = pUniversal->HelloWorld();
 	wcout << str << endl;
+
+	// Create ILogSystem from IUniversal::CreateLogSystem interface.
+	ILogSystem* pLog = NULL;
+	pUniversal->CreateLogSystem(pUniversal, &pLog);
+	pLog->WriteLine(TEXT("TestLog"));
+	pLog->WriteLine(pUniversal->HelloWorld());
 	pLog->Release();
-	pTest->Release();	
+
+	// Create ILogSystem by CoCreateInstance interface.
+	ILogSystem* pLog2 = NULL;
+	CoCreateInstance(IID_IUniversal, NULL, CLSCTX_INPROC_SERVER, IID_ILogSystem, (LPVOID*)&pLog2);
+	pLog2->Initialize(pUniversal, TEXT("Log2.Log"));
+	pLog2->WriteLine(TEXT("TEST2"));
+	pLog->WriteLine(pUniversal->HelloWorld());
+	pLog2->Release();
+	
+	pUniversal->Release();
 	
 	CoUninitialize();	
 	

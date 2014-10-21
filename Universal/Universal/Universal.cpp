@@ -24,9 +24,6 @@ TCHAR g_szFormat[NUM_SWAP][MAX_STRING] = { 0 };
 ULONG CUniversal::m_objNum = 0;
 CRITICAL_SECTION CUniversal::m_cs;
 
-LPCTSTR g_SoaringLoong = TEXT("Copyright (C) 2014 Soaring Loong Corp");
-
-
 UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
 {
 	GUID CLSID_Universal;
@@ -100,7 +97,7 @@ ULONG _stdcall CUniversal::Release()
 
 LPCTSTR _stdcall CUniversal::HelloWorld()
 {
-	return g_SoaringLoong;
+	return (LPCTSTR)VERSION_LEGALCOPYRIGHT;
 }
 
 int CUniversal::Init()

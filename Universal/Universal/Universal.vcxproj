@@ -67,6 +67,9 @@
     <PostBuildEvent>
       <Command>regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
     </PostBuildEvent>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -87,6 +90,9 @@
     <PostBuildEvent>
       <Command>regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
     </PostBuildEvent>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -98,6 +104,7 @@
     <ClInclude Include="LinkList.h" />
     <ClInclude Include="LogSystem.h" />
     <ClInclude Include="PropertyScript.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptParsing.h" />
     <ClInclude Include="SLoongError.h" />
     <ClInclude Include="stdafx.h" />
@@ -133,6 +140,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="universal.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Universal.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

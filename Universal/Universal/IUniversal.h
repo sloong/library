@@ -4,26 +4,25 @@
 #define UNIVERSAL_API __declspec(dllexport)
 // Version
 #define VERSION_NUMBER						2,0,0,22
-#define VERSION_FILEVERSION					"2.0.0.22"
-#define VERSION_BUILDTIME					"2014/10/10"
+#define VERSION_FILEVERSION					TEXT("2.0.0.22")
+#define VERSION_BUILDTIME					TEXT("2014/10/10")
 #ifdef _DEBUG
-#define VERSION_PRODUCTVERSION 				"Ver.2.0 for Debug"
-#define	VERSION_FILEDESCRIPTION				"SLoong Universal Debug Libaray"
-#define	VERSION_PRODUCTNAME					"SLoong Universal Debug Libaray"
+#define VERSION_PRODUCTVERSION 				TEXT("Ver.2.0 for Debug")
+#define	VERSION_FILEDESCRIPTION				TEXT("SLoong Universal Debug Libaray")
+#define	VERSION_PRODUCTNAME					TEXT("SLoong Universal Debug Libaray")
 #else
-#define VERSION_PRODUCTVERSION 				"Ver.2.0"
-#define	VERSION_FILEDESCRIPTION				"SLoong Universal Libaray"
-#define	VERSION_PRODUCTNAME					"SLoong Universal Libaray"
+#define VERSION_PRODUCTVERSION 				TEXT("Ver.2.0")
+#define	VERSION_FILEDESCRIPTION				TEXT("SLoong Universal Libaray")
+#define	VERSION_PRODUCTNAME					TEXT("SLoong Universal Libaray")
 #endif // _DEBUG
-#define VERSION_INTERNALNAME				"SLUniversal.dll"
-#define VERSION_COMPANYNAME 				"SoaringLoong, Inc."
-#define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2014 SoaringLoong, Inc."
+#define VERSION_INTERNALNAME				TEXT("Universal.dll")
+#define VERSION_COMPANYNAME 				TEXT("SoaringLoong, Inc.")
+#define	VERSION_LEGALCOPYRIGHT				TEXT("Copyright (C) 2014 SoaringLoong, Inc.")
 #else
 #define UNIVERSAL_API __declspec(dllimport)
 #endif
 
 #include <unknwn.h>
-#include <windows.h>
 #include <tchar.h>
 #include <assert.h>
 #include <time.h>

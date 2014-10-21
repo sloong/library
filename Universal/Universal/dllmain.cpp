@@ -1,7 +1,4 @@
 #include "stdafx.h"
-#include <iostream>
-#include <windows.h>
-#include <winerror.h>
 #include "factory.h"
 #include "IUniversal.h"
 

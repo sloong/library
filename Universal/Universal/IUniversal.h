@@ -48,7 +48,6 @@ const LPCTSTR ProgID_Universal = TEXT("COMCTL.SLoongUniversal");
 #define _ARGB(a,r,g,b) ((ULONG)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 #endif	// _ARGB
 
-
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)		{if(NULL != (p)){delete (p);(p)=NULL;}}
 #endif	// SAFE_DELETE
@@ -72,6 +71,11 @@ const LPCTSTR ProgID_Universal = TEXT("COMCTL.SLoongUniversal");
 #ifndef SAFE_DEL_ALL_DATA_FROM_LIST
 #define SAFE_DEL_ALL_DATA_FROM_LIST(p,type,del) {if(NULL!=p){for(int i=0;i<p->m_nNum;i++){CLinkList* pNode=p->Locate(i);type pData=(type)pNode->GetData();del(pData);pNode->SetData(NULL,false);}}}
 #endif // !SAFE_DEL_ALL_DATA_FROM_LIST
+
+#ifndef FAILED_RETURN
+#define FAILED_RETURN(hRes) {if(FAILED(hRes))return hRes;}
+#endif // !FAILED_RETURN
+
 
 #ifdef _UNICODE
 #include <string>
@@ -197,14 +201,15 @@ namespace SoaringLoong
 		virtual LPCTSTR _stdcall HelloWorld() = 0;
 		virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...) = 0;
 		virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
-		virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog) = 0;
-		virtual HRESULT _stdcall CreateLinkList(ILinkList*& pLinkList) = 0;
-		virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser*& pParser) = 0;
+		virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog) = 0;
+		virtual HRESULT _stdcall CreateLinkList(ILinkList** pLinkList) = 0;
+		virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser** pParser) = 0;
 	};
 
 	class ILogSystem : public IUnknown
 	{
 	public:
+		virtual void _stdcall Initialize(IUniversal* pUniversal, LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false) = 0;
 		virtual DWORD _stdcall Write(LPCTSTR szLog) = 0;
 		virtual void _stdcall WriteLine(LPCTSTR szMessage) = 0;
 		virtual void _stdcall Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;

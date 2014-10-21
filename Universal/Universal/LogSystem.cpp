@@ -12,46 +12,12 @@ const TCHAR g_szEnd[]		= {TEXT("----------------------------------End-----------
 
 HRESULT SoaringLoong::g_hRes = S_OK;
 
-//CLogSystem SoaringLoong::g_oLog;
+ULONG CLogSystem::m_objNum = 0;
+CRITICAL_SECTION CLogSystem::m_cs;
 
-// void CLogSystem::Create( CLogSystem*& pLog )
-// {
-// 	try
-// 	{
-// 		pLog = new CLogSystem();
-// 	}
-// 	catch(std::bad_alloc)
-// 	{
-// 		pLog = NULL;
-// 	}
-// }
-
-CLogSystem::CLogSystem( IUniversal* pUniversal, LPCTSTR szPathName /* = TEXT("Log.log") */,LOGLEVEL emLevel /* = LOGLEVEL::All */ , LOGTYPE emType /* = ONEFILE */, bool bIsCoverPrev /* = false */ )
+CLogSystem::CLogSystem()
 {
-	// All value init
-	g_hRes = S_OK;
-	m_emLevel = emLevel;
-	m_hFileHandle = INVALID_HANDLE_VALUE;
-	m_szFilePath = NULL;
-	m_szFileName = NULL;
-	m_szLastDate = NULL;
-	m_bIsCoverPrev = false;
-
-	// Set value
-	::InitializeCriticalSection(&m_csLock);
-	m_emType = emType;
-	m_bIsCoverPrev = bIsCoverPrev;
-	m_pUniversal = pUniversal;
-	if ( emType != LOGTYPE::ONEFILE )
-	{
-		SetConfiguration( NULL, szPathName, NULL, NULL );
-	}
-	else
-	{
-		SetConfiguration( szPathName, NULL, NULL, NULL );
-	}
-
-	WriteLine(g_szStart);
+	
 }
 
 
@@ -405,6 +371,41 @@ HRESULT _stdcall CLogSystem::QueryInterface(const IID& riid, void** ppvObject)
 		return E_NOINTERFACE;
 	}
 	return S_OK;
+}
+
+int CLogSystem::Init()
+{
+	m_objNum = 0;
+	InitializeCriticalSection(&m_cs);
+	return 0;
+}
+
+void _stdcall CLogSystem::Initialize(IUniversal* pUniversal, LPCTSTR szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+{
+	// All value init
+	g_hRes = S_OK;
+	m_emLevel = emLevel;
+	m_hFileHandle = INVALID_HANDLE_VALUE;
+	m_szFilePath = NULL;
+	m_szFileName = NULL;
+	m_szLastDate = NULL;
+	m_bIsCoverPrev = false;
+
+	// Set value
+	::InitializeCriticalSection(&m_csLock);
+	m_emType = emType;
+	m_bIsCoverPrev = bIsCoverPrev;
+	m_pUniversal = pUniversal;
+	if (emType != LOGTYPE::ONEFILE)
+	{
+		SetConfiguration(NULL, szPathName, NULL, NULL);
+	}
+	else
+	{
+		SetConfiguration(szPathName, NULL, NULL, NULL);
+	}
+
+	WriteLine(g_szStart);
 }
 
 // namespace YaoUtil {

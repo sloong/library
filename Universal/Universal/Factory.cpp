@@ -55,7 +55,21 @@ HRESULT _stdcall CFactory::CreateInstance(IUnknown *pUnkOuter, const IID &riid, 
 	}
 
 	HRESULT hr = E_OUTOFMEMORY;
-	
+
+	if (riid == IID_ILogSystem)
+	{
+		CLogSystem::Init();
+		CLogSystem* pObj = new CLogSystem();
+		if (NULL == pObj)
+		{
+			return hr;
+		}
+		hr = pObj->QueryInterface(riid, ppvObject);
+		if (S_OK != hr)
+		{
+			delete pObj;
+		}
+	}
 	if (riid == IID_IUniversal || riid == IID_IUnknown)
 	{
 		CUniversal::Init();
@@ -65,9 +79,11 @@ HRESULT _stdcall CFactory::CreateInstance(IUnknown *pUnkOuter, const IID &riid, 
 			return hr;
 		}
 		hr = pObj->QueryInterface(riid, ppvObject);
-		if (S_OK != hr){
+		if (S_OK != hr)
+		{
 			delete pObj;
 		}
+		
 	}
 	
 	return hr;

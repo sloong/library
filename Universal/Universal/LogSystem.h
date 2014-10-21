@@ -10,85 +10,24 @@ using SoaringLoong::IUniversal;
 class CLogSystem : public ILogSystem
 {
 public:
-	CLogSystem( IUniversal* pUniversal, LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
-
+	CLogSystem();
 	~CLogSystem();
 
+	static int Init();
 	virtual HRESULT _stdcall QueryInterface(const IID& riid, void** ppvObject);
 	virtual ULONG _stdcall AddRef();
 	virtual ULONG _stdcall Release();
 
-	//--- Write Function annotation ---
-	// Parameters:
-	//		szMessage
-	//			The string for you add to log file.
-	// Remarks:
-	//		Write szMessage to log file.
+	virtual void _stdcall Initialize(IUniversal* pUniversal, LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+
 	DWORD _stdcall Write(LPCTSTR szMessage);
-
-	//--- WriteLog Function annotation ---
-	// Parameters:
-	//		szMessage
-	//			The string for you add to log file. it will add "time" begin string and "\n" in string last.
-	// Remarks:
-	//		WriteLog szMessage to log file.
 	void _stdcall WriteLine(LPCTSTR szLog);
-
-	//--- ResLog Function annotation ---
-	// Parameters:
-	//		lpstrErrText
-	//			The Error text, if g_hRes is not S_OK, the error text will append to log file.
-	// Remarks:
-	//		Check result function, if no error, function return ,
-	//		if error, the error text will append to log file.
 	void _stdcall Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
-
-	//--- FormatWindowsErrorMessage Function annotation ---
-	// Parameters:
-	//		szErrText:
-	//			A string buffer.
-	//		dwSize:
-	//			The size of buffer.
-	//		dwErrCode:
-	//			The Error code of windows.
-	// Remarks:
-	//		Format the Windows error string.
 	HRESULT FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode);
-
-	//--- SetConfiguration Function annotation ---
-	// Parameters:
-	//		szFileName:
-	//			The new file name, the log system will create it and used it to write string after call log function.
-	//			if no need change it, set to NULL.
-	//		szFilePath:
-	//			The new file path, it just used without LOG_TYPE::ONEFILE mode, the log system will create the directory.
-	//			if no need change it, set to NULL.
-	//		pType:
-	//			The new log type.
-	//		pLevel:
-	//			The new level value.
-	// Remarks:
-	//		Set the log system configuration.
 	void SetConfiguration(LPCTSTR szFileName, LPCTSTR szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
-
-	//--- IsOpen Function annotation ---
-	// Remarks:
-	//		Check the current log file is not opened.
 	bool IsOpen();
-
-	//--- Close Function annotation ---
-	// Remarks:
-	//		Close current log file.
 	void Close();
-
-	//--- GetFileName Function annotation ---
-	// Remarks:
-	//		Get current log file name with path.
 	LPCTSTR GetFileName();
-
-	//--- GetPath Function annotation ---
-	// Remarks:
-	//		Get current log file path, it used without LOG_TYPE::ONEFILE mode.
 	LPCTSTR GetPath();
 
 protected:
@@ -111,4 +50,6 @@ protected:
 	ULONG		m_Ref;
 	bool		m_bIsCoverPrev;
 	IUniversal*	m_pUniversal;
+	static ULONG m_objNum;
+	static CRITICAL_SECTION m_cs;
 };

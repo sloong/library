@@ -20,37 +20,30 @@ HRESULT RegisterCOMLibrary(LPCWSTR lpPath)
 	HRESULT hRes;
 
 	hRes = RegOpenKey(HKEY_CLASSES_ROOT, L"CLSID", &thk);
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	hRes = RegCreateKey(thk, CLSID_Universal, &tclsidk);
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	HKEY tinps32k;
 	hRes = RegCreateKey(tclsidk, L"InprocServer32", &tinps32k);
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	hRes = RegSetValue(tinps32k, NULL, REG_SZ, lpPath, wcslen(lpPath) * 2);
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	RegCloseKey(tinps32k);
 	RegCloseKey(tclsidk);
 	RegCloseKey(thk);
 
 	hRes = RegCreateKey(HKEY_CLASSES_ROOT, ProgID_Universal, &thk);
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	hRes = RegCreateKey(thk, L"CLSID", &tclsidk);
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	hRes = RegSetValue(tclsidk, NULL, REG_SZ, CLSID_Universal, wcslen(CLSID_Universal)*sizeof(TCHAR));
-	if (FAILED(hRes))
-		return hRes;
+	FAILED_RETURN(hRes);
 
 	return S_OK;
 }

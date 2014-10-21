@@ -229,28 +229,30 @@ void _stdcall CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
 	_tcscpy_s(lpTarget, nLength + 1, lpFrom);
 }
 
-HRESULT _stdcall CUniversal::CreateLogSystem(IUniversal* pUniversal, ILogSystem*& pLog)
+HRESULT _stdcall CUniversal::CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog)
 {
-	pLog = new CLogSystem(pUniversal);
+	ILogSystem* pTemp = new CLogSystem();
+	pTemp->QueryInterface(IID_ILogSystem, (LPVOID*)pLog);
+	(*pLog)->Initialize(this);
 	return S_OK;
 }
 
-HRESULT _stdcall CUniversal::CreateLinkList(ILinkList*& pLinkList)
+HRESULT _stdcall CUniversal::CreateLinkList(ILinkList** pLinkList)
 {
-	try
-	{
-		pLinkList = new CLinkList();
-	}
-	catch (std::bad_alloc)
-	{
-		pLinkList = NULL;
-		return S_FALSE;
-	}
+// 	try
+// 	{
+// 		pLinkList = new CLinkList();
+// 	}
+// 	catch (std::bad_alloc)
+// 	{
+// 		pLinkList = NULL;
+// 		return S_FALSE;
+// 	}
 	return S_OK;
 }
 
 
-HRESULT _stdcall CUniversal::CreateScriptParser(PARSETYPE emType, IScriptParser*& pParser)
+HRESULT _stdcall CUniversal::CreateScriptParser(PARSETYPE emType, IScriptParser** pParser)
 {
 // 	if (NULL == pParsing)
 // 	{

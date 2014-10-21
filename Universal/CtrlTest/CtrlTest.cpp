@@ -11,9 +11,7 @@ int main()
 	IUniversal* pTest = NULL;
 	CreateUniversal((LPVOID*)&pTest);
 	ILogSystem* pLog = NULL;
-	pTest->CreateLogSystem(pTest, pLog);
-	ILinkList* pLinkList = NULL;
-	pTest->CreateLinkList(pLinkList);
+	pTest->CreateLogSystem(pTest, &pLog);
 	pLog->WriteLine(TEXT("TestLog"));
 	LPCTSTR str = pTest->HelloWorld();
 	wcout << str << endl;

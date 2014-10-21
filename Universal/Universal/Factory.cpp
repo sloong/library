@@ -47,7 +47,7 @@ ULONG _stdcall CFactory::Release()
 	return m_Ref;
 }
 
-HRESULT _stdcall CFactory::CreateInstance(IUnknown *pUnkOuter, const IID &riid, void **ppvObject)//最重要的函数，这个函数创建CompTestClass对象，并返回所需接口
+HRESULT _stdcall CFactory::CreateInstance(IUnknown *pUnkOuter, const IID &riid, void **ppvObject)
 {
 	if (NULL != pUnkOuter)
 	{

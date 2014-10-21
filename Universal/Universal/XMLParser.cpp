@@ -5,7 +5,7 @@
 #include "StdAfx.h"
 #include "IUniversal.h"
 #include "SLoongError.h"
-#include "Universal/TinyXML/tinyxml.h"
+#include "TinyXML/tinyxml.h"
 #include "XMLParser.h"
 
 using namespace SoaringLoong;

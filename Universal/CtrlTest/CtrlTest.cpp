@@ -1,6 +1,6 @@
 #include <iostream>
-#include "..\Universal\IUniversal.h"
-#pragma comment(lib,"..\\Debug\\Universal.lib")
+#include "IUniversal.h"
+#pragma comment(lib,"Universal.lib")
 using namespace std;
 using namespace SoaringLoong;
 

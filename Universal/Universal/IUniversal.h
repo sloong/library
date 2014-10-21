@@ -38,8 +38,11 @@ static const GUID IID_IUniversal =
 static const GUID IID_ILogSystem =
 { 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc5 } };
 
-const LPCTSTR CLSID_Universal = TEXT("{3D8C5798-69C0-B18C-7EE8-E6C99BEBC8C4}");
-const LPCTSTR ProgID_Universal = TEXT("COMCTL.SLoongUniversal");
+static const GUID CLSID_SLOONGUniversal = 
+{ 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc4 } };
+
+const LPCTSTR szCLSID_Universal = TEXT("{3D8C5798-69C0-B18C-7EE8-E6C99BEBC8C4}");
+const LPCTSTR szProgID_Universal = TEXT("COMCTL.SLoongUniversal");
 
 #pragma region SLUniversal Defines
 

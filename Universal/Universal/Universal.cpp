@@ -27,7 +27,7 @@ CRITICAL_SECTION CUniversal::m_cs;
 UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
 {
 	GUID CLSID_Universal;
-	LRESULT hResult = CLSIDFromProgID(ProgID_Universal, &CLSID_Universal);
+	HRESULT hResult = CLSIDFromProgID(szProgID_Universal, &CLSID_Universal);
 	if (S_OK != hResult)
 	{
 		_tprintf(TEXT("Can't find CLSID!\n"));
@@ -39,7 +39,7 @@ UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
 		StringFromCLSID(CLSID_Universal, &szCLSID);
 		CoTaskMemFree(szCLSID);
 	}
-
+	
 	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUniversal, pUniversal);
 	return hResult;
 }

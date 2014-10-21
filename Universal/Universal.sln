@@ -14,7 +14,7 @@ Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 3
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://172.16.21.49:8080/tfs/soaringloong
+		SccTeamFoundationServer = http://serv-tfs:8080/tfs/soaringloong
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = CtrlTest\\CtrlTest.vcxproj
 		SccProjectName1 = CtrlTest
@@ -24,18 +24,28 @@ Global
 		SccLocalPath2 = Universal
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Debug|Win32.Build.0 = Debug|Win32
-		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Release|Win32.ActiveCfg = Release|Win32
-		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Release|Win32.Build.0 = Release|Win32
-		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Debug|Win32.ActiveCfg = Debug|Win32
-		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Debug|Win32.Build.0 = Debug|Win32
-		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Release|Win32.ActiveCfg = Release|Win32
-		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Release|Win32.Build.0 = Release|Win32
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Debug|x64.ActiveCfg = Debug|x64
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Debug|x64.Build.0 = Debug|x64
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Debug|x86.ActiveCfg = Debug|Win32
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Debug|x86.Build.0 = Debug|Win32
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Release|x64.ActiveCfg = Release|x64
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Release|x64.Build.0 = Release|x64
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Release|x86.ActiveCfg = Release|Win32
+		{3B85462A-E2AD-4908-88AC-4B52E58D4499}.Release|x86.Build.0 = Release|Win32
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Debug|x64.ActiveCfg = Debug|x64
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Debug|x64.Build.0 = Debug|x64
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Debug|x86.ActiveCfg = Debug|Win32
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Debug|x86.Build.0 = Debug|Win32
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Release|x64.ActiveCfg = Release|x64
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Release|x64.Build.0 = Release|x64
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Release|x86.ActiveCfg = Release|Win32
+		{51377FCB-4919-4F12-8FB2-9EDD1A3E7C94}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

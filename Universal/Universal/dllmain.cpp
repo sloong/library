@@ -107,7 +107,7 @@ extern "C" HRESULT _stdcall DllCanUnloadNow()
 
 extern "C" HRESULT _stdcall DllGetClassObject(__in REFCLSID rclsid, __in REFIID riid, LPVOID FAR* ppv)
 {
-	if (IID_IUniversal == rclsid)
+	if (CLSID_SLOONGUniversal == rclsid)
 	{
 		CFactory* pFactory = new CFactory();
 		if (NULL == pFactory)

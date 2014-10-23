@@ -24,10 +24,9 @@ int main()
 
 	// Create ILogSystem by CoCreateInstance interface.
 	ILogSystem* pLog2 = NULL;
-	CoCreateInstance(IID_IUniversal, NULL, CLSCTX_INPROC_SERVER, IID_ILogSystem, (LPVOID*)&pLog2);
+	CoCreateInstance(CLSID_SLOONGUniversal, NULL, CLSCTX_INPROC_SERVER, IID_ILogSystem, (LPVOID*)&pLog2);
 	pLog2->Initialize(pUniversal, TEXT("Log2.Log"));
 	pLog2->WriteLine(TEXT("TEST2"));
-	pLog->WriteLine(pUniversal->HelloWorld());
 	pLog2->Release();
 	
 	pUniversal->Release();

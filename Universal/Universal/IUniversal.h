@@ -74,11 +74,6 @@ const LPCTSTR szProgID_Universal = TEXT("COMCTL.SLoongUniversal");
 #define SAFE_DEL_ALL_DATA_FROM_LIST(p,type,del) {if(NULL!=p){for(int i=0;i<p->m_nNum;i++){CLinkList* pNode=p->Locate(i);type pData=(type)pNode->GetData();del(pData);pNode->SetData(NULL,false);}}}
 #endif // !SAFE_DEL_ALL_DATA_FROM_LIST
 
-#ifndef FAILED_RETURN
-#define FAILED_RETURN(hRes) {if(FAILED(hRes))return hRes;}
-#endif // !FAILED_RETURN
-
-
 #ifdef _UNICODE
 #include <string>
 #include <fstream>

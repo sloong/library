@@ -12,35 +12,25 @@ HRESULT UnregisterCOMLibrary();
 
 HRESULT RegisterCOMLibrary(LPCWSTR lpPath)
 {
-	HKEY thk, tclsidk;
+	// This function is used in DllRegisterServer,
+	// But in the function, return a error code, always pop-up a succeeded message.
+	// So in here, all return check is deleted.
+	HKEY thk, tclsidk, tinps32k;
 
-	HRESULT hRes;
-	hRes = RegOpenKey(HKEY_CLASSES_ROOT, L"CLSID", &thk);
-	FAILED_RETURN(hRes);
+	if (ERROR_SUCCESS == RegOpenKey(HKEY_CLASSES_ROOT, L"CLSID", &thk))
+	{
+		RegCreateKey(thk, szCLSID_Universal, &tclsidk);
+		RegCreateKey(tclsidk, L"InProcServer32", &tinps32k);
+		RegSetValue(tinps32k, NULL, REG_SZ, lpPath, wcslen(lpPath) * 2);
+		RegCloseKey(tinps32k);
+		RegCloseKey(tclsidk);
+		RegCloseKey(thk);
+	}
 
-	hRes = RegCreateKey(thk, szCLSID_Universal, &tclsidk);
-	FAILED_RETURN(hRes);
-
-	HKEY tinps32k;
-	hRes = RegCreateKey(tclsidk, L"InProcServer32", &tinps32k);
-	FAILED_RETURN(hRes);
-
-	hRes = RegSetValue(tinps32k, NULL, REG_SZ, lpPath, wcslen(lpPath) * 2);
-	FAILED_RETURN(hRes);
-
-	RegCloseKey(tinps32k);
-	RegCloseKey(tclsidk);
-	RegCloseKey(thk);
-
-	hRes = RegCreateKey(HKEY_CLASSES_ROOT, szProgID_Universal, &thk);
-	FAILED_RETURN(hRes);
-
-	hRes = RegCreateKey(thk, L"CLSID", &tclsidk);
-	FAILED_RETURN(hRes);
-
-	hRes = RegSetValue(tclsidk, NULL, REG_SZ, szCLSID_Universal, wcslen(szCLSID_Universal)*sizeof(TCHAR));
-	FAILED_RETURN(hRes);
-
+	RegCreateKey(HKEY_CLASSES_ROOT, szProgID_Universal, &thk);
+	RegCreateKey(thk, L"CLSID", &tclsidk);
+	RegSetValue(tclsidk, NULL, REG_SZ, szCLSID_Universal, wcslen(szCLSID_Universal)*sizeof(TCHAR));
+	
 	return S_OK;
 }
 
@@ -52,17 +42,8 @@ extern "C" HRESULT _stdcall DllRegisterServer()
 	{
 		return -1;
 	}
-	HRESULT hRes = RegisterCOMLibrary(szModule);
-	if ( FAILED(hRes) )
-	{
-		MessageBox(NULL, TEXT("注册失败,请确定是否是以管理员身份运行!"), TEXT("错误"), MB_OK);
-	}
-	else
-	{
-		MessageBox(NULL, TEXT("注册成功!"), TEXT("信息"), MB_OK);
-	}
-	
-	return hRes;
+	RegisterCOMLibrary(szModule);
+	return S_OK;
 }
 
 HRESULT UnregisterCOMLibrary()

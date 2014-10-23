@@ -107,6 +107,11 @@ LPCTSTR CLogSystem::FormatInformationMessage( DWORD dwCode, LPCTSTR strErrorText
 
 void _stdcall CLogSystem::Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
+	if (NULL == m_pUniversal)
+	{
+		return;
+	}
+
 	LPCTSTR strLogText = NULL;
 
 	if ( ERROR_SUCCESS != g_hRes || false == bJustFailedWrite || INF == emLevel )
@@ -193,7 +198,7 @@ HRESULT CLogSystem::FormatWindowsErrorMessage( LPTSTR szErrText, DWORD dwSize, D
 
 void _stdcall CLogSystem::WriteLine( LPCTSTR szLog )
 {
-	if (NULL == szLog)
+	if (NULL == szLog || NULL == m_pUniversal )
 		return;
 
 	SYSTEMTIME st;

@@ -44,7 +44,7 @@ static const GUID CLSID_SLOONGUniversal =
 const LPCTSTR szCLSID_Universal = TEXT("{3D8C5798-69C0-B18C-7EE8-E6C99BEBC8C4}");
 const LPCTSTR szProgID_Universal = TEXT("COMCTL.SLoongUniversal");
 
-#pragma region SLUniversal Defines
+#pragma region SoaringLoong Universal Defines
 
 #ifndef _ARGB
 #define _ARGB(a,r,g,b) ((ULONG)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
@@ -276,7 +276,7 @@ namespace SoaringLoong
 
 	/////////////////////////////////////////////////////////////////////////////
 	// CPoint - A 2-D point, similar to Windows POINT structure.
-	class CPoint : public tagPOINT
+	class UNIVERSAL_API CPoint : public tagPOINT
 	{
 	public:
 		// Constructors
@@ -330,7 +330,7 @@ namespace SoaringLoong
 
 	/////////////////////////////////////////////////////////////////////////////
 	// CRect - A 2-D rectangle, similar to Windows RECT structure.
-	class CRect : public tagRECT
+	class UNIVERSAL_API CRect : public tagRECT
 	{
 		// Constructors
 	public:
@@ -500,6 +500,6 @@ namespace SoaringLoong
 #pragma endregion
 
 	UNIVERSAL_API extern HRESULT g_hRes;
+	UNIVERSAL_API HRESULT _stdcall CreateUniversal(IUniversal* pUniversal);
 }
 
-UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal);

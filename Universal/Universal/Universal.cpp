@@ -24,7 +24,7 @@ TCHAR g_szFormat[NUM_SWAP][MAX_STRING] = { 0 };
 ULONG CUniversal::m_objNum = 0;
 CRITICAL_SECTION CUniversal::m_cs;
 
-UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
+UNIVERSAL_API HRESULT _stdcall CreateUniversal(IUniversal* pUniversal)
 {
 	GUID CLSID_Universal;
 	HRESULT hResult = CLSIDFromProgID(szProgID_Universal, &CLSID_Universal);
@@ -40,7 +40,7 @@ UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal)
 		CoTaskMemFree(szCLSID);
 	}
 	
-	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUniversal, pUniversal);
+	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUniversal, (LPVOID*)&pUniversal);
 	return hResult;
 }
 

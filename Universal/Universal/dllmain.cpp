@@ -21,7 +21,7 @@ HRESULT RegisterCOMLibrary(LPCWSTR lpPath)
 	{
 		RegCreateKey(thk, szCLSID_Universal, &tclsidk);
 		RegCreateKey(tclsidk, L"InProcServer32", &tinps32k);
-		RegSetValue(tinps32k, NULL, REG_SZ, lpPath, wcslen(lpPath) * 2);
+		RegSetValue(tinps32k, NULL, REG_SZ, lpPath, (DWORD)wcslen(lpPath) * 2);
 		RegCloseKey(tinps32k);
 		RegCloseKey(tclsidk);
 		RegCloseKey(thk);
@@ -29,7 +29,7 @@ HRESULT RegisterCOMLibrary(LPCWSTR lpPath)
 
 	RegCreateKey(HKEY_CLASSES_ROOT, szProgID_Universal, &thk);
 	RegCreateKey(thk, L"CLSID", &tclsidk);
-	RegSetValue(tclsidk, NULL, REG_SZ, szCLSID_Universal, wcslen(szCLSID_Universal)*sizeof(TCHAR));
+	RegSetValue(tclsidk, NULL, REG_SZ, szCLSID_Universal, (DWORD)wcslen(szCLSID_Universal)*sizeof(TCHAR));
 	
 	return S_OK;
 }

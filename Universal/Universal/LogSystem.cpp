@@ -217,7 +217,7 @@ DWORD _stdcall CLogSystem::Write(LPCTSTR szMessage)
 	Lock();
 	if (IsOpen())
 	{
-		WriteFile(m_hFileHandle, szMessage, _tcslen(szMessage)*sizeof(TCHAR), &dwWriteLength, NULL);
+		WriteFile(m_hFileHandle, szMessage, (DWORD)_tcslen(szMessage)*sizeof(TCHAR), &dwWriteLength, NULL);
 		FlushFileBuffers(m_hFileHandle);
 	}
 

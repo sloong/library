@@ -2,10 +2,10 @@
 //
 
 #include "stdafx.h"
-#include "SLoongMath.h"
-#pragma comment(lib,"SLoongMath.lib")
+#include "SLMath.h"
+#pragma comment(lib,"SLMath.lib")
 
-using namespace SLoongMath;
+using namespace SoaringLoong::SLMath;
 
 int _tmain(int argc, _TCHAR* argv[])
 {

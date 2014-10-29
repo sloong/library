@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SLoongMath.h">
-      <Filter>SLoong Math Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>IDE Files</Filter>
     </ClInclude>
@@ -27,6 +24,9 @@
     <ClInclude Include="resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="SLMath.h">
+      <Filter>SLoong Math Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -34,9 +34,6 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>IDE Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SLoongMath.cpp">
-      <Filter>SLoong Math Files</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>SLoong Math Files</Filter>
@@ -59,9 +56,12 @@
     <ClCompile Include="Vector.cpp">
       <Filter>SLoong Math Files</Filter>
     </ClCompile>
+    <ClCompile Include="SLMath.cpp">
+      <Filter>SLoong Math Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SLoongMath.rc">
+    <ResourceCompile Include="SLMath.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

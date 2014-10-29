@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "SLUniversal.h"
-#include "SLoongMath.h"
-using namespace SLoongMath;
+
+#include "SLMath.h"
+using namespace SoaringLoong::SLMath;
 
 CMatrix::CMatrix()
 {

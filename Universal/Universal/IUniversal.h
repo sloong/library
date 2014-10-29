@@ -500,6 +500,6 @@ namespace SoaringLoong
 #pragma endregion
 
 	UNIVERSAL_API extern HRESULT g_hRes;
-	UNIVERSAL_API HRESULT _stdcall CreateUniversal(IUniversal*& pUniversal);
+	UNIVERSAL_API HRESULT _stdcall CreateUniversal(LPVOID* pUniversal);
 }
 

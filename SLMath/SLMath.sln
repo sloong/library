@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SLMath", "SLoongMath\SLoongMath.vcxproj", "{2C099C1F-DEDC-4EE9-9C9D-1A4EB763BBAE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SLMath", "SLMath\SLMath.vcxproj", "{2C099C1F-DEDC-4EE9-9C9D-1A4EB763BBAE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{7A738474-F063-440A-A90A-36A68FA60C76}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,9 +15,9 @@ Global
 		SccNumberOfProjects = 3
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://serv-tfs:8080/tfs/soaringloong
-		SccProjectUniqueName0 = SLoongMath\\SLoongMath.vcxproj
-		SccProjectName0 = SLoongMath
-		SccLocalPath0 = SLoongMath
+		SccProjectUniqueName0 = SLMath\\SLMath.vcxproj
+		SccProjectName0 = SLMath
+		SccLocalPath0 = SLMath
 		SccProjectUniqueName1 = UnitTest\\UnitTest.vcxproj
 		SccProjectName1 = UnitTest
 		SccLocalPath1 = UnitTest

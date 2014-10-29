@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2C099C1F-DEDC-4EE9-9C9D-1A4EB763BBAE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SLoongMath</RootNamespace>
+    <RootNamespace>SLMath</RootNamespace>
     <SccProjectName>SAK</SccProjectName>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>

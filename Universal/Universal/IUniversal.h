@@ -3,9 +3,9 @@
 #ifdef UNIVERSAL_EXPORTS
 #define UNIVERSAL_API __declspec(dllexport)
 // Version
-#define VERSION_NUMBER						2,0,0,22
-#define VERSION_FILEVERSION					TEXT("2.0.0.22")
-#define VERSION_BUILDTIME					TEXT("2014/10/10")
+#define VERSION_NUMBER						2,0,0,71
+#define VERSION_FILEVERSION					TEXT("2.0.0.71")
+#define VERSION_BUILDTIME					TEXT("2014/10/29")
 #ifdef _DEBUG
 #define VERSION_PRODUCTVERSION 				TEXT("Ver.2.0 for Debug")
 #define	VERSION_FILEDESCRIPTION				TEXT("SLoong Universal Debug Libaray")

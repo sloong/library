@@ -2,19 +2,19 @@
 
 #ifdef SLMATH_EXPORTS
 #define SLMATH_API __declspec(dllexport)
-#define VERSION_NUMBER						1,1,1,6
-#define VERSION_FILEVERSION					"1.1.1.6"
-#define VERSION_BUILDTIME					"2014/4/9"
+#define VERSION_NUMBER						1,2,0,60
+#define VERSION_FILEVERSION					"1.2.0.60"
+#define VERSION_BUILDTIME					"2014/10/29"
 #ifdef _DEBUG
-#define VERSION_PRODUCTVERSION 				"Ver.1.1 for Debug"
+#define VERSION_PRODUCTVERSION 				"Ver.1.2 for Debug"
 #define	VERSION_FILEDESCRIPTION				"Universal Math Debug Libaray"
 #define	VERSION_PRODUCTNAME					"Universal Debug Libaray"
 #else
-#define VERSION_PRODUCTVERSION 				"Ver.1.1"
+#define VERSION_PRODUCTVERSION 				"Ver.1.2"
 #define	VERSION_FILEDESCRIPTION				"Universal Math Libaray"
 #define	VERSION_PRODUCTNAME					"Universal Libaray"
 #endif // _DEBUG
-#define VERSION_INTERNALNAME				"SLoongMath.dll"
+#define VERSION_INTERNALNAME				"SLMath.dll"
 #define VERSION_COMPANYNAME 				"SoaringLoong, Inc."
 #define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2013 SoaringLoong, Inc."
 #else

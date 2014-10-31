@@ -61,15 +61,13 @@ CUniversal::~CUniversal()
 
 HRESULT _stdcall CUniversal::QueryInterface(const IID &riid, void **ppvObject)
 {
-	if (IID_IUnknown == riid){
-		*ppvObject = (IUnknown*)this;
-		((IUnknown*)(*ppvObject))->AddRef();
+	if (IID_IUnknown == riid || IID_IUniversal == riid)
+	{
+		*ppvObject = this;
+		this->AddRef();
 	}
-	else if (IID_IUniversal == riid){
-		*ppvObject = (IUniversal*)this;
-		((IUniversal*)(*ppvObject))->AddRef();
-	}
-	else{
+	else
+	{
 		*ppvObject = NULL;
 		return E_NOINTERFACE;
 	}

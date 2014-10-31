@@ -189,6 +189,7 @@ namespace SoaringLoong
 		PARSE_XML,
 		PARSE_TOKEN,
 	}PARSETYPE;
+
 	class ILogSystem;
 	class ILinkList;
 	class IScriptParser;

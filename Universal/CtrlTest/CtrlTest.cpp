@@ -11,7 +11,7 @@ int main()
 
 	// Test IUniversal interface.
 	IUniversal* pUniversal = NULL;
-	CreateUniversal((LPVOID*)&pUniversal);
+	CreateUniversal(&pUniversal);
 	LPCTSTR str = pUniversal->HelloWorld();
 	wcout << str << endl;
 

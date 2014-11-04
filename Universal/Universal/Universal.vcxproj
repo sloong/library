@@ -107,7 +107,7 @@
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
 copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
+regsvr32 /s/c "$(TargetPath)"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -130,7 +130,7 @@ regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
 copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
+regsvr32 /s/c "$(TargetPath)"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -159,7 +159,7 @@ regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
 copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
+regsvr32 /s/c "$(TargetPath)"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -188,7 +188,7 @@ regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
 copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 "$(OutputPath)\$(TargetFilename)"</Command>
+regsvr32 /s/c "$(TargetPath)"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>

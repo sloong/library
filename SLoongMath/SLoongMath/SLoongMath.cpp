@@ -3,9 +3,9 @@
 /************************************************************************/
 #include "stdafx.h"
 
-#include "SLMath.h"
+#include "SloongMath.h"
 
-using namespace SoaringLoong::SLMath;
+using namespace SoaringLoong::SloongMath;
 
 CSLMath::CSLMath()
 {

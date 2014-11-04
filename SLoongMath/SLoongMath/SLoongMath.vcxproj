@@ -21,12 +21,12 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2C099C1F-DEDC-4EE9-9C9D-1A4EB763BBAE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SLMath</RootNamespace>
+    <RootNamespace>SloongMath</RootNamespace>
     <SccProjectName>SAK</SccProjectName>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
     <SccProvider>SAK</SccProvider>
-    <ProjectName>SLMath</ProjectName>
+    <ProjectName>SloongMath</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -110,7 +110,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SLMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SLOONGMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
@@ -119,7 +119,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ResourceCompile>
-      <PreprocessorDefinitions>SLMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SLOONGMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
     </ResourceCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(OutDir)$(ProjectName).lib" "$(SolutionDir)Include\$(PlatformTarget)\"
@@ -134,7 +134,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SLMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SLOONGMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
@@ -143,7 +143,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ResourceCompile>
-      <PreprocessorDefinitions>SLMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SLOONGMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
     </ResourceCompile>
     <PostBuildEvent>
       <Command>copy /Y "$(OutDir)$(ProjectName).lib" "$(SolutionDir)Include\$(PlatformTarget)\"
@@ -160,7 +160,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SLMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SLOONGMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
@@ -178,7 +178,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
       <Command>copy /Y "$(ProjectDir)$(ProjectName).h" "$(SolutionDir)Include\"</Command>
     </PreBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>SLMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SLOONGMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -188,7 +188,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SLMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SLOONGMATH_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
@@ -206,12 +206,12 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
       <Command>copy /Y "$(ProjectDir)$(ProjectName).h" "$(SolutionDir)Include\"</Command>
     </PreBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>SLMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SLOONGMATH_EXPORTS;_UNICODE;UNICODE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SLMath.h" />
+    <ClInclude Include="SloongMath.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -236,7 +236,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="SLMath.cpp" />
+    <ClCompile Include="SloongMath.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -246,7 +246,7 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SLMath.rc" />
+    <ResourceCompile Include="SloongMath.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -196,36 +196,42 @@ namespace SoaringLoong
 	class IUniversal : public IUnknown
 	{
 	public:
-		virtual LPCTSTR _stdcall HelloWorld() = 0;
-		virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...) = 0;
-		virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
-		virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog) = 0;
-		virtual HRESULT _stdcall CreateLinkList(ILinkList** pLinkList) = 0;
-		virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser** pParser) = 0;
+		virtual LPCTSTR STDMETHODCALLTYPE HelloWorld() = 0;
+		virtual LPCTSTR STDMETHODCALLTYPE Format(LPCTSTR strString, ...) = 0;
+		virtual void STDMETHODCALLTYPE CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
+		virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode) = 0;
+		virtual HRESULT STDMETHODCALLTYPE CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog) = 0;
+		virtual HRESULT STDMETHODCALLTYPE CreateLinkList(ILinkList** pLinkList) = 0;
+		virtual HRESULT STDMETHODCALLTYPE CreateScriptParser(PARSETYPE emType, IScriptParser** pParser) = 0;
 	};
 
 	class ILogSystem : public IUnknown
 	{
 	public:
-		virtual void _stdcall Initialize(IUniversal* pUniversal, LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false) = 0;
-		virtual DWORD _stdcall Write(LPCTSTR szLog) = 0;
-		virtual void _stdcall WriteLine(LPCTSTR szMessage) = 0;
-		virtual void _stdcall Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
+		virtual void STDMETHODCALLTYPE Initialize(IUniversal* pUniversal, LPCTSTR szPathName = TEXT("Log.log"), LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false) = 0;
+		virtual DWORD STDMETHODCALLTYPE Write(LPCTSTR szLog) = 0;
+		virtual void STDMETHODCALLTYPE WriteLine(LPCTSTR szMessage) = 0;
+		virtual void STDMETHODCALLTYPE Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
+		virtual void STDMETHODCALLTYPE SetConfiguration(LPCTSTR szFileName, LPCTSTR szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel) = 0;
+		virtual bool STDMETHODCALLTYPE IsOpen() = 0;
+		virtual void STDMETHODCALLTYPE Close() = 0;
+		virtual LPCTSTR STDMETHODCALLTYPE GetFileName() = 0;
+		virtual LPCTSTR STDMETHODCALLTYPE GetPath() = 0;
 	};
 
 	class ILinkList : public IUnknown
 	{
 	public:
-		virtual int _stdcall Add( LPVOID pData, LPCTSTR szMarkName, LPCTSTR szDataFormat ) = 0;
-		virtual void _stdcall Remove(int nIndex) = 0;
-		virtual int _stdcall Count() = 0;
-		virtual ILinkList* _stdcall GetListHeader() = 0;
+		virtual int STDMETHODCALLTYPE Add( LPVOID pData, LPCTSTR szMarkName, LPCTSTR szDataFormat ) = 0;
+		virtual void STDMETHODCALLTYPE Remove(int nIndex) = 0;
+		virtual int STDMETHODCALLTYPE Count() = 0;
+		virtual ILinkList* STDMETHODCALLTYPE GetListHeader() = 0;
 	};
 
 	class IException : public IUnknown
 	{
 	public: 
-		virtual LPCTSTR _stdcall Message() = 0;
+		virtual LPCTSTR STDMETHODCALLTYPE Message() = 0;
 	};
 
 	class IScriptParser : public IUnknown

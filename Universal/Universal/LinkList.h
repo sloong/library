@@ -14,9 +14,9 @@ public:
 	//		User cannot call it. and when list delete, this function don't call the destroy function. 
 	~CLinkList(void);
 
-	virtual HRESULT _stdcall QueryInterface(const IID& riid, void** ppvObject);
-	virtual ULONG _stdcall AddRef();
-	virtual ULONG _stdcall Release();
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(const IID& riid, void** ppvObject);
+	virtual ULONG STDMETHODCALLTYPE AddRef();
+	virtual ULONG STDMETHODCALLTYPE Release();
 
 	//--- Locate Function annotation ---
 	// Parameters:
@@ -74,7 +74,7 @@ public:
 	//		This node's index in list.
 	//	Remarks:
 	//		Insert node at the list last.
-	int _stdcall Add(LPVOID pData, LPCTSTR szMarkName = TEXT("UseIndex"), LPCTSTR szDataType = TEXT("LPVOID"));
+	int STDMETHODCALLTYPE Add(LPVOID pData, LPCTSTR szMarkName = TEXT("UseIndex"), LPCTSTR szDataType = TEXT("LPVOID"));
 
 	//--- GetData Function annotation ---		
 	// Return value:
@@ -105,15 +105,15 @@ public:
 	// Remarks:
 	//		Delete this node or other node in list, if no have param 1, it is delete this self.
 	void Delete();
-	void _stdcall Remove(int nIndex);
+	void STDMETHODCALLTYPE Remove(int nIndex);
 
 	//--- Destroy Function annotation ---
 	// Remarks:
 	//		Delete this list.
 	void Destroy();
 
-	ILinkList* _stdcall GetListHeader();
-	int _stdcall Count();
+	ILinkList* STDMETHODCALLTYPE GetListHeader();
+	int STDMETHODCALLTYPE Count();
 
 
 private:

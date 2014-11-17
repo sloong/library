@@ -16,6 +16,9 @@
     <Filter Include="TinyXML">
       <UniqueIdentifier>{5a6eb328-f42d-4483-b150-7d593b646c5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="COM Files">
+      <UniqueIdentifier>{b83835a0-0c23-4920-8888-8da0e7588a2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -25,12 +28,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Factory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IUniversal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TinyXML\tinystr.h">
@@ -75,12 +72,15 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IUniversal.h">
+      <Filter>COM Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Factory.h">
+      <Filter>COM Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Universal.cpp">
@@ -116,24 +116,27 @@
     <ClCompile Include="XMLParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="XMLPro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="universal.def">
-      <Filter>Header Files</Filter>
-    </None>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>COM Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Factory.cpp">
+      <Filter>COM Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Universal.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="universal.def">
+      <Filter>COM Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

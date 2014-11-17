@@ -1,5 +1,5 @@
 /************************************************************************/
-/*		 LinkList.cpp --- Current Link List Library Implement			*/
+/*		 LinkList.cpp --- Universal Link List Library Implement			*/
 /************************************************************************/
 //--- 2013/06/07 --- WCB --- Add
 #include "StdAfx.h"
@@ -37,7 +37,7 @@ CLinkList::~CLinkList(void)
 	//Delete();
 }
 
-HRESULT _stdcall CLinkList::QueryInterface(const IID& riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE CLinkList::QueryInterface(const IID& riid, void** ppvObject)
 {
 	if (IID_IUnknown == riid){
 		*ppvObject = (IUnknown*)this;
@@ -54,13 +54,13 @@ HRESULT _stdcall CLinkList::QueryInterface(const IID& riid, void** ppvObject)
 	return S_OK;
 }
 
-ULONG _stdcall CLinkList::AddRef()
+ULONG STDMETHODCALLTYPE CLinkList::AddRef()
 {
 	m_Ref++;
 	return m_Ref;
 }
 
-ULONG _stdcall CLinkList::Release()
+ULONG STDMETHODCALLTYPE CLinkList::Release()
 {
 	m_Ref--;
 	if (0 == m_Ref)
@@ -322,7 +322,7 @@ void CLinkList::SetListLast(CLinkList* pLast)
 //--- 2013/06/07 --- WCB --- Add
 //* Remarks: 
 //*		Insert a node in the list last, many time you should used this function not the Insert() function .
-int _stdcall CLinkList::Add( LPVOID pData, LPCTSTR szMarkName /* = TEXT("UseIndex") */, LPCTSTR szDataType /* = TEXT("LPVOID") */ )
+int STDMETHODCALLTYPE CLinkList::Add( LPVOID pData, LPCTSTR szMarkName /* = TEXT("UseIndex") */, LPCTSTR szDataType /* = TEXT("LPVOID") */ )
 {
 	// empty list
 	int nIndex = 0;
@@ -399,7 +399,7 @@ void CLinkList::Delete()
 //--- 2013/7/2 --- WCB --- Add
 // Remarks:
 //		Delete the appointed node with index number
-void _stdcall CLinkList::Remove( int nIndex )
+void STDMETHODCALLTYPE CLinkList::Remove( int nIndex )
 {
 	// Checking value
 	if ( nIndex < 0 || nIndex > m_nNum )
@@ -435,12 +435,12 @@ void CLinkList::RefreshIndex()
 	}
 }
 
-int _stdcall CLinkList::Count()
+int STDMETHODCALLTYPE CLinkList::Count()
 {
 	return m_nNum;
 }
 
-ILinkList* _stdcall CLinkList::GetListHeader()
+ILinkList* STDMETHODCALLTYPE CLinkList::GetListHeader()
 {
 	return m_pListHead;
 }

@@ -58,7 +58,7 @@ CUniversal::~CUniversal()
 	LeaveCriticalSection(&m_cs);
 }
 
-HRESULT _stdcall CUniversal::QueryInterface(const IID &riid, void **ppvObject)
+HRESULT STDMETHODCALLTYPE CUniversal::QueryInterface(const IID &riid, void **ppvObject)
 {
 	if (IID_IUnknown == riid || IID_IUniversal == riid)
 	{
@@ -73,13 +73,13 @@ HRESULT _stdcall CUniversal::QueryInterface(const IID &riid, void **ppvObject)
 	return S_OK;
 }
 
-ULONG _stdcall CUniversal::AddRef()
+ULONG STDMETHODCALLTYPE CUniversal::AddRef()
 {
 	m_Ref++;
 	return m_Ref;
 }
 
-ULONG _stdcall CUniversal::Release()
+ULONG STDMETHODCALLTYPE CUniversal::Release()
 {
 	m_Ref--;
 	if (0 == m_Ref)
@@ -91,7 +91,7 @@ ULONG _stdcall CUniversal::Release()
 	return m_Ref;
 }
 
-LPCTSTR _stdcall CUniversal::HelloWorld()
+LPCTSTR STDMETHODCALLTYPE CUniversal::HelloWorld()
 {
 	return (LPCTSTR)VERSION_LEGALCOPYRIGHT;
 }
@@ -173,7 +173,7 @@ HRESULT FormatErrorMessage(LPTSTR szErrText, DWORD dwSize, HRESULT nErrorCode)
 	}
 }
 
-LPCTSTR _stdcall CUniversal::Format(LPCTSTR strString, ...)
+LPCTSTR STDMETHODCALLTYPE CUniversal::Format(LPCTSTR strString, ...)
 {
 	va_list args;
 	va_start(args, strString);
@@ -213,7 +213,7 @@ LPCTSTR _stdcall CUniversal::Format(LPCTSTR strString, ...)
 	return strTarget;
 }
 
-void _stdcall CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
+void STDMETHODCALLTYPE CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
 {
 	SAFE_DELETE_ARR(lpTarget);
 	UINT nLength = (UINT)_tcslen(lpFrom);
@@ -222,7 +222,16 @@ void _stdcall CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
 	_tcscpy_s(lpTarget, nLength + 1, lpFrom);
 }
 
-HRESULT _stdcall CUniversal::CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog)
+// Remarks:
+//		Format the windows error message
+DWORD CUniversal::FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode)
+{
+	DWORD systemLocale = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+	DWORD dwLength = 0;
+	return FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, dwErrCode, systemLocale, szErrText, dwSize, NULL);
+}
+
+HRESULT STDMETHODCALLTYPE CUniversal::CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog)
 {
 	ILogSystem* pTemp = new CLogSystem();
 	pTemp->QueryInterface(IID_ILogSystem, (LPVOID*)pLog);
@@ -230,7 +239,7 @@ HRESULT _stdcall CUniversal::CreateLogSystem(IUniversal* pUniversal, ILogSystem*
 	return S_OK;
 }
 
-HRESULT _stdcall CUniversal::CreateLinkList(ILinkList** pLinkList)
+HRESULT STDMETHODCALLTYPE CUniversal::CreateLinkList(ILinkList** pLinkList)
 {
 // 	try
 // 	{
@@ -245,7 +254,7 @@ HRESULT _stdcall CUniversal::CreateLinkList(ILinkList** pLinkList)
 }
 
 
-HRESULT _stdcall CUniversal::CreateScriptParser(PARSETYPE emType, IScriptParser** pParser)
+HRESULT STDMETHODCALLTYPE CUniversal::CreateScriptParser(PARSETYPE emType, IScriptParser** pParser)
 {
 // 	if (NULL == pParsing)
 // 	{

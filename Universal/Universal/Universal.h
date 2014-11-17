@@ -12,19 +12,20 @@ public:
 	CUniversal();
 	~CUniversal();
 
-	virtual HRESULT _stdcall QueryInterface(const IID& riid, void** ppvObject);
-	virtual ULONG _stdcall AddRef();
-	virtual ULONG _stdcall Release();
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(const IID& riid, void** ppvObject);
+	virtual ULONG STDMETHODCALLTYPE AddRef();
+	virtual ULONG STDMETHODCALLTYPE Release();
 	static int Init();
 	ULONG ObjNum();
 
 
-	virtual LPCTSTR _stdcall HelloWorld();
-	virtual LPCTSTR _stdcall Format(LPCTSTR strString, ...);
-	virtual void _stdcall CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
-	virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog);
-	virtual HRESULT _stdcall CreateLinkList(ILinkList** pLinkList);
-	virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser** pParser);
+	virtual LPCTSTR STDMETHODCALLTYPE HelloWorld();
+	virtual LPCTSTR STDMETHODCALLTYPE Format(LPCTSTR strString, ...);
+	virtual void STDMETHODCALLTYPE CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
+	virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode);
+	virtual HRESULT STDMETHODCALLTYPE CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog);
+	virtual HRESULT STDMETHODCALLTYPE CreateLinkList(ILinkList** pLinkList);
+	virtual HRESULT STDMETHODCALLTYPE CreateScriptParser(PARSETYPE emType, IScriptParser** pParser);
 protected:
 	static ULONG m_objNum;
 	static CRITICAL_SECTION m_cs;

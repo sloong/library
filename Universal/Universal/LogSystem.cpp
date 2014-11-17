@@ -105,7 +105,7 @@ LPCTSTR CLogSystem::FormatInformationMessage( DWORD dwCode, LPCTSTR strErrorText
 }
 
 
-void _stdcall CLogSystem::Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
+void STDMETHODCALLTYPE CLogSystem::Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
 	if (NULL == m_pUniversal)
 	{
@@ -147,7 +147,7 @@ void _stdcall CLogSystem::Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorTe
 		DWORD dwWinErrCode = GetLastError();
 		if ( ERROR_SUCCESS != dwWinErrCode )
 		{
-			FormatWindowsErrorMessage( szWinErrText, MAX_STRING, dwWinErrCode ) ;
+			m_pUniversal->FormatWindowsErrorMessage( szWinErrText, MAX_STRING, dwWinErrCode ) ;
 			// Remove "\r\n"
 			szWinErrText[_tcslen(szWinErrText)-2] = '\0';
 			if ( NULL == szWinErrText )
@@ -160,13 +160,13 @@ void _stdcall CLogSystem::Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR strErrorTe
 	}
 }
 
-ULONG _stdcall CLogSystem::AddRef()
+ULONG STDMETHODCALLTYPE CLogSystem::AddRef()
 {
 	m_Ref++;
 	return m_Ref;
 }
 
-ULONG _stdcall CLogSystem::Release()
+ULONG STDMETHODCALLTYPE CLogSystem::Release()
 {
 	m_Ref--;
 	if (0 == m_Ref)
@@ -178,25 +178,8 @@ ULONG _stdcall CLogSystem::Release()
 	return m_Ref;
 }
 
-// Remarks:
-//		Format the windows error message
-HRESULT CLogSystem::FormatWindowsErrorMessage( LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode )
-{
-	DWORD systemLocale = MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US);
-	DWORD dwLength = 0;
-	dwLength = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,NULL,dwErrCode,systemLocale,szErrText,dwSize,NULL);
-	if ( 0 >= dwLength )
-	{
-		return S_FALSE;
-	}
-	else
-	{
-		return S_OK;
-	}
-}
 
-
-void _stdcall CLogSystem::WriteLine( LPCTSTR szLog )
+void STDMETHODCALLTYPE CLogSystem::WriteLine( LPCTSTR szLog )
 {
 	if (NULL == szLog || NULL == m_pUniversal )
 		return;
@@ -210,7 +193,7 @@ void _stdcall CLogSystem::WriteLine( LPCTSTR szLog )
 	Write(TEXT("\r\n"));
 }
 
-DWORD _stdcall CLogSystem::Write(LPCTSTR szMessage)
+DWORD STDMETHODCALLTYPE CLogSystem::Write(LPCTSTR szMessage)
 {
 	DWORD dwWriteLength = 0;
 
@@ -253,12 +236,12 @@ HRESULT CLogSystem::OpenFile()
 	}
 }
 
-LPCTSTR CLogSystem::GetFileName()
+LPCTSTR STDMETHODCALLTYPE CLogSystem::GetFileName()
 {
 	return m_szFileName;
 }
 
-bool CLogSystem::IsOpen()
+bool STDMETHODCALLTYPE CLogSystem::IsOpen()
 {
 	if ( m_emType != LOGTYPE::ONEFILE )
 	{
@@ -295,7 +278,7 @@ bool CLogSystem::IsOpen()
 	return true;
 }
 
-void CLogSystem::Close()
+void STDMETHODCALLTYPE CLogSystem::Close()
 {
 	if(m_hFileHandle != INVALID_HANDLE_VALUE)
 	{
@@ -305,7 +288,7 @@ void CLogSystem::Close()
 }
 
 
-LPCTSTR CLogSystem::GetPath()
+LPCTSTR STDMETHODCALLTYPE CLogSystem::GetPath()
 {
 	return m_szFilePath;
 }
@@ -321,7 +304,7 @@ void CLogSystem::Unlock()
 	::LeaveCriticalSection(&m_csLock);
 }
 
-void CLogSystem::SetConfiguration( LPCTSTR szFileName, LPCTSTR szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel )
+void STDMETHODCALLTYPE CLogSystem::SetConfiguration( LPCTSTR szFileName, LPCTSTR szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel )
 {
 	if ( szFileName )
 	{
@@ -361,7 +344,7 @@ void CLogSystem::SetConfiguration( LPCTSTR szFileName, LPCTSTR szFilePath, LOGTY
 	}
 }
 
-HRESULT _stdcall CLogSystem::QueryInterface(const IID& riid, void** ppvObject)
+HRESULT STDMETHODCALLTYPE CLogSystem::QueryInterface(const IID& riid, void** ppvObject)
 {
 	if (IID_IUnknown == riid){
 		*ppvObject = (IUnknown*)this;
@@ -385,7 +368,7 @@ int CLogSystem::Init()
 	return 0;
 }
 
-void _stdcall CLogSystem::Initialize(IUniversal* pUniversal, LPCTSTR szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void STDMETHODCALLTYPE CLogSystem::Initialize(IUniversal* pUniversal, LPCTSTR szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	// All value init
 	g_hRes = S_OK;

@@ -12,5 +12,5 @@
 #include <windows.h>
 
 
-
 // TODO: reference additional headers your program requires here
+#import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")

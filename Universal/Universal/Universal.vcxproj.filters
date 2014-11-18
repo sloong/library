@@ -16,20 +16,20 @@
     <Filter Include="TinyXML">
       <UniqueIdentifier>{5a6eb328-f42d-4483-b150-7d593b646c5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ADO Files">
+      <UniqueIdentifier>{628c2d80-cf08-4ccb-8f7f-21f4d8fe19d9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="COM Files">
-      <UniqueIdentifier>{b83835a0-0c23-4920-8888-8da0e7588a2a}</UniqueIdentifier>
+      <UniqueIdentifier>{8c417788-8554-4876-baa6-b946d7be7ed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDE Files">
+      <UniqueIdentifier>{96c18fa1-ffba-4645-a937-8ee238eafcf9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TinyXML\tinystr.h">
       <Filter>TinyXML</Filter>
     </ClInclude>
@@ -69,8 +69,14 @@
     <ClInclude Include="CMDParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SloongConnection.h">
+      <Filter>ADO Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongRecordset.h">
+      <Filter>ADO Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongCommand.h">
+      <Filter>ADO Files</Filter>
     </ClInclude>
     <ClInclude Include="IUniversal.h">
       <Filter>COM Files</Filter>
@@ -78,11 +84,17 @@
     <ClInclude Include="Factory.h">
       <Filter>COM Files</Filter>
     </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>IDE Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>IDE Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Universal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -122,11 +134,23 @@
     <ClCompile Include="Exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SloongConnection.cpp">
+      <Filter>ADO Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongRecordset.cpp">
+      <Filter>ADO Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongCommand.cpp">
+      <Filter>ADO Files</Filter>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>COM Files</Filter>
     </ClCompile>
     <ClCompile Include="Factory.cpp">
       <Filter>COM Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>IDE Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

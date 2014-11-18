@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3B85462A-E2AD-4908-88AC-4B52E58D4499}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Universal</RootNamespace>
+    <ProjectGuid>{54B0DED5-B61F-48F1-96F9-043BCB5DE162}</ProjectGuid>
+    <RootNamespace>UnitTest</RootNamespace>
+    <Keyword>MFCProj</Keyword>
     <SccProjectName>SAK</SccProjectName>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
@@ -29,30 +29,34 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -72,21 +76,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)Include\$(PlatformTarget);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
     <OutDir>$(SolutionDir)$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)Include\$(PlatformTarget);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
     <OutDir>$(SolutionDir)$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)Include\$(PlatformTarget);$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
     <OutDir>$(SolutionDir)$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)Include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(SolutionDir)Include\$(PlatformTarget);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
     <OutDir>$(SolutionDir)$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -95,22 +107,22 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>universal.def</ModuleDefinitionFile>
     </Link>
-    <PostBuildEvent>
-      <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
-copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
-    </PostBuildEvent>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,22 +130,21 @@ regsvr32 /s/c "$(TargetPath)"</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>universal.def</ModuleDefinitionFile>
     </Link>
-    <PostBuildEvent>
-      <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
-copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
-    </PostBuildEvent>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -143,7 +154,7 @@ regsvr32 /s/c "$(TargetPath)"</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -151,18 +162,16 @@ regsvr32 /s/c "$(TargetPath)"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <IgnoreAllDefaultLibraries>
-      </IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>universal.def</ModuleDefinitionFile>
     </Link>
-    <PostBuildEvent>
-      <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
-copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
-    </PostBuildEvent>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -172,7 +181,7 @@ regsvr32 /s/c "$(TargetPath)"</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -180,79 +189,52 @@ regsvr32 /s/c "$(TargetPath)"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <IgnoreAllDefaultLibraries>
-      </IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>universal.def</ModuleDefinitionFile>
     </Link>
-    <PostBuildEvent>
-      <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
-copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
-    </PostBuildEvent>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CMDParser.h" />
-    <ClInclude Include="SloongCommand.h" />
-    <ClInclude Include="Exception.h" />
-    <ClInclude Include="Factory.h" />
-    <ClInclude Include="LinkList.h" />
-    <ClInclude Include="LogSystem.h" />
-    <ClInclude Include="PropertyScript.h" />
-    <ClInclude Include="SloongRecordset.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="ScriptParsing.h" />
-    <ClInclude Include="SloongConnection.h" />
-    <ClInclude Include="SLoongError.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="IUniversal.h" />
-    <ClInclude Include="TinyXML\tinystr.h" />
-    <ClInclude Include="TinyXML\tinyxml.h" />
-    <ClInclude Include="TokenParser.h" />
-    <ClInclude Include="Universal.h" />
-    <ClInclude Include="XMLParser.h" />
-    <ClInclude Include="XMLPro.h" />
+    <ClInclude Include="UnitTest.h" />
+    <ClInclude Include="UnitTestDlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CMDParser.cpp" />
-    <ClCompile Include="SloongCommand.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Exception.cpp" />
-    <ClCompile Include="Factory.cpp" />
-    <ClCompile Include="LinkList.cpp" />
-    <ClCompile Include="LogSystem.cpp" />
-    <ClCompile Include="PropertyScript.cpp" />
-    <ClCompile Include="SloongRecordset.cpp" />
-    <ClCompile Include="SloongConnection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TinyXML\tinystr.cpp" />
-    <ClCompile Include="TinyXML\tinyxml.cpp" />
-    <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
-    <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
-    <ClCompile Include="TokenParser.cpp" />
-    <ClCompile Include="Universal.cpp" />
-    <ClCompile Include="XMLParser.cpp" />
-    <ClCompile Include="XMLPro.cpp" />
+    <ClCompile Include="UnitTest.cpp" />
+    <ClCompile Include="UnitTestDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="universal.def" />
+    <ResourceCompile Include="UnitTest.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Universal.rc" />
+    <None Include="res\UnitTest.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\UnitTest.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="UnitTest.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

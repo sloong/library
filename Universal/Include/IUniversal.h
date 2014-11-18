@@ -38,6 +38,10 @@ static const GUID IID_IUniversal =
 static const GUID IID_ILogSystem =
 { 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc5 } };
 
+// {451B188B-ECEF-5DC7-FB76-633B83D93FE4}
+static const GUID IID_ISloongADO =
+{ 0x451B188B, 0xECEF, 0x5DC7, { 0xFB, 0x76, 0x63, 0x3B, 0x83, 0xD9, 0x3F, 0xE4 } };
+
 static const GUID CLSID_SLOONGUniversal = 
 { 0x3d8c5798, 0x69c0, 0xb18c, { 0x7e, 0xe8, 0xe6, 0xc9, 0x9b, 0xeb, 0xc8, 0xc4 } };
 
@@ -160,12 +164,10 @@ class TiXmlAttribute;
 #define MAX_PARAM_SIZE						2048
 #define CHAR_SWAP_SIZE						2048
 
+
 namespace SoaringLoong
 {
-	class CSize;
-	class CPoint;
-	class CRect;
-
+	
 	typedef enum _emLogType
 	{
 		YEAR = 0,
@@ -190,19 +192,25 @@ namespace SoaringLoong
 		PARSE_TOKEN,
 	}PARSETYPE;
 
+	class CSize;
+	class CPoint;
+	class CRect;
 	class ILogSystem;
 	class ILinkList;
 	class IScriptParser;
+	class ISloongCommand;
+	class ISloongConnection;
+	class ISloongRecordset;
 	class IUniversal : public IUnknown
 	{
 	public:
 		virtual LPCTSTR STDMETHODCALLTYPE HelloWorld() = 0;
 		virtual LPCTSTR STDMETHODCALLTYPE Format(LPCTSTR strString, ...) = 0;
 		virtual void STDMETHODCALLTYPE CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom) = 0;
-		virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateLinkList(ILinkList** pLinkList) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateScriptParser(PARSETYPE emType, IScriptParser** pParser) = 0;
+		virtual HRESULT STDMETHODCALLTYPE CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand) = 0;
 	};
 
 	class ILogSystem : public IUnknown
@@ -212,26 +220,220 @@ namespace SoaringLoong
 		virtual DWORD STDMETHODCALLTYPE Write(LPCTSTR szLog) = 0;
 		virtual void STDMETHODCALLTYPE WriteLine(LPCTSTR szMessage) = 0;
 		virtual void STDMETHODCALLTYPE Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
-		virtual void STDMETHODCALLTYPE SetConfiguration(LPCTSTR szFileName, LPCTSTR szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel) = 0;
-		virtual bool STDMETHODCALLTYPE IsOpen() = 0;
-		virtual void STDMETHODCALLTYPE Close() = 0;
-		virtual LPCTSTR STDMETHODCALLTYPE GetFileName() = 0;
-		virtual LPCTSTR STDMETHODCALLTYPE GetPath() = 0;
+	};
+
+	enum ObjectStateEnum
+	{
+		adStateClosed = 0,
+		adStateOpen = 1,
+		adStateConnecting = 2,
+		adStateExecuting = 4,
+		adStateFetching = 8
+	};
+	enum CursorLocationEnum
+	{
+		adUseNone = 1,
+		adUseServer = 2,
+		adUseClient = 3,
+		adUseClientBatch = 3
+	};
+	enum ConnectOptionEnum
+	{
+		adConnectUnspecified = -1,
+		adAsyncConnect = 16
+	};
+	enum CursorTypeEnum
+	{
+		adOpenUnspecified = -1,
+		adOpenForwardOnly = 0,
+		adOpenKeyset = 1,
+		adOpenDynamic = 2,
+		adOpenStatic = 3
+	};
+	enum LockTypeEnum
+	{
+		adLockUnspecified = -1,
+		adLockReadOnly = 1,
+		adLockPessimistic = 2,
+		adLockOptimistic = 3,
+		adLockBatchOptimistic = 4
+	};
+
+	enum AffectEnum
+	{
+		adAffectCurrent = 1,
+		adAffectGroup = 2,
+		adAffectAll = 3,
+		adAffectAllChapters = 4
+	};
+	enum CommandTypeEnum
+	{
+		adCmdUnspecified = -1,
+		adCmdUnknown = 8,
+		adCmdText = 1,
+		adCmdTable = 2,
+		adCmdStoredProc = 4,
+		adCmdFile = 256,
+		adCmdTableDirect = 512
+	};
+	class _RecordsetPtr;
+	class _ConnectionPtr;
+	class ISloongConnection : public IUnknown
+	{
+	public:
+		virtual LPCTSTR STDMETHODCALLTYPE GetConnectionString() const = 0;
+		virtual void STDMETHODCALLTYPE SetConnectionString(LPCTSTR charConn) = 0;
+
+		//Property: ConnectionTimeout
+		virtual long STDMETHODCALLTYPE GetConnectionTimeout() const = 0;
+		virtual void STDMETHODCALLTYPE SetConnectionTimeout(long time) = 0;
+
+		//Property: CursorLocation
+		virtual CursorLocationEnum STDMETHODCALLTYPE GetCursorLocation() const = 0;
+		virtual void STDMETHODCALLTYPE SetCursorLocation(CursorLocationEnum CursorLocation) = 0;
+
+		//Property: CommandTimeout
+		virtual long STDMETHODCALLTYPE GetCommandTimeout() const = 0;
+		virtual void STDMETHODCALLTYPE SetCommandTimeout(long time) = 0;
+
+
+		//Property: State
+		virtual ObjectStateEnum STDMETHODCALLTYPE GetState() const = 0;
+
+		//Property: m_sErrorMessage
+		virtual LPCTSTR STDMETHODCALLTYPE GetErrorMessage() const = 0;
+
+		//Property: m_pConn
+		virtual _ConnectionPtr STDMETHODCALLTYPE GetConnection() const = 0;
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Core Method                                                                                    //
+		////////////////////////////////////////////////////////////////////////////////////////////////////    
+	public:
+		virtual bool STDMETHODCALLTYPE Open(LPCTSTR ConnectionString, LPCTSTR UserID = _T(""), LPCTSTR Password = _T(""), long ConnectOption = adConnectUnspecified) = 0;
+		virtual bool STDMETHODCALLTYPE Close() = 0;
+		virtual bool STDMETHODCALLTYPE Cancel() = 0;
+		virtual bool STDMETHODCALLTYPE RollbackTrans() = 0;
+		virtual bool STDMETHODCALLTYPE CommitTrans() = 0;
+		virtual long STDMETHODCALLTYPE BeginTrans() = 0;
+	};
+
+	class ISloongRecordset : public IUnknown
+	{
+	public:
+		//Property: RecordCount
+		virtual long STDMETHODCALLTYPE GetRecordCount() const = 0;
+
+		//Property: PageCount
+		virtual long STDMETHODCALLTYPE GetPageCount() const = 0;
+
+		//Property: PageSize
+		virtual long STDMETHODCALLTYPE GetPageSize() const = 0;
+		virtual void STDMETHODCALLTYPE SetPageSize(long pageSize) = 0;
+
+		//Property: AbsolutePage
+		virtual long STDMETHODCALLTYPE GetAbsolutePage() const = 0;
+		virtual void STDMETHODCALLTYPE SetAbsolutePage(long page) = 0;
+
+		//Property: AbsolutePosition
+		virtual long STDMETHODCALLTYPE GetAbsolutePosition() const = 0;
+		virtual void STDMETHODCALLTYPE SetAbsolutePosition(long pos) = 0;
+
+		//Property: State
+		virtual ObjectStateEnum STDMETHODCALLTYPE GetState() const = 0;
+
+		//Property: CursorLocation
+		virtual void STDMETHODCALLTYPE SetCursorLocation(CursorLocationEnum CursorLocation) = 0;
+
+		virtual _RecordsetPtr STDMETHODCALLTYPE GetRecordsetPtr() = 0;
+		virtual void STDMETHODCALLTYPE SetRecordsetPtr(_RecordsetPtr pRecordset) = 0;
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Core  Method                                                                                   //
+		//////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+	public:
+		virtual void STDMETHODCALLTYPE Open(LPCTSTR Source, _ConnectionPtr pConn, CursorTypeEnum CursorType = adOpenStatic, LockTypeEnum LockType = adLockOptimistic, long Options = adCmdText) = 0;
+		virtual void STDMETHODCALLTYPE Open(LPCTSTR Source, ISloongConnection & ActiveConn, CursorTypeEnum CursorType = adOpenStatic, LockTypeEnum LockType = adLockOptimistic, long Options = adCmdText) = 0;
+		virtual bool STDMETHODCALLTYPE Close() = 0;
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Position                                                                                       //
+		//////////////////////////////////////////////////////////////////////////////////////////////////// 
+		virtual void STDMETHODCALLTYPE MoveNext() = 0;
+		virtual void STDMETHODCALLTYPE MovePrevious() = 0;
+		virtual void STDMETHODCALLTYPE MoveLast() = 0;
+		virtual void STDMETHODCALLTYPE MoveFirst() = 0;
+		virtual void STDMETHODCALLTYPE Move(long pos) = 0;
+		virtual bool STDMETHODCALLTYPE rstEOF() = 0;
+		virtual bool STDMETHODCALLTYPE rstBOF() = 0;
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Recordset update db                                                                            //
+		//////////////////////////////////////////////////////////////////////////////////////////////////// 
+		virtual void STDMETHODCALLTYPE AddNew() = 0;
+		virtual void STDMETHODCALLTYPE Delete(AffectEnum Option) = 0;
+		virtual void STDMETHODCALLTYPE Cancel() = 0;
+		virtual void STDMETHODCALLTYPE Update() = 0;
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// GetValues form recordset                                                                       //
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual int STDMETHODCALLTYPE GetInt(LPCTSTR columnName) = 0;
+		virtual LPCTSTR STDMETHODCALLTYPE GetString(LPCTSTR columnName) = 0;
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// SetValues form recordset                                                                       //
+		//////////////////////////////////////////////////////////////////////////////////////////////////// 
+		virtual void STDMETHODCALLTYPE SetInt(LPCTSTR columnName, int value) = 0;
+		virtual void STDMETHODCALLTYPE SetString(LPCTSTR columnName, LPCTSTR value) = 0;
+	};
+
+	
+	class ISloongCommand : public IUnknown
+	{
+	public:
+		//Property: ActiveConnection
+		virtual void STDMETHODCALLTYPE SetActiveConnection(ISloongConnection &ActiveConn) = 0;
+
+		//Property: CommandText
+		virtual void STDMETHODCALLTYPE SetCommandText(LPCTSTR strCmd) = 0;
+
+		//Property: CommandTimeout
+		virtual void STDMETHODCALLTYPE SetCommandTimeout(long time) = 0;
+
+		//Property: CommandType
+		//void SetCommandType(CommandTypeEnum CommandType);
+
+		//Property: State
+		virtual ObjectStateEnum STDMETHODCALLTYPE GetState() const = 0;
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Other Method                                                                                   //
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+	public:
+		virtual bool STDMETHODCALLTYPE ExecuteQuery(ISloongRecordset &Rst, CommandTypeEnum CommandType = adCmdText) = 0;
+		virtual bool STDMETHODCALLTYPE ExecuteUpdate(long &AffectedRows, ISloongRecordset &Rst, CommandTypeEnum CommandType = adCmdText) = 0;
+		virtual bool STDMETHODCALLTYPE Cancel() = 0;
 	};
 
 	class ILinkList : public IUnknown
 	{
 	public:
-		virtual int STDMETHODCALLTYPE Add( LPVOID pData, LPCTSTR szMarkName, LPCTSTR szDataFormat ) = 0;
-		virtual void STDMETHODCALLTYPE Remove(int nIndex) = 0;
-		virtual int STDMETHODCALLTYPE Count() = 0;
-		virtual ILinkList* STDMETHODCALLTYPE GetListHeader() = 0;
+		virtual int _stdcall Add( LPVOID pData, LPCTSTR szMarkName, LPCTSTR szDataFormat ) = 0;
+		virtual void _stdcall Remove(int nIndex) = 0;
+		virtual int _stdcall Count() = 0;
+		virtual ILinkList* _stdcall GetListHeader() = 0;
 	};
 
 	class IException : public IUnknown
 	{
 	public: 
-		virtual LPCTSTR STDMETHODCALLTYPE Message() = 0;
+		virtual LPCTSTR _stdcall Message() = 0;
 	};
 
 	class IScriptParser : public IUnknown
@@ -504,6 +706,7 @@ namespace SoaringLoong
 			_In_ int nMultiplier,
 			_In_ int nDivisor) const throw();
 	};
+
 #pragma endregion
 
 	UNIVERSAL_API extern HRESULT g_hRes;

@@ -11,6 +11,9 @@
 #include "LogSystem.h"
 #include "LinkList.h"
 #include "Universal.h"
+#include "SloongConnection.h"
+#include "SloongCommand.h"
+#include "SloongRecordset.h"
 
 using namespace std;
 using namespace SoaringLoong;
@@ -276,6 +279,13 @@ HRESULT STDMETHODCALLTYPE CUniversal::CreateScriptParser(PARSETYPE emType, IScri
 // 		return S_OK;
 // 	}
 	return S_FALSE;
+}
+
+HRESULT STDMETHODCALLTYPE CUniversal::CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand)
+{
+	ISloongConnection* pCon = new CSloongConnection();
+	pCon->QueryInterface(IID_ILogSystem, (LPVOID*)pConnection);
+	return S_OK;
 }
 
 

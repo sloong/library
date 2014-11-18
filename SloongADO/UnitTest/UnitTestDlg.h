@@ -48,4 +48,10 @@ public:
 	void EnableControl(bool flag);
 	void DisableBtn();
 	afx_msg void OnBnClickedButtonSearch();
+	afx_msg void OnBnClickedButtonAdd();
+	afx_msg void OnBnClickedButtonDelete();
+	afx_msg void OnBnClickedButtonFirst();
+	afx_msg void OnBnClickedButtonPrev();
+	afx_msg void OnBnClickedButtonNext();
+	afx_msg void OnBnClickedButtonLast();
 };

@@ -102,7 +102,7 @@ _ConnectionPtr CSloongConnection::GetConnection() const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Open 
-bool CSloongConnection::Open(CString ConnectionString, CString UserID, CString Password, ConnectOptionEnum ConnectOption)
+bool CSloongConnection::Open(CString ConnectionString, CString UserID, CString Password, long ConnectOption)
 {
 	try
 	{
@@ -125,8 +125,9 @@ bool CSloongConnection::Open(CString ConnectionString, CString UserID, CString P
 	}
 	catch (_com_error e)
 	{
-		//m_sErrorMessage
-		m_sErrorMessage = "There is an error when called then function: Close()!";
+
+		m_sErrorMessage = e.ErrorMessage();
+		AfxMessageBox(e.Description());
 		return false;
 	}
 }

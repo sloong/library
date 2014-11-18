@@ -47,8 +47,6 @@ END_MESSAGE_MAP()
 
 // CUnitTestDlg dialog
 
-
-
 CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CUnitTestDlg::IDD, pParent)
 	, m_id(0)
@@ -59,9 +57,9 @@ CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 	, m_total(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
-	m_Conn.SetConnectionString("Provider=Microsoft.Jet.OLEDB.4.0; Data Source= TestDb.mdb;Jet OLEDB:DataBase password=1314;");
-	m_Conn.Open(_T(""), _T(""), _T(""), ConnectOption::adConnectUnspecified);
+	CString str(_T("Provider=SQLNCLI11;Server=(localdb)\\Projects;Database=VEISDBDev_01;Trusted_Connection=yes"));
+	m_Conn.SetConnectionString(str);
+	m_Conn.Open(str, _T(""), _T(""), adModeUnknown);
 
 	m_Cmd.SetActiveConnection(m_Conn);
 }
@@ -82,6 +80,12 @@ BEGIN_MESSAGE_MAP(CUnitTestDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CUnitTestDlg::OnBnClickedButtonSearch)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CUnitTestDlg::OnBnClickedButtonAdd)
+	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CUnitTestDlg::OnBnClickedButtonDelete)
+	ON_BN_CLICKED(IDC_BUTTON_FIRST, &CUnitTestDlg::OnBnClickedButtonFirst)
+	ON_BN_CLICKED(IDC_BUTTON_PREV, &CUnitTestDlg::OnBnClickedButtonPrev)
+	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CUnitTestDlg::OnBnClickedButtonNext)
+	ON_BN_CLICKED(IDC_BUTTON_LAST, &CUnitTestDlg::OnBnClickedButtonLast)
 END_MESSAGE_MAP()
 
 
@@ -174,16 +178,9 @@ HCURSOR CUnitTestDlg::OnQueryDragIcon()
 
 void CUnitTestDlg::OnBnClickedButtonSearch()
 {
-	// TODO: Add your control notification handler code here
 	try
 	{
-		//方法一：通过CConnection对象的Open方法来查询
-		//m_Rst.Open("select * from Phone",m_Conn,CursorType::adOpenDynamic,LockType::adLockOptimistic,CommandType::adCmdText);
-
-
-		//方法二：通过CCommand对象的ExecuteQuery方法来查询
-
-		m_Cmd.SetCommandText(_T("select * from Phone"));
+		m_Cmd.SetCommandText(_T("select * from [Table]"));
 		m_Cmd.ExecuteQuery(m_Rst, CommandType::adCmdText);
 
 		ShowData();
@@ -264,4 +261,97 @@ void CUnitTestDlg::EnableControl(bool flag)
 	GetDlgItem(IDC_BUTTON_LAST)->EnableWindow(flag);
 	GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(flag);
 	GetDlgItem(IDC_BUTTON_DELETE)->EnableWindow(flag);
+}
+
+void CUnitTestDlg::OnBnClickedButtonAdd()
+{
+	// TODO: Add your control notification handler code here
+	UpdateData(true);
+
+	CString sql = _T("");
+	sql.Format(_T("insert into [Table](id,name,phone,email) values(%d,'%s','%s','%s')"),m_id,m_name,m_phone,m_email);
+
+	m_Cmd.SetCommandText(sql);
+	long rows = 0;
+	m_Cmd.ExecuteUpdate(rows, m_Rst, CommandType::adCmdText);
+
+	CString msgStr;
+	msgStr.Format(_T("成功添加了%d行。"), rows);
+	MessageBox(msgStr);
+}
+
+
+void CUnitTestDlg::OnBnClickedButtonDelete()
+{
+	// TODO: Add your control notification handler code here
+	CString sql;
+	sql.Format(_T("delete from [Table] where id='%d'"),m_id);
+
+	m_Cmd.SetCommandText(sql);
+	long rows = 0;
+	m_Cmd.ExecuteUpdate(rows, m_Rst, CommandType::adCmdText);
+
+	CString msgStr;
+	msgStr.Format(_T("删除了%d行。"), rows);
+	MessageBox(msgStr);
+}
+
+
+void CUnitTestDlg::OnBnClickedButtonFirst()
+{
+	// TODO: Add your control notification handler code here
+	try
+	{
+		m_Rst.MoveFirst();
+		ShowData();
+	}
+	catch (_com_error e)
+	{
+		MessageBox(e.Description());
+	}
+}
+
+
+void CUnitTestDlg::OnBnClickedButtonPrev()
+{
+	// TODO: Add your control notification handler code here
+	try
+	{
+		m_Rst.MovePrevious();
+		ShowData();
+	}
+	catch (_com_error e)
+	{
+		MessageBox(e.Description());
+	}
+}
+
+
+void CUnitTestDlg::OnBnClickedButtonNext()
+{
+	// TODO: Add your control notification handler code here
+	try
+	{
+		m_Rst.MoveNext();
+		ShowData();
+	}
+	catch (_com_error e)
+	{
+		MessageBox(e.Description());
+	}
+}
+
+
+void CUnitTestDlg::OnBnClickedButtonLast()
+{
+	// TODO: Add your control notification handler code here
+	try
+	{
+		m_Rst.MoveLast();
+		ShowData();
+	}
+	catch (_com_error e)
+	{
+		MessageBox(e.Description());
+	}
 }

@@ -63,11 +63,18 @@ bool CSloongCommand::ExecuteQuery(CSloongRecordset &Rst,CommandTypeEnum CommandT
 //ExecuteUpdate
 bool CSloongCommand::ExecuteUpdate(long &AffectedRows,CSloongRecordset &Rst,CommandTypeEnum CommandType)
 {	
-	VARIANT rows; 
-    rows.vt = VT_I4; 
-    Rst.m_pRst=m_pCmd->Execute(&rows,NULL,CommandType);
-	AffectedRows=rows.lVal ;
+	try
+	{
+		VARIANT rows;
+		rows.vt = VT_I4;
+		Rst.m_pRst = m_pCmd->Execute(&rows, NULL, CommandType);
+		AffectedRows = rows.lVal;
 
+	}
+	catch (_com_error e)
+	{
+		AfxMessageBox(e.Description());
+	}
 	return true;	
 }
 

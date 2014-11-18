@@ -136,7 +136,7 @@ namespace SloongADO
 		// Core Method                                                                                    //
 		////////////////////////////////////////////////////////////////////////////////////////////////////    
 	public:
-		bool Open(CString ConnectionString, CString UserID = _T(""), CString Password = _T(""), ConnectOptionEnum ConnectOption = ConnectOption::adConnectUnspecified);//ID和Password为空，因为要再连接字符串中去指明ID和密码
+		bool Open(CString ConnectionString, CString UserID = _T(""), CString Password = _T(""), long ConnectOption = adConnectUnspecified);//ID和Password为空，因为要再连接字符串中去指明ID和密码
 		bool Close();
 		bool Cancel();
 		void Release();

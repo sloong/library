@@ -57,7 +57,7 @@ CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 	, m_total(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	CString str(_T("Provider=SQLNCLI11;Server=(localdb)\\Projects;Database=VEISDBDev_01;Trusted_Connection=yes"));
+	CString str(_T("Provider=SQLNCLI11;Server=(localdb)\\ProjectsV12;Database=SLOONG.COM_BaseDB;Trusted_Connection=yes"));
 	IUniversal* pUniversal;
 	CreateUniversal(&pUniversal);
 	pUniversal->CreateADO(&m_pConn, &m_pRst, &m_pCmd);

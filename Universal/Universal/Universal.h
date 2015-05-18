@@ -26,7 +26,9 @@ public:
 	virtual HRESULT _stdcall CreateLinkList(ILinkList** pLinkList);
 	virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser** pParser);
 	virtual HRESULT STDMETHODCALLTYPE CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand);
+	virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode);
 protected:
+	
 	static ULONG m_objNum;
 	static CRITICAL_SECTION m_cs;
 	ULONG m_Ref;

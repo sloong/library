@@ -211,6 +211,7 @@ namespace SoaringLoong
 		virtual HRESULT STDMETHODCALLTYPE CreateLinkList(ILinkList** pLinkList) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateScriptParser(PARSETYPE emType, IScriptParser** pParser) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand) = 0;
+		virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode) = 0;
 	};
 
 	class ILogSystem : public IUnknown

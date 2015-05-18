@@ -5,6 +5,9 @@
 #pragma once
 #import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
 #include "IUniversal.h"
+#include "TestADODlg.h"
+#include "TestLogDlg.h"
+#include "afxcmn.h"
 #pragma comment(lib,"Universal.lib")
 using namespace SoaringLoong;
 // CUnitTestDlg dialog
@@ -33,23 +36,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	ISloongConnection* m_pConn;
-	ISloongRecordset*  m_pRst;
-	ISloongCommand*    m_pCmd;
-	int m_id;
-	CString m_name;
-	CString m_phone;
-	CString m_email;
-	int m_cur;
-	long m_total;
-	void ShowData();
-	void EnableControl(bool flag);
-	void DisableBtn();
-	afx_msg void OnBnClickedButtonSearch();
-	afx_msg void OnBnClickedButtonAdd();
-	afx_msg void OnBnClickedButtonDelete();
-	afx_msg void OnBnClickedButtonFirst();
-	afx_msg void OnBnClickedButtonPrev();
-	afx_msg void OnBnClickedButtonNext();
-	afx_msg void OnBnClickedButtonLast();
+	IUniversal*	pUniversal;
+
+public:
+	CTestADODlg* m_page1;
+	CTestLogDlg* m_page2;
+	
+	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
+	CTabCtrl m_tab;
+	virtual BOOL DestroyWindow();
 };

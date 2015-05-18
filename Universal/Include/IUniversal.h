@@ -211,6 +211,7 @@ namespace SoaringLoong
 		virtual HRESULT STDMETHODCALLTYPE CreateLinkList(ILinkList** pLinkList) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateScriptParser(PARSETYPE emType, IScriptParser** pParser) = 0;
 		virtual HRESULT STDMETHODCALLTYPE CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand) = 0;
+		virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode) = 0;
 	};
 
 	class ILogSystem : public IUnknown
@@ -222,62 +223,6 @@ namespace SoaringLoong
 		virtual void STDMETHODCALLTYPE Log(LOGLEVEL emLevel, DWORD dwCode, LPCTSTR szErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true) = 0;
 	};
 
-	enum ObjectStateEnum
-	{
-		adStateClosed = 0,
-		adStateOpen = 1,
-		adStateConnecting = 2,
-		adStateExecuting = 4,
-		adStateFetching = 8
-	};
-	enum CursorLocationEnum
-	{
-		adUseNone = 1,
-		adUseServer = 2,
-		adUseClient = 3,
-		adUseClientBatch = 3
-	};
-	enum ConnectOptionEnum
-	{
-		adConnectUnspecified = -1,
-		adAsyncConnect = 16
-	};
-	enum CursorTypeEnum
-	{
-		adOpenUnspecified = -1,
-		adOpenForwardOnly = 0,
-		adOpenKeyset = 1,
-		adOpenDynamic = 2,
-		adOpenStatic = 3
-	};
-	enum LockTypeEnum
-	{
-		adLockUnspecified = -1,
-		adLockReadOnly = 1,
-		adLockPessimistic = 2,
-		adLockOptimistic = 3,
-		adLockBatchOptimistic = 4
-	};
-
-	enum AffectEnum
-	{
-		adAffectCurrent = 1,
-		adAffectGroup = 2,
-		adAffectAll = 3,
-		adAffectAllChapters = 4
-	};
-	enum CommandTypeEnum
-	{
-		adCmdUnspecified = -1,
-		adCmdUnknown = 8,
-		adCmdText = 1,
-		adCmdTable = 2,
-		adCmdStoredProc = 4,
-		adCmdFile = 256,
-		adCmdTableDirect = 512
-	};
-	class _RecordsetPtr;
-	class _ConnectionPtr;
 	class ISloongConnection : public IUnknown
 	{
 	public:
@@ -392,7 +337,6 @@ namespace SoaringLoong
 		virtual void STDMETHODCALLTYPE SetString(LPCTSTR columnName, LPCTSTR value) = 0;
 	};
 
-	
 	class ISloongCommand : public IUnknown
 	{
 	public:

@@ -201,7 +201,9 @@ DWORD STDMETHODCALLTYPE CLogSystem::Write(LPCTSTR szMessage)
 	if (IsOpen())
 	{
 		WriteFile(m_hFileHandle, szMessage, (DWORD)_tcslen(szMessage)*sizeof(TCHAR), &dwWriteLength, NULL);
+#ifdef _DEBUG
 		FlushFileBuffers(m_hFileHandle);
+#endif // _DEBUG
 	}
 
 	Unlock();

@@ -34,6 +34,7 @@ protected:
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
 {
+	
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
@@ -49,46 +50,26 @@ END_MESSAGE_MAP()
 
 CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CUnitTestDlg::IDD, pParent)
-	, m_id(0)
-	, m_name(_T(""))
-	, m_phone(_T(""))
-	, m_email(_T(""))
-	, m_cur(0)
-	, m_total(0)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	CString str(_T("Provider=SQLNCLI11;Server=(localdb)\\ProjectsV12;Database=SLOONG.COM_BaseDB;Trusted_Connection=yes"));
-	IUniversal* pUniversal;
+	pUniversal = NULL;
+	CoInitialize(NULL);
 	CreateUniversal(&pUniversal);
-	pUniversal->CreateADO(&m_pConn, &m_pRst, &m_pCmd);
-	m_pConn->SetConnectionString(str);
-	m_pConn->Open(str, _T(""), _T(""), adModeUnknown);
-
-	m_pCmd->SetActiveConnection(*m_pConn);
+	m_page1 = new CTestADODlg();
+	m_page2 = new CTestLogDlg(pUniversal);
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
 void CUnitTestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_ID, m_id);
-	DDX_Text(pDX, IDC_EDIT_NAME, m_name);
-	DDX_Text(pDX, IDC_EDIT_PHONE, m_phone);
-	DDX_Text(pDX, IDC_EDIT_EMAIL, m_email);
-	DDX_Text(pDX, IDC_EDIT_CURRENTPOS, m_cur);
-	DDX_Text(pDX, IDC_EDIT_TOTAL, m_total);
+	DDX_Control(pDX, IDC_TAB1, m_tab);
 }
 
 BEGIN_MESSAGE_MAP(CUnitTestDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CUnitTestDlg::OnBnClickedButtonSearch)
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CUnitTestDlg::OnBnClickedButtonAdd)
-	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CUnitTestDlg::OnBnClickedButtonDelete)
-	ON_BN_CLICKED(IDC_BUTTON_FIRST, &CUnitTestDlg::OnBnClickedButtonFirst)
-	ON_BN_CLICKED(IDC_BUTTON_PREV, &CUnitTestDlg::OnBnClickedButtonPrev)
-	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CUnitTestDlg::OnBnClickedButtonNext)
-	ON_BN_CLICKED(IDC_BUTTON_LAST, &CUnitTestDlg::OnBnClickedButtonLast)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CUnitTestDlg::OnTcnSelchangeTab1)
 END_MESSAGE_MAP()
 
 
@@ -122,9 +103,41 @@ BOOL CUnitTestDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+	// Test IUniversal interface.
+	
+	
+	TCITEM tcList[] =
+	{
+		{ TCIF_TEXT, 0, 0, _T("ADO测试") },
+		{ TCIF_TEXT, 0, 0, _T("Log模块测试") },
+	};
 
-	// TODO: Add extra initialization here
-	EnableControl(false);
+	for (int i = 0; i < ARRAYSIZE(tcList); i++ )
+	{
+		m_tab.InsertItem(i, &tcList[i]);
+	}
+
+	SoaringLoong::CRect rec;
+	m_tab.GetClientRect(&rec);//获得TAB控件的坐标
+
+	//定位选项卡页的位置，这里可以根据情况自己调节偏移量
+	rec.bottom -= 2;
+	rec.left += 1;
+	rec.top += 27;
+	rec.right -= 3;
+
+	//创建子页面
+	m_page1->Create(IDD_DIALOG1, GetDlgItem(IDC_TAB1));
+	m_page2->Create(IDD_DIALOG2, GetDlgItem(IDC_TAB1));
+	//将子页面移动到指定的位置
+	m_page1->MoveWindow(&rec);
+	m_page2->MoveWindow(&rec);
+	//显示子页面
+	m_page1->ShowWindow(SW_SHOW);
+	m_page2->ShowWindow(SW_HIDE);
+	LPCTSTR str = pUniversal->HelloWorld();
+	MessageBox(str);
+//	EnableControl(false);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -178,183 +191,29 @@ HCURSOR CUnitTestDlg::OnQueryDragIcon()
 }
 
 
-
-void CUnitTestDlg::OnBnClickedButtonSearch()
+void CUnitTestDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	try
+	switch (m_tab.GetCurSel())
 	{
-		m_pCmd->SetCommandText(_T("select * from [Table]"));
-		m_pCmd->ExecuteQuery(*m_pRst, SoaringLoong::adCmdText);
-
-		ShowData();
-
-	}
-	catch (_com_error e)
-	{
-		MessageBox(e.Description());
-	}
-}
-
-void CUnitTestDlg::ShowData()
-{
-	if (m_pRst->GetRecordCount() > 0)
-	{
-		m_id = m_pRst->GetInt(_T("id"));
-		m_name = m_pRst->GetString(_T("name"));
-		m_phone = m_pRst->GetString(_T("phone"));
-		m_email = m_pRst->GetString(_T("email"));
-
-		m_cur = m_pRst->GetAbsolutePosition();
-		m_total = m_pRst->GetRecordCount();
-
-		UpdateData(false);
-
-		DisableBtn();
-	}
-	else
-	{
-		MessageBox(_T("No data!"));
-
-		m_pRst->Release();
-		m_pCmd->Release();
-		m_pConn->Release();
+	case 0:
+		m_page1->ShowWindow(SW_SHOW);
+		m_page2->ShowWindow(SW_HIDE);
+		break;
+	case 1:
+		m_page1->ShowWindow(SW_HIDE);
+		m_page2->ShowWindow(SW_SHOW);
+		break;
+	default:
+		break;
 	}
 }
 
 
-void CUnitTestDlg::DisableBtn()
+BOOL CUnitTestDlg::DestroyWindow()
 {
-
-	EnableControl(true);
-
-	/////////////////////////////////////////////////////////////
-
-	if (m_cur >= m_total)
-	{
-		GetDlgItem(IDC_BUTTON_NEXT)->EnableWindow(false);
-		GetDlgItem(IDC_BUTTON_LAST)->EnableWindow(false);
-	}
-	else if (m_cur <= 1)
-	{
-		GetDlgItem(IDC_BUTTON_FIRST)->EnableWindow(false);
-		GetDlgItem(IDC_BUTTON_PREV)->EnableWindow(false);
-	}
-	else
-	{
-	}
-
-}
-
-void CUnitTestDlg::EnableControl(bool flag)
-{
-	//////////////////////////////////////////////////////////////
-	GetDlgItem(IDC_EDIT_ID)->EnableWindow(flag);
-	GetDlgItem(IDC_EDIT_NAME)->EnableWindow(flag);
-	GetDlgItem(IDC_EDIT_PHONE)->EnableWindow(flag);
-	GetDlgItem(IDC_EDIT_EMAIL)->EnableWindow(flag);
-
-	//////////////////////////////////////////////////////////////
-	GetDlgItem(IDC_EDIT_CURRENTPOS)->EnableWindow(flag);
-	GetDlgItem(IDC_EDIT_TOTAL)->EnableWindow(flag);
-
-	//////////////////////////////////////////////////////////////
-	GetDlgItem(IDC_BUTTON_FIRST)->EnableWindow(flag);
-	GetDlgItem(IDC_BUTTON_PREV)->EnableWindow(flag);
-	GetDlgItem(IDC_BUTTON_NEXT)->EnableWindow(flag);
-	GetDlgItem(IDC_BUTTON_LAST)->EnableWindow(flag);
-	GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(flag);
-	GetDlgItem(IDC_BUTTON_DELETE)->EnableWindow(flag);
-}
-
-void CUnitTestDlg::OnBnClickedButtonAdd()
-{
-	// TODO: Add your control notification handler code here
-	UpdateData(true);
-
-	CString sql = _T("");
-	sql.Format(_T("insert into [Table](id,name,phone,email) values(%d,'%s','%s','%s')"),m_id,m_name,m_phone,m_email);
-
-	m_pCmd->SetCommandText(sql);
-	long rows = 0;
-	m_pCmd->ExecuteUpdate(rows, *m_pRst, SoaringLoong::adCmdText);
-
-	CString msgStr;
-	msgStr.Format(_T("成功添加了%d行。"), rows);
-	MessageBox(msgStr);
-}
-
-
-void CUnitTestDlg::OnBnClickedButtonDelete()
-{
-	// TODO: Add your control notification handler code here
-	CString sql;
-	sql.Format(_T("delete from [Table] where id='%d'"),m_id);
-
-	m_pCmd->SetCommandText(sql);
-	long rows = 0;
-	m_pCmd->ExecuteUpdate(rows, *m_pRst, SoaringLoong::adCmdText);
-
-	CString msgStr;
-	msgStr.Format(_T("删除了%d行。"), rows);
-	MessageBox(msgStr);
-}
-
-
-void CUnitTestDlg::OnBnClickedButtonFirst()
-{
-	// TODO: Add your control notification handler code here
-	try
-	{
-		m_pRst->MoveFirst();
-		ShowData();
-	}
-	catch (_com_error e)
-	{
-		MessageBox(e.Description());
-	}
-}
-
-
-void CUnitTestDlg::OnBnClickedButtonPrev()
-{
-	// TODO: Add your control notification handler code here
-	try
-	{
-		m_pRst->MovePrevious();
-		ShowData();
-	}
-	catch (_com_error e)
-	{
-		MessageBox(e.Description());
-	}
-}
-
-
-void CUnitTestDlg::OnBnClickedButtonNext()
-{
-	// TODO: Add your control notification handler code here
-	try
-	{
-		m_pRst->MoveNext();
-		ShowData();
-	}
-	catch (_com_error e)
-	{
-		MessageBox(e.Description());
-	}
-}
-
-
-void CUnitTestDlg::OnBnClickedButtonLast()
-{
-	// TODO: Add your control notification handler code here
-	try
-	{
-		m_pRst->MoveLast();
-		ShowData();
-	}
-	catch (_com_error e)
-	{
-		MessageBox(e.Description());
-	}
+	pUniversal->Release();
+	delete m_page1;
+	delete m_page2;
+	CoUninitialize();
+	return CDialogEx::DestroyWindow();
 }

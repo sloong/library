@@ -1,0 +1,16 @@
+/Universal/*.opensdf
+/Universal/*.sdf
+/Universal/*.suo
+/Universal/x64
+/Universal/x86
+/Universal/SloongLua/Debug
+/Universal/SloongLua/x86
+/Universal/CtrlTest/x64
+/Universal/CtrlTest/x86
+/Universal/UnitTest/x64
+/Universal/UnitTest/x86
+/Universal/Universal/x86
+/Universal/Universal/x64
+/SloongADO/*.sdf
+/SloongADO/*.suo
+/SloongADO/ipch/sloongado-a468af8/*.ipch

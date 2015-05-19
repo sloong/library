@@ -6,7 +6,7 @@
 #include "TestLogDlg.h"
 #include "afxdialogex.h"
 #include "IUniversal.h"
-using namespace SoaringLoong;
+using namespace Sloong;
 
 // CTestLogDlg dialog
 

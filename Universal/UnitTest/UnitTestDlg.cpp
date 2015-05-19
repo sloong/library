@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-using namespace SoaringLoong;
+using namespace Sloong::Universal;
 
 // CAboutDlg dialog used for App About
 
@@ -53,8 +53,7 @@ CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 {
 	pUniversal = NULL;
 	CoInitialize(NULL);
-	CreateUniversal(&pUniversal);
-	m_page1 = new CTestADODlg();
+	Sloong::CreateUniversal(&pUniversal);
 	m_page2 = new CTestLogDlg(pUniversal);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -117,7 +116,7 @@ BOOL CUnitTestDlg::OnInitDialog()
 		m_tab.InsertItem(i, &tcList[i]);
 	}
 
-	SoaringLoong::CRect rec;
+	Sloong::Universal::CRect rec;
 	m_tab.GetClientRect(&rec);//获得TAB控件的坐标
 
 	//定位选项卡页的位置，这里可以根据情况自己调节偏移量
@@ -127,13 +126,10 @@ BOOL CUnitTestDlg::OnInitDialog()
 	rec.right -= 3;
 
 	//创建子页面
-	m_page1->Create(IDD_DIALOG1, GetDlgItem(IDC_TAB1));
 	m_page2->Create(IDD_DIALOG2, GetDlgItem(IDC_TAB1));
 	//将子页面移动到指定的位置
-	m_page1->MoveWindow(&rec);
 	m_page2->MoveWindow(&rec);
 	//显示子页面
-	m_page1->ShowWindow(SW_SHOW);
 	m_page2->ShowWindow(SW_HIDE);
 	LPCTSTR str = pUniversal->HelloWorld();
 	MessageBox(str);
@@ -169,7 +165,7 @@ void CUnitTestDlg::OnPaint()
 		// Center icon in client rectangle
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
-		SoaringLoong::CRect rect;
+		Sloong::Universal::CRect rect;
 		GetClientRect(&rect);
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
@@ -196,11 +192,9 @@ void CUnitTestDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	switch (m_tab.GetCurSel())
 	{
 	case 0:
-		m_page1->ShowWindow(SW_SHOW);
 		m_page2->ShowWindow(SW_HIDE);
 		break;
 	case 1:
-		m_page1->ShowWindow(SW_HIDE);
 		m_page2->ShowWindow(SW_SHOW);
 		break;
 	default:
@@ -212,7 +206,6 @@ void CUnitTestDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 BOOL CUnitTestDlg::DestroyWindow()
 {
 	pUniversal->Release();
-	delete m_page1;
 	delete m_page2;
 	CoUninitialize();
 	return CDialogEx::DestroyWindow();

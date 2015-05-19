@@ -2,7 +2,7 @@
 #include "IUniversal.h"
 #pragma comment(lib,"Universal.lib")
 using namespace std;
-using namespace SoaringLoong;
+using namespace Sloong::Universal;
 
 
 int main()
@@ -11,7 +11,7 @@ int main()
 
 	// Test IUniversal interface.
 	IUniversal* pUniversal = NULL;
-	CreateUniversal(&pUniversal);
+	Sloong::CreateUniversal(&pUniversal);
 	LPCTSTR str = pUniversal->HelloWorld();
 	wcout << str << endl;
 

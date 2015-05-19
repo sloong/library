@@ -8,7 +8,7 @@
 #include "TinyXML/tinyxml.h"
 #include "XMLParser.h"
 
-using namespace SoaringLoong;
+using namespace Sloong;
 
 //--- 2013/7/5 --- WCB --- Add
 CXMLParser::CXMLParser(void)

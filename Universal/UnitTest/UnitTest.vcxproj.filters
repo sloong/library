@@ -33,9 +33,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestADODlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestLogDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestADODlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestLogDlg.cpp">

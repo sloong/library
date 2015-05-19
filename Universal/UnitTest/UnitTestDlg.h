@@ -5,11 +5,10 @@
 #pragma once
 #import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
 #include "IUniversal.h"
-#include "TestADODlg.h"
 #include "TestLogDlg.h"
 #include "afxcmn.h"
 #pragma comment(lib,"Universal.lib")
-using namespace SoaringLoong;
+using namespace Sloong::Universal;
 // CUnitTestDlg dialog
 class CUnitTestDlg : public CDialogEx
 {
@@ -39,7 +38,6 @@ public:
 	IUniversal*	pUniversal;
 
 public:
-	CTestADODlg* m_page1;
 	CTestLogDlg* m_page2;
 	
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);

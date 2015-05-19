@@ -2,11 +2,14 @@
 
 
 // CTestLogDlg dialog
-namespace SoaringLoong
+namespace Sloong
 {
-	class IUniversal;
+	namespace Universal
+	{
+		class IUniversal;
+	}
 }
-using namespace SoaringLoong;
+using namespace Sloong::Universal;
 class CTestLogDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CTestLogDlg)

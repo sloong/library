@@ -1,6 +1,6 @@
 #pragma once
 #include "IUniversal.h"
-using SoaringLoong::IException;
+using namespace Sloong::Universal;
 
 class CException : public IException
 {

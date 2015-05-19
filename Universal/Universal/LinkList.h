@@ -2,7 +2,7 @@
 
 #include "IUniversal.h"
 
-using SoaringLoong::ILinkList;
+using namespace Sloong::Universal;
 
 class CLinkList : public ILinkList
 {

@@ -5,12 +5,12 @@
 #include "IUniversal.h"
 #include "LogSystem.h"
 
-using namespace SoaringLoong;
+using namespace Sloong;
 
 const TCHAR g_szStart[]		= {TEXT("---------------------------------Start---------------------------------")};
 const TCHAR g_szEnd[]		= {TEXT("----------------------------------End----------------------------------\r\n")};
 
-HRESULT SoaringLoong::g_hRes = S_OK;
+HRESULT Sloong::g_hRes = S_OK;
 
 ULONG CLogSystem::m_objNum = 0;
 CRITICAL_SECTION CLogSystem::m_cs;

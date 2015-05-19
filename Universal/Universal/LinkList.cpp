@@ -6,7 +6,7 @@
 #include "IUniversal.h"
 #include "LinkList.h"
 
-using namespace SoaringLoong;
+using namespace Sloong;
 
 //--- 2013/06/07 --- WCB --- Add
 //* Remarks:

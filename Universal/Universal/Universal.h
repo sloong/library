@@ -2,7 +2,7 @@
 
 #include "IUniversal.h"
 
-using namespace SoaringLoong;
+using namespace Sloong::Universal;
 
 class CLogSystem;
 class CUniversal : public IUniversal
@@ -25,7 +25,6 @@ public:
 	virtual HRESULT _stdcall CreateLogSystem(IUniversal* pUniversal, ILogSystem** pLog);
 	virtual HRESULT _stdcall CreateLinkList(ILinkList** pLinkList);
 	virtual HRESULT _stdcall CreateScriptParser(PARSETYPE emType, IScriptParser** pParser);
-	virtual HRESULT STDMETHODCALLTYPE CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand);
 	virtual DWORD STDMETHODCALLTYPE FormatWindowsErrorMessage(LPTSTR szErrText, DWORD dwSize, DWORD dwErrCode);
 protected:
 	

@@ -11,12 +11,9 @@
 #include "LogSystem.h"
 #include "LinkList.h"
 #include "Universal.h"
-#include "SloongConnection.h"
-#include "SloongCommand.h"
-#include "SloongRecordset.h"
 
 using namespace std;
-using namespace SoaringLoong;
+using namespace Sloong::Universal;
 
 typedef map<int, _tstring> MSGMAP;
 MSGMAP g_MessageMap;
@@ -26,24 +23,7 @@ TCHAR g_szFormat[NUM_SWAP][MAX_STRING] = { 0 };
 ULONG CUniversal::m_objNum = 0;
 CRITICAL_SECTION CUniversal::m_cs;
 
-UNIVERSAL_API HRESULT _stdcall SoaringLoong::CreateUniversal(IUniversal** pUniversal)
-{
-	GUID CLSID_Universal;
-	HRESULT hResult = CLSIDFromProgID(szProgID_Universal, &CLSID_Universal);
-	if (S_OK != hResult)
-	{
-		_tprintf(TEXT("Can't find CLSID!\n"));
-		return S_FALSE;
-	}
-	else
-	{
-		LPOLESTR szCLSID;
-		StringFromCLSID(CLSID_Universal, &szCLSID);
-		CoTaskMemFree(szCLSID);
-	}
-	hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUniversal, (LPVOID*)pUniversal);
-	return hResult;
-}
+
 
 
 CUniversal::CUniversal()
@@ -279,13 +259,6 @@ HRESULT STDMETHODCALLTYPE CUniversal::CreateScriptParser(PARSETYPE emType, IScri
 // 		return S_OK;
 // 	}
 	return S_FALSE;
-}
-
-HRESULT STDMETHODCALLTYPE CUniversal::CreateADO(ISloongConnection** pConnection, ISloongRecordset** pRecordset, ISloongCommand** pCommand)
-{
-	ISloongConnection* pCon = new CSloongConnection();
-	pCon->QueryInterface(IID_ILogSystem, (LPVOID*)pConnection);
-	return S_OK;
 }
 
 

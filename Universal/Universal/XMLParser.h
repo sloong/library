@@ -5,7 +5,7 @@
 
 #define CHAR_SWAP_SIZE	2048
 
-using SoaringLoong::ILinkList;
+using Sloong::ILinkList;
 
 class TiXmlDocument;
 class TiXmlElement;

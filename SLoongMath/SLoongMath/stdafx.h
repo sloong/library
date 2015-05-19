@@ -11,6 +11,17 @@
 // Windows Header Files:
 #include <windows.h>
 
+// C RunTime Header Files
+#include <stdlib.h>
+#include <malloc.h>
+#include <memory.h>
+#include <tchar.h>
+#include <math.h>
+
+#include <vector>
+using std::vector;
 
 
 // TODO: reference additional headers your program requires here
+#include "Defines.h"
+

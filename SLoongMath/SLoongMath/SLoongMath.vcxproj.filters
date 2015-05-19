@@ -5,13 +5,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="SLoong Math Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="IDE Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Hard Files">
+      <UniqueIdentifier>{0813a639-9293-4325-a7b4-33e45b2d9678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -21,11 +24,62 @@
     <ClInclude Include="targetver.h">
       <Filter>IDE Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Resource Files</Filter>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SloongMath.h">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongCylindrical3D.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISloongPolygon.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongMath.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongMathBase.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongMatrix.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongParmLine.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongPlane.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongPolar2D.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongPolygon.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongQuaternion.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongSpherical3D.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongVector.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongVertex.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongMath2.h">
+      <Filter>Hard Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -36,28 +90,67 @@
       <Filter>IDE Files</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Matrix.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Plane.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Polygon.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Quaternion.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Ray.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vector.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SloongMath.cpp">
-      <Filter>SLoong Math Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongMath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongCylindrical3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongMathBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongParmLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongPolar2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongPolygon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongQuaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongSpherical3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongVector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongVertex.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

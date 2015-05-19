@@ -1,6 +1,7 @@
-/Universal/*.opensdf
-/Universal/*.sdf
-/Universal/*.suo
+*.sdf
+*.suo
+*.ipch
+*.opensdf
 /Universal/x64
 /Universal/x86
 /Universal/SloongLua/Debug
@@ -11,6 +12,8 @@
 /Universal/UnitTest/x86
 /Universal/Universal/x86
 /Universal/Universal/x64
-/SloongADO/*.sdf
-/SloongADO/*.suo
-/SloongADO/ipch/sloongado-a468af8/*.ipch
+/SloongMath/SloongMath/Debug/SloongMath.tlog
+/SloongMath/SloongMath/Debug
+/SloongMath/SloongMath/x64/Debug
+/SloongMath/UnitTest/x64/Debug
+/SloongMath/x64/Debug

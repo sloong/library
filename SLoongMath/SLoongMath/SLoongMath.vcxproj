@@ -210,12 +210,37 @@ copy /Y "$(OutDir)$(ProjectName).dll" "$(SolutionDir)Include\$(PlatformTarget)\"
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ISloongPolygon.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SloongCylindrical3D.h" />
+    <ClInclude Include="SloongMath2.h" />
+    <ClInclude Include="SloongMathBase.h" />
+    <ClInclude Include="SloongMatrix.h" />
+    <ClInclude Include="SloongParmLine.h" />
+    <ClInclude Include="SloongPlane.h" />
+    <ClInclude Include="SloongPolar2D.h" />
+    <ClInclude Include="SloongPolygon.h" />
+    <ClInclude Include="SloongQuaternion.h" />
+    <ClInclude Include="SloongSpherical3D.h" />
+    <ClInclude Include="SloongVector.h" />
+    <ClInclude Include="SloongVertex.h" />
+    <ClInclude Include="Defines.h" />
     <ClInclude Include="SloongMath.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="SloongCylindrical3D.cpp" />
+    <ClCompile Include="SloongMathBase.cpp" />
+    <ClCompile Include="SloongMatrix.cpp" />
+    <ClCompile Include="SloongParmLine.cpp" />
+    <ClCompile Include="SloongPlane.cpp" />
+    <ClCompile Include="SloongPolar2D.cpp" />
+    <ClCompile Include="SloongPolygon.cpp" />
+    <ClCompile Include="SloongQuaternion.cpp" />
+    <ClCompile Include="SloongSpherical3D.cpp" />
+    <ClCompile Include="SloongVector.cpp" />
+    <ClCompile Include="SloongVertex.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>

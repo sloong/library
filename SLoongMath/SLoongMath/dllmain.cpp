@@ -5,8 +5,6 @@
 #include <vld.h>
 #pragma comment(lib,"vld.lib")
 #endif // _UNITTEST
-
-
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

@@ -420,3 +420,17 @@ namespace SoaringLoong
 		};
 	}
 }
+
+namespace SoaringLoong
+{
+	namespace Math
+	{
+		class SLOONGMATH_API IMathBase
+		{
+		public:
+			static float Fast_Distance_3D(float x, float y, float z);
+			static float Fast_Sin(float theta);
+			static float Fast_Cos(float theta);
+		};
+	}
+}

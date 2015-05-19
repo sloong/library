@@ -1,13 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <list>
 namespace SoaringLoong
 {
 	namespace Universal
 	{
-		using std::vector;
-		using std::list;
 		typedef LPTHREAD_START_ROUTINE LPCALLBACKFUNC;
 		struct ThreadParam
 		{

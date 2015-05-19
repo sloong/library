@@ -535,6 +535,7 @@ namespace Sloong
 			CoTaskMemFree(szCLSID);
 		}
 		hResult = CoCreateInstance(CLSID_Universal, NULL, CLSCTX_INPROC_SERVER, IID_IUniversal, (LPVOID*)pUniversal);
+
 		return hResult;
 	}
 }

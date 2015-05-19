@@ -35,7 +35,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	IUniversal*	pUniversal;
+	IUniversal*	m_pUniversal;
 
 public:
 	CTestLogDlg* m_page2;

@@ -51,10 +51,13 @@ END_MESSAGE_MAP()
 CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CUnitTestDlg::IDD, pParent)
 {
-	pUniversal = NULL;
+	m_pUniversal = NULL;
 	CoInitialize(NULL);
-	Sloong::CreateUniversal(&pUniversal);
-	m_page2 = new CTestLogDlg(pUniversal);
+	if (FAILED(Sloong::CreateUniversal(&m_pUniversal)))
+	{
+		MessageBox(_T("Create Universal failed."));
+	}
+	m_page2 = new CTestLogDlg(m_pUniversal);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
@@ -131,7 +134,7 @@ BOOL CUnitTestDlg::OnInitDialog()
 	m_page2->MoveWindow(&rec);
 	//ÏÔÊ¾×ÓÒ³Ãæ
 	m_page2->ShowWindow(SW_HIDE);
-	LPCTSTR str = pUniversal->HelloWorld();
+	LPCTSTR str = m_pUniversal->HelloWorld();
 	MessageBox(str);
 //	EnableControl(false);
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -205,7 +208,7 @@ void CUnitTestDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 
 BOOL CUnitTestDlg::DestroyWindow()
 {
-	pUniversal->Release();
+	m_pUniversal->Release();
 	delete m_page2;
 	CoUninitialize();
 	return CDialogEx::DestroyWindow();

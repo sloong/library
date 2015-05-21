@@ -1,7 +1,7 @@
 #pragma once
 
-#ifdef SLMATH_EXPORTS
-#define SLMATH_API __declspec(dllexport)
+#ifdef SLOONGMATH_EXPORTS
+#define SLOONGMATH_API __declspec(dllexport)
 #define VERSION_NUMBER						1,2,0,60
 #define VERSION_FILEVERSION					"1.2.0.60"
 #define VERSION_BUILDTIME					"2014/10/29"
@@ -18,7 +18,7 @@
 #define VERSION_COMPANYNAME 				"SoaringLoong, Inc."
 #define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2013 SoaringLoong, Inc."
 #else
-#define SLMATH_API __declspec(dllimport)
+#define SLOONGMATH_API __declspec(dllimport)
 #endif
 
 #include <math.h>
@@ -52,7 +52,7 @@
 
 namespace SoaringLoong
 {
-	namespace SLMath
+	namespace SloongMath
 	{
 		// a 2D vertex
 		typedef struct VERTEX2DI_TYP
@@ -190,7 +190,7 @@ namespace SoaringLoong
 
 		};
 
-		class SLMATH_API CVector3
+		class SLOONGMATH_API CVector3
 		{
 		public:
 			CVector3();
@@ -226,7 +226,7 @@ namespace SoaringLoong
 		};
 
 		class CPlane;
-		class SLMATH_API CRay
+		class SLOONGMATH_API CRay
 		{
 		public:
 			CRay(){}
@@ -242,7 +242,7 @@ namespace SoaringLoong
 		};
 
 
-		class SLMATH_API CQuaternion
+		class SLOONGMATH_API CQuaternion
 		{
 		public:
 			CQuaternion();
@@ -271,7 +271,7 @@ namespace SoaringLoong
 		};
 
 
-		class SLMATH_API CPolygon
+		class SLOONGMATH_API CPolygon
 		{
 		public:
 			CPolygon() : m_flag(0) { }
@@ -290,7 +290,7 @@ namespace SoaringLoong
 
 
 
-		class SLMATH_API CPlane
+		class SLOONGMATH_API CPlane
 		{
 		public:
 			CPlane();
@@ -333,7 +333,7 @@ namespace SoaringLoong
 
 
 
-		class SLMATH_API CFrustum
+		class SLOONGMATH_API CFrustum
 		{
 		public:
 			void CalculateFrustum(float *mv, float *proj);
@@ -349,7 +349,7 @@ namespace SoaringLoong
 		};
 
 
-		class SLMATH_API CMatrix4x4
+		class SLOONGMATH_API CMatrix4x4
 		{
 		public:
 			CMatrix4x4() { Identity(); }
@@ -389,7 +389,7 @@ namespace SoaringLoong
 			float matrix[4][4];
 		};
 
-		class SLMATH_API CMatrix
+		class SLOONGMATH_API CMatrix
 		{
 		public:
 			CMatrix();
@@ -417,6 +417,20 @@ namespace SoaringLoong
 			int m_nColumn;
 			int m_nRow;
 			double** m_pMatrix;
+		};
+	}
+}
+
+namespace SoaringLoong
+{
+	namespace Math
+	{
+		class SLOONGMATH_API IMathBase
+		{
+		public:
+			static float Fast_Distance_3D(float x, float y, float z);
+			static float Fast_Sin(float theta);
+			static float Fast_Cos(float theta);
 		};
 	}
 }

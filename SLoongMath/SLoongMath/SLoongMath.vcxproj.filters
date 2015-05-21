@@ -30,9 +30,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SloongMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SloongCylindrical3D.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -81,6 +78,9 @@
     <ClInclude Include="SloongMath2.h">
       <Filter>Hard Files</Filter>
     </ClInclude>
+    <ClInclude Include="SloongMath.h">
+      <Filter>Hard Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -93,9 +93,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Matrix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Polygon.cpp">

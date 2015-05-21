@@ -15,8 +15,8 @@
 #define	VERSION_PRODUCTNAME					"Universal Libaray"
 #endif // _DEBUG
 #define VERSION_INTERNALNAME				"SLMath.dll"
-#define VERSION_COMPANYNAME 				"SoaringLoong, Inc."
-#define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2013 SoaringLoong, Inc."
+#define VERSION_COMPANYNAME 				"Sloong, Inc."
+#define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2013 Sloong, Inc."
 #else
 #define SLOONGMATH_API __declspec(dllimport)
 #endif
@@ -50,9 +50,9 @@
 #define UGP_VISIBLE  5
 #pragma endregion
 
-namespace SoaringLoong
+namespace Sloong
 {
-	namespace SloongMath
+	namespace Math
 	{
 		// a 2D vertex
 		typedef struct VERTEX2DI_TYP
@@ -288,51 +288,7 @@ namespace SoaringLoong
 			CVector3 m_vertexList[3];
 		};
 
-
-
-		class SLOONGMATH_API CPlane
-		{
-		public:
-			CPlane();
-			CPlane(float A, float B, float C, float D);
-			CPlane(CVector3 &n, float D);
-
-			void CreatePlaneFromTri(CVector3 &v1, CVector3 &v2,
-				CVector3 &v3);
-
-			void SetPlaneNormal(float A, float B, float C)
-			{
-				a = A; b = B; c = C;
-			}
-			void SetPlaneIntercept(float D) { d = D; }
-
-			bool Intersect(CPlane &p2, CPlane &p3,
-				CVector3 *intersectPoint);
-			bool Intersect(CPlane &pl, CVector3 *intersectPoint);
-			bool Intersect(CPlane &pl, CRay *intersect);
-			bool Intersect(CVector3 &p1, CVector3 &p2, CVector3 &p3);
-
-			int ClassifyPolygon(CPolygon &pol);
-			int ClassifyPoint(CVector3 &v);
-			int ClassifyPoint(float x, float y, float z);
-
-			void Lerp(CPlane &p1, CPlane &p2, float amount);
-
-			float GetDistance(CVector3 &v)
-			{
-				return a * v.x + b * v.y + c * v.z + d;
-			}
-
-			float GetDistance(float x, float y, float z)
-			{
-				return a * x + b * y + c * z + d;
-			}
-
-			float a, b, c, d;
-		};
-
-
-
+		class CPlane;
 		class SLOONGMATH_API CFrustum
 		{
 		public:
@@ -345,48 +301,7 @@ namespace SoaringLoong
 			void NormalizeFrustum();
 
 		protected:
-			CPlane Frustum[MAX_SIDES];
-		};
-
-
-		class SLOONGMATH_API CMatrix4x4
-		{
-		public:
-			CMatrix4x4() { Identity(); }
-			CMatrix4x4(const CMatrix4x4 &m);
-			CMatrix4x4(float r11, float r12, float r13, float r14,
-				float r21, float r22, float r23, float r24,
-				float r31, float r32, float r33, float r34,
-				float r41, float r42, float r43, float r44);
-			~CMatrix4x4() {}
-
-			void Identity();
-
-			void operator=(CMatrix4x4 &m);
-			CMatrix4x4 operator-(CMatrix4x4 &m);
-			CMatrix4x4 operator+(CMatrix4x4 &m);
-			CMatrix4x4 operator*(CMatrix4x4 &m);
-
-			CMatrix4x4 operator*(float f);
-			CMatrix4x4 operator/(float f);
-
-			void operator +=(CMatrix4x4 &m);
-			void operator -=(CMatrix4x4 &m);
-			void operator *=(CMatrix4x4 &m);
-
-			void operator *=(float f);
-			void operator /=(float f);
-
-			void Translate(CVector3 &Translate);
-			void Translate(float x, float y, float z);
-			void inverseTranslate();
-
-			void Rotate(double angle, int x, int y, int z);
-
-			CVector3 VectorMatrixMultiply(CVector3 &v);
-			CVector3 VectorMatrixMultiply3x3(CVector3 &v);
-
-			float matrix[4][4];
+			CPlane* Frustum[MAX_SIDES];
 		};
 
 		class SLOONGMATH_API CMatrix
@@ -421,7 +336,7 @@ namespace SoaringLoong
 	}
 }
 
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{

@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "SloongMathBase.h"
-using namespace SoaringLoong::Math;
+using namespace Sloong::Math;
 
-float SoaringLoong::Math::CMathBase::sin_look[361] = {0.0f};
+float Sloong::Math::CMathBase::sin_look[361] = {0.0f};
 
-float SoaringLoong::Math::CMathBase::cos_look[361] = {0.0f};
+float Sloong::Math::CMathBase::cos_look[361] = {0.0f};
 
-bool SoaringLoong::Math::CMathBase::isBuildFastTable = false;
+bool Sloong::Math::CMathBase::isBuildFastTable = false;
 
 
 float CMathBase::Fast_Distance_3D(float fx, float fy, float fz)
@@ -35,7 +35,7 @@ float CMathBase::Fast_Distance_3D(float fx, float fy, float fz)
 
 } // end Fast_Distance_3D
 
-void SoaringLoong::Math::CMathBase::BuildFastTable()
+void Sloong::Math::CMathBase::BuildFastTable()
 {
 	// create sin/cos lookup table
 	// note the creation of one extra element; 360
@@ -59,7 +59,7 @@ void SoaringLoong::Math::CMathBase::BuildFastTable()
 	isBuildFastTable = true;
 }
 
-float SoaringLoong::Math::CMathBase::Fast_Sin(float theta)
+float Sloong::Math::CMathBase::Fast_Sin(float theta)
 {
 	// this function uses the sin_look[] lookup table, but
 	// has logic to handle negative angles as well as fractional
@@ -89,7 +89,7 @@ float SoaringLoong::Math::CMathBase::Fast_Sin(float theta)
 
 }
 
-float SoaringLoong::Math::CMathBase::Fast_Cos(float theta)
+float Sloong::Math::CMathBase::Fast_Cos(float theta)
 {
 	// this function uses the cos_look[] lookup table, but
 	// has logic to handle negative angles as well as fractional
@@ -118,7 +118,7 @@ float SoaringLoong::Math::CMathBase::Fast_Cos(float theta)
 		theta_frac*(cos_look[theta_int + 1] - cos_look[theta_int]));
 }
 
-SoaringLoong::Math::CMathBase::CMathBase()
+Sloong::Math::CMathBase::CMathBase()
 {
 	BuildFastTable();
 }

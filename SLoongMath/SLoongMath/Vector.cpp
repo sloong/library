@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "SloongMath.h"
-using namespace SoaringLoong::SloongMath;
+using namespace Sloong::Math;
 
 CVector3::CVector3()
 {

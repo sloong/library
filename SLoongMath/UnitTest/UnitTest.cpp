@@ -5,12 +5,12 @@
 #include "SloongMath.h"
 #pragma comment(lib,"SloongMath.lib")
 
-using namespace SoaringLoong::SloongMath;
+using namespace Sloong::Math;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	double pTemp[] = {1,2,3,4};
- 	CMatrix Test( 2,2, pTemp );
+	CMatrix Test( 2,2, pTemp );
 	_tprintf(TEXT("1\n"));
 	for ( int i = 0; i< Test.m_nRow; i++)
 	{

@@ -1,7 +1,7 @@
 #pragma once
 #include "SloongMathBase.h"
 #include "SloongMatrix.h"
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{

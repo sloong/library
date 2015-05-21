@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "SloongParmLine.h"
 
-using namespace SoaringLoong::Math::Vector;
-void SoaringLoong::Math::CParamLine2D::Init_Parm_Line2D(POINT2D_PTR p_init, POINT2D_PTR p_term, PARMLINE2D_PTR p)
+using namespace Sloong::Math::Vector;
+void Sloong::Math::CParamLine2D::Init_Parm_Line2D(POINT2D_PTR p_init, POINT2D_PTR p_term, PARMLINE2D_PTR p)
 {
 // this initializes a parametric 2d line, note that the function
 	// computes v=p_pend - p_init, thus when t=0 the line p=p0+v*t = p0
@@ -20,7 +20,7 @@ void SoaringLoong::Math::CParamLine2D::Init_Parm_Line2D(POINT2D_PTR p_init, POIN
 
 }
 
-void SoaringLoong::Math::CParamLine2D::Compute_Parm_Line2D(PARMLINE2D_PTR p, float t, POINT2D_PTR pt)
+void Sloong::Math::CParamLine2D::Compute_Parm_Line2D(PARMLINE2D_PTR p, float t, POINT2D_PTR pt)
 {
 	// this function computes the value of the sent parametric 
 	// line at the value of t
@@ -29,7 +29,7 @@ void SoaringLoong::Math::CParamLine2D::Compute_Parm_Line2D(PARMLINE2D_PTR p, flo
 	pt->y = p->p0.y + p->v.y*t;
 }
 
-int SoaringLoong::Math::CParamLine2D::Intersect_Parm_Lines2D(PARMLINE2D_PTR p1, PARMLINE2D_PTR p2, float *t1, float *t2)
+int Sloong::Math::CParamLine2D::Intersect_Parm_Lines2D(PARMLINE2D_PTR p1, PARMLINE2D_PTR p2, float *t1, float *t2)
 {
 	// this function computes the interesection of the two parametric 
 	// line segments the function returns true if the segments 
@@ -90,7 +90,7 @@ int SoaringLoong::Math::CParamLine2D::Intersect_Parm_Lines2D(PARMLINE2D_PTR p1, 
 		return(PARM_LINE_INTERSECT_OUT_SEGMENT);
 }
 
-int SoaringLoong::Math::CParamLine2D::Intersect_Parm_Lines2D(PARMLINE2D_PTR p1, PARMLINE2D_PTR p2, POINT2D_PTR pt)
+int Sloong::Math::CParamLine2D::Intersect_Parm_Lines2D(PARMLINE2D_PTR p1, PARMLINE2D_PTR p2, POINT2D_PTR pt)
 {
 	// this function computes the interesection of the two 
 	// parametric line segments the function returns true if 
@@ -156,7 +156,7 @@ int SoaringLoong::Math::CParamLine2D::Intersect_Parm_Lines2D(PARMLINE2D_PTR p1, 
 
 }
 
-void SoaringLoong::Math::CParamLine3D::Init_Parm_Line3D(POINT3D_PTR p_init, POINT3D_PTR p_term, PARMLINE3D_PTR p)
+void Sloong::Math::CParamLine3D::Init_Parm_Line3D(POINT3D_PTR p_init, POINT3D_PTR p_term, PARMLINE3D_PTR p)
 {
 	// this initializes a parametric 3d line, note that the function
 	// computes v=p_pend - p_init, thus when t=0 the line p=p0+v*t = p0
@@ -173,7 +173,7 @@ void SoaringLoong::Math::CParamLine3D::Init_Parm_Line3D(POINT3D_PTR p_init, POIN
 	p_init->VECTOR3D_Build(p_init, p_term, &(p->v));
 }
 
-void SoaringLoong::Math::CParamLine3D::Compute_Parm_Line3D(PARMLINE3D_PTR p, float t, POINT3D_PTR pt)
+void Sloong::Math::CParamLine3D::Compute_Parm_Line3D(PARMLINE3D_PTR p, float t, POINT3D_PTR pt)
 {
 	// this function computes the value of the sent parametric 
 	// line at the value of t

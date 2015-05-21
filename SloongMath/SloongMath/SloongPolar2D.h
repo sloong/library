@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{

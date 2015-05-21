@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "SloongCylindrical3D.h"
-using namespace SoaringLoong::Math;
+using namespace Sloong::Math;
 #include "SloongVector.h"
-using SoaringLoong::Math::Vector::CVector3D;
+using Sloong::Math::Vector::CVector3D;
 
-SoaringLoong::Math::CCylindrical3D::CCylindrical3D()
+Sloong::Math::CCylindrical3D::CCylindrical3D()
 {
 
 }
 
-SoaringLoong::Math::CCylindrical3D::~CCylindrical3D()
+Sloong::Math::CCylindrical3D::~CCylindrical3D()
 {
 
 }

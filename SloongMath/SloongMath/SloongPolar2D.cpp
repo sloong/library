@@ -1,22 +1,22 @@
 #include "stdafx.h"
 #include "SloongPolar2D.h"
-using namespace SoaringLoong::Math;
+using namespace Sloong::Math;
 #include "SloongVector.h"
-using SoaringLoong::Math::Vector::CVector2D;
+using Sloong::Math::Vector::CVector2D;
 
-SoaringLoong::Math::CPolar2D::CPolar2D()
+Sloong::Math::CPolar2D::CPolar2D()
 {
 
 }
 
-SoaringLoong::Math::CPolar2D::~CPolar2D()
+Sloong::Math::CPolar2D::~CPolar2D()
 {
 
 }
 
 
 
-void SoaringLoong::Math::CPolar2D::POLAR2D_To_POINT2D(POLAR2D_PTR polar, POINT2D_PTR rect)
+void Sloong::Math::CPolar2D::POLAR2D_To_POINT2D(POLAR2D_PTR polar, POINT2D_PTR rect)
 {
 	// convert polar to rectangular
 	rect->x = polar->r*cosf(polar->theta);
@@ -26,7 +26,7 @@ void SoaringLoong::Math::CPolar2D::POLAR2D_To_POINT2D(POLAR2D_PTR polar, POINT2D
 
 ////////////////////////////////////////////////////////////////
 
-void SoaringLoong::Math::CPolar2D::POLAR2D_To_RectXY(POLAR2D_PTR polar, float *x, float *y)
+void Sloong::Math::CPolar2D::POLAR2D_To_RectXY(POLAR2D_PTR polar, float *x, float *y)
 {
 	// convert polar to rectangular
 	*x = polar->r*cosf(polar->theta);
@@ -36,7 +36,7 @@ void SoaringLoong::Math::CPolar2D::POLAR2D_To_RectXY(POLAR2D_PTR polar, float *x
 
 ///////////////////////////////////////////////////////////////
 
-void SoaringLoong::Math::CPolar2D::POINT2D_To_POLAR2D(POINT2D_PTR rect, POLAR2D_PTR polar)
+void Sloong::Math::CPolar2D::POINT2D_To_POLAR2D(POINT2D_PTR rect, POLAR2D_PTR polar)
 {
 	// convert rectangular to polar
 	polar->r = sqrtf((rect->x * rect->x) + (rect->y * rect->y));
@@ -46,7 +46,7 @@ void SoaringLoong::Math::CPolar2D::POINT2D_To_POLAR2D(POINT2D_PTR rect, POLAR2D_
 
 ////////////////////////////////////////////////////////////
 
-void SoaringLoong::Math::CPolar2D::POINT2D_To_PolarRTh(POINT2D_PTR rect, float *r, float *theta)
+void Sloong::Math::CPolar2D::POINT2D_To_PolarRTh(POINT2D_PTR rect, float *r, float *theta)
 {
 	// convert rectangular to polar
 	*r = sqrtf((rect->x * rect->x) + (rect->y * rect->y));

@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
 #include "SloongMath.h"
-using namespace SoaringLoong::SloongMath;
+#include "SloongPlane.h"
+using namespace Sloong::Math;
 
 void CFrustum::CalculateFrustum(float *mv, float *proj)
 {
@@ -34,40 +35,40 @@ void CFrustum::CalculateFrustum(float *mv, float *proj)
 	
 
 	// Calculate the right side of the frustum.
-   Frustum[0].a = clip[3]  - clip[0];
-	Frustum[0].b = clip[7]  - clip[4];
-	Frustum[0].c = clip[11] - clip[8];
-	Frustum[0].d = clip[15] - clip[12];
+    Frustum[0]->a = clip[3]  - clip[0];
+	Frustum[0]->b = clip[7]  - clip[4];
+	Frustum[0]->c = clip[11] - clip[8];
+	Frustum[0]->d = clip[15] - clip[12];
 
 	// Calculate the left side of the frustum.
-	Frustum[1].a = clip[3]  + clip[0];
-	Frustum[1].b = clip[7]  + clip[4];
-	Frustum[1].c = clip[11] + clip[8];
-	Frustum[1].d = clip[15] + clip[12];
+	Frustum[1]->a = clip[3]  + clip[0];
+	Frustum[1]->b = clip[7]  + clip[4];
+	Frustum[1]->c = clip[11] + clip[8];
+	Frustum[1]->d = clip[15] + clip[12];
 
 	// Calculate the bottom side of the frustum.
-	Frustum[2].a = clip[3]  + clip[1];
-	Frustum[2].b = clip[7]  + clip[5];
-	Frustum[2].c = clip[11] + clip[9];
-	Frustum[2].d = clip[15] + clip[13];
+	Frustum[2]->a = clip[3] + clip[1];
+	Frustum[2]->b = clip[7] + clip[5];
+	Frustum[2]->c = clip[11] + clip[9];
+	Frustum[2]->d = clip[15] + clip[13];
 
 	// Calculate the top side of the frustum.
-	Frustum[3].a = clip[3]  - clip[1];
-	Frustum[3].b = clip[7]  - clip[5];
-	Frustum[3].c = clip[11] - clip[9];
-	Frustum[3].d = clip[15] - clip[13];
+	Frustum[3]->a = clip[3] - clip[1];
+	Frustum[3]->b = clip[7] - clip[5];
+	Frustum[3]->c = clip[11] - clip[9];
+	Frustum[3]->d = clip[15] - clip[13];
 
 	// Calculate the far side of the frustum.
-	Frustum[4].a = clip[3]  - clip[2];
-	Frustum[4].b = clip[7]  - clip[6];
-	Frustum[4].c = clip[11] - clip[10];
-	Frustum[4].d = clip[15] - clip[14];
+	Frustum[4]->a = clip[3] - clip[2];
+	Frustum[4]->b = clip[7] - clip[6];
+	Frustum[4]->c = clip[11] - clip[10];
+	Frustum[4]->d = clip[15] - clip[14];
 
 	// Calculate the near side of the frustum.
-	Frustum[5].a = clip[3]  + clip[2];
-	Frustum[5].b = clip[7]  + clip[6];
-	Frustum[5].c = clip[11] + clip[10];
-	Frustum[5].d = clip[15] + clip[14];
+	Frustum[5]->a = clip[3] + clip[2];
+	Frustum[5]->b = clip[7] + clip[6];
+	Frustum[5]->c = clip[11] + clip[10];
+	Frustum[5]->d = clip[15] + clip[14];
 
 	// Normalize the sides of the frustum.
    NormalizeFrustum();
@@ -81,15 +82,15 @@ void CFrustum::NormalizeFrustum()
    // Loop through each side of the frustum and normalize it.
    for(int i = 0; i < MAX_SIDES; i++)
       {
-         magnitude = (float)sqrt(Frustum[i].a * Frustum[i].a + 
-			   		               Frustum[i].b * Frustum[i].b + 
-						               Frustum[i].c * Frustum[i].c);
+         magnitude = (float)sqrt(Frustum[i]->a * Frustum[i]->a + 
+			   		             Frustum[i]->b * Frustum[i]->b + 
+						         Frustum[i]->c * Frustum[i]->c);
          magnitude = 1 / magnitude;
 
-	      Frustum[i].a *= magnitude;
-	      Frustum[i].b *= magnitude;
-	      Frustum[i].c *= magnitude;
-	      Frustum[i].d *= magnitude;
+		 Frustum[i]->a *= magnitude;
+		 Frustum[i]->b *= magnitude;
+		 Frustum[i]->c *= magnitude;
+		 Frustum[i]->d *= magnitude;
       }
 }
 
@@ -99,7 +100,7 @@ bool CFrustum::isPointVisiable(float x, float y, float z)
    // Test all sides of the frustum planes.
    for(int i = 0; i < MAX_SIDES; i++)
       {
-         if(Frustum[i].GetDistance(x, y, z) < 0)
+         if(Frustum[i]->GetDistance(x, y, z) < 0)
             return false;
       }
 
@@ -114,7 +115,7 @@ bool CFrustum::isSphereVisiable(float x, float y, float z, float radius)
    // Test all sides of the frustum planes.
    for(int i = 0; i < MAX_SIDES; i++)
       {
-         distance = Frustum[i].GetDistance(x, y, z);
+         distance = Frustum[i]->GetDistance(x, y, z);
 
          if(distance < -radius)
             return false;
@@ -138,14 +139,14 @@ bool CFrustum::isBoxVisiable(float x, float y, float z, float size)
    // Test all sides of the frustum planes.
    for(int i = 0; i < MAX_SIDES; i++)
       {
-         if(Frustum[i].GetDistance(minX, minY, minZ) > 0) continue;
-         if(Frustum[i].GetDistance(maxX, minY, minZ) > 0) continue;   
-         if(Frustum[i].GetDistance(minX, maxY, minZ) > 0) continue;   
-         if(Frustum[i].GetDistance(maxX, maxY, minZ) > 0) continue;   
-         if(Frustum[i].GetDistance(minX, minY, maxZ) > 0) continue;   
-         if(Frustum[i].GetDistance(maxX, minY, maxZ) > 0) continue;   
-         if(Frustum[i].GetDistance(minX, maxY, maxZ) > 0) continue;   
-         if(Frustum[i].GetDistance(maxX, maxY, maxZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(minX, minY, minZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(maxX, minY, minZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(minX, maxY, minZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(maxX, maxY, minZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(minX, minY, maxZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(maxX, minY, maxZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(minX, maxY, maxZ) > 0) continue;
+	   if (Frustum[i]->GetDistance(maxX, maxY, maxZ) > 0) continue;
          
          return false;
       }

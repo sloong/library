@@ -1,6 +1,6 @@
 #pragma once
 #include "SloongVector.h"
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{

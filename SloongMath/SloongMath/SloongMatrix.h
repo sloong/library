@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SloongMathBase.h"
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{
@@ -207,6 +207,12 @@ namespace SoaringLoong
 			{
 			public:
 				CMatrix4x4();
+				CMatrix4x4(const CMatrix4x4 &m);
+				CMatrix4x4(float r11, float r12, float r13, float r14,
+					float r21, float r22, float r23, float r24,
+					float r31, float r32, float r33, float r34,
+					float r41, float r42, float r43, float r44);
+
 				virtual ~CMatrix4x4();
 			public:
 				union
@@ -223,6 +229,22 @@ namespace SoaringLoong
 					}; // end explicit names
 
 				}; // end union
+
+			public:
+				void operator=(CMatrix4x4 &m);
+				CMatrix4x4 operator-(CMatrix4x4 &m);
+				CMatrix4x4 operator+(CMatrix4x4 &m);
+				CMatrix4x4 operator*(CMatrix4x4 &m);
+
+				CMatrix4x4 operator*(float f);
+				CMatrix4x4 operator/(float f);
+
+				void operator +=(CMatrix4x4 &m);
+				void operator -=(CMatrix4x4 &m);
+				void operator *=(CMatrix4x4 &m);
+
+				void operator *=(float f);
+				void operator /=(float f);
 
 			public:
 				inline void MAT_TRANSPOSE_4X4(CMatrix4x4* m)
@@ -249,6 +271,7 @@ namespace SoaringLoong
 				}
 
 			public:
+				void Identity();
 				void Initialize(float m00, float m01, float m02, float m03,
 					float m10, float m11, float m12, float m13,
 					float m20, float m21, float m22, float m23,
@@ -261,6 +284,14 @@ namespace SoaringLoong
 				void Zero();
 				// 将两个矩阵相乘，并将结果存储在本身
 				void Multiply(CMatrix4x4* ma, CMatrix4x4* mb);
+				void Translate(CVector3D &Translate);
+				void Translate(float x, float y, float z);
+				void inverseTranslate();
+
+				void Rotate(double angle, int x, int y, int z);
+
+				CVector3D VectorMatrixMultiply(CVector3D &v);
+				CVector3D VectorMatrixMultiply3x3(CVector3D &v);
 
 				CVector3D Multiply( const CVector3D& va);
 				CVector4D Multiply( const CVector4D& va) const;

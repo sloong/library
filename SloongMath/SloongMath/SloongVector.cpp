@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SloongVector.h"
 #include "SloongMath2.h"
-using namespace SoaringLoong::Math::Vector;
+using namespace Sloong::Math::Vector;
 
 
 
@@ -596,7 +596,7 @@ float CVector4D::VECTOR4D_CosTh(VECTOR4D_PTR va, VECTOR4D_PTR vb)
 } // end VECTOR4D_CosTh
 
 
-SoaringLoong::Math::Vector::CVector4D::CVector4D(int x, int y, int z, int w)
+Sloong::Math::Vector::CVector4D::CVector4D(int x, int y, int z, int w)
 {
 	this->x = x;
 	this->y = y;
@@ -604,22 +604,22 @@ SoaringLoong::Math::Vector::CVector4D::CVector4D(int x, int y, int z, int w)
 	this->w = w;
 }
 
-SoaringLoong::Math::Vector::CVector4D::CVector4D(int x, int y, int z)
+Sloong::Math::Vector::CVector4D::CVector4D(int x, int y, int z)
 {
 	Initialize(x, y, z);
 }
 
-SoaringLoong::Math::Vector::CVector4D::CVector4D(const CVector4D& vSrc)
+Sloong::Math::Vector::CVector4D::CVector4D(const CVector4D& vSrc)
 {
 	Copy(vSrc);
 }
 
-void SoaringLoong::Math::Vector::CVector4D::Add(const CVector4D& va)
+void Sloong::Math::Vector::CVector4D::Add(const CVector4D& va)
 {
 	Copy(Add(this, &va));
 }
 
-void SoaringLoong::Math::Vector::CVector4D::Add(const CVector4D* va)
+void Sloong::Math::Vector::CVector4D::Add(const CVector4D* va)
 {
 	Copy( Add(this, va));
 }
@@ -639,17 +639,17 @@ CVector4D CVector4D::Add( const CVector4D* va, const CVector4D* vb)
 	return(vsum);
 }
 
-CVector4D SoaringLoong::Math::Vector::CVector4D::Multiply(const CVector4D& vector, const CMatrix4x4& matrix)
+CVector4D Sloong::Math::Vector::CVector4D::Multiply(const CVector4D& vector, const CMatrix4x4& matrix)
 {
 	return Multiply(&vector, &matrix);
 }
 
-void SoaringLoong::Math::Vector::CVector4D::Multiply(const CMatrix4x4& matrix)
+void Sloong::Math::Vector::CVector4D::Multiply(const CMatrix4x4& matrix)
 {
 	*this = Multiply(*this, matrix);
 }
 
-CVector4D SoaringLoong::Math::Vector::CVector4D::Multiply(const CVector4D* vector, const CMatrix4x4* matrix)
+CVector4D Sloong::Math::Vector::CVector4D::Multiply(const CVector4D* vector, const CMatrix4x4* matrix)
 {
 	// this function multiplies a VECTOR4D against a 
 	// 4x4 matrix - ma*mb and stores the result in mprod
@@ -675,12 +675,12 @@ CVector4D SoaringLoong::Math::Vector::CVector4D::Multiply(const CVector4D* vecto
 	return pTemp;
 }
 
-float SoaringLoong::Math::Vector::CVector4D::Dot(const CVector4D& va)
+float Sloong::Math::Vector::CVector4D::Dot(const CVector4D& va)
 {
 	return Dot(*this, va);
 }
 
-CVector4D SoaringLoong::Math::Vector::CVector4D::Subtract(const CVector4D* va, const CVector4D* vb)
+CVector4D Sloong::Math::Vector::CVector4D::Subtract(const CVector4D* va, const CVector4D* vb)
 {
 	// this function subtracts va-vb and return it in vdiff
 	// the stack
@@ -692,12 +692,12 @@ CVector4D SoaringLoong::Math::Vector::CVector4D::Subtract(const CVector4D* va, c
 	return vTemp;
 }
 
-void SoaringLoong::Math::Vector::CVector4D::Build(const CVector4D& vInit, const CVector4D& vTerm)
+void Sloong::Math::Vector::CVector4D::Build(const CVector4D& vInit, const CVector4D& vTerm)
 {
 	Build(&vInit, &vTerm);
 }
 
-void SoaringLoong::Math::Vector::CVector4D::Build(const CVector4D* vInit, const CVector4D* vTerm)
+void Sloong::Math::Vector::CVector4D::Build(const CVector4D* vInit, const CVector4D* vTerm)
 {
 	x = vTerm->x - vInit->x;
 	y = vTerm->y - vInit->y;

@@ -25,7 +25,7 @@
 #define POLY4DV1_ATTR_SHADE_MODE_TEXTURE    0x0200 
 
 
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{

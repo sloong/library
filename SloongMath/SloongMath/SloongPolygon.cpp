@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "SloongPolygon.h"
 #include "SloongVector.h"
-using namespace SoaringLoong::Graphics;
-using namespace SoaringLoong::Math::Vector;
-using namespace SoaringLoong::Math::Polygon;
+using namespace Sloong::Graphics;
+using namespace Sloong::Math::Vector;
+using namespace Sloong::Math::Polygon;
 
 
 // these are the matrix versions, note they are more inefficient for
@@ -303,14 +303,14 @@ HRESULT CPolygon3D::Render()
 	return S_OK;
 }
 
-SoaringLoong::Math::Polygon::CPolygon3D::CPolygon3D(RenderFunc pFunc)
+Sloong::Math::Polygon::CPolygon3D::CPolygon3D(RenderFunc pFunc)
 {
 	m_pTransList = new vector<CVector4D*>;
 	m_pLocalList = new vector<CVector4D*>;
 	SetRenderFunc(pFunc);
 }
 
-inline void SoaringLoong::Math::Polygon::CPolygon3D::SetRenderFunc(RenderFunc pFunc)
+inline void Sloong::Math::Polygon::CPolygon3D::SetRenderFunc(RenderFunc pFunc)
 {
 	m_pRenderFunc = pFunc;
 }
@@ -423,7 +423,7 @@ void CPolygon3D::DeleteStatus(DWORD dwStatus)
 	m_dwStatus &= (~dwStatus);
 }
 
-SLOONGMATH_API IPolygon* SoaringLoong::Math::Polygon::IPolygon::Create3D(RenderFunc pFunc)
+SLOONGMATH_API IPolygon* Sloong::Math::Polygon::IPolygon::Create3D(RenderFunc pFunc)
 {
 	IPolygon* pNew = new CPolygon3D(pFunc);
 	return pNew;

@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "SloongQuaternion.h"
 #include "SloongVector.h"
-using namespace SoaringLoong::Math::Vector;
+using namespace Sloong::Math::Vector;
 
 
 void Write_Error(char* sz, ...){}
 
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Add(CQuaternion* q1, CQuaternion* q2, CQuaternion* qsum)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Add(CQuaternion* q1, CQuaternion* q2, CQuaternion* qsum)
 {
 
 	// this function adds two quaternions
@@ -18,7 +18,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Add(CQuaternion* q1, CQua
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Sub(CQuaternion* q1, CQuaternion* q2, CQuaternion* qdiff)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Sub(CQuaternion* q1, CQuaternion* q2, CQuaternion* qdiff)
 {
 	// this function subtracts two quaternions, q1-q2
 	qdiff->x = q1->x - q2->x;
@@ -27,7 +27,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Sub(CQuaternion* q1, CQua
 	qdiff->w = q1->w - q2->w;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Conjugate(CQuaternion* q, CQuaternion* qconj)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Conjugate(CQuaternion* q, CQuaternion* qconj)
 {
 	// this function computes the conjugate of a quaternion
 	qconj->x = -q->x;
@@ -36,7 +36,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Conjugate(CQuaternion* q,
 	qconj->w = q->w;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Scale(CQuaternion* q, float scale, CQuaternion* qs)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Scale(CQuaternion* q, float scale, CQuaternion* qs)
 {
 	// this function scales a quaternion and returns it 
 	qs->x = scale*q->x;
@@ -45,7 +45,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Scale(CQuaternion* q, flo
 	qs->w = scale*q->w;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Scale(CQuaternion* q, float scale)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Scale(CQuaternion* q, float scale)
 {
 	// this function scales a quaternion in place
 	q->x *= scale;
@@ -55,17 +55,17 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Scale(CQuaternion* q, flo
 
 }
 
-float SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Norm(CQuaternion* q)
+float Sloong::Math::Quaternion::CQuaternion::QUAT_Norm(CQuaternion* q)
 {
 	return(sqrtf(q->w*q->w + q->x*q->x + q->y*q->y + q->z*q->z));
 }
 
-float SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Norm2(CQuaternion* q)
+float Sloong::Math::Quaternion::CQuaternion::QUAT_Norm2(CQuaternion* q)
 {
 	return(q->w*q->w + q->x*q->x + q->y*q->y + q->z*q->z);
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Normalize(CQuaternion* q, CQuaternion* qn)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Normalize(CQuaternion* q, CQuaternion* qn)
 {
 	// this functions normalizes the sent quaternion and 
 	// returns it
@@ -81,7 +81,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Normalize(CQuaternion* q,
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Normalize(CQuaternion* q)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Normalize(CQuaternion* q)
 {
 	// this functions normalizes the sent quaternion in place
 
@@ -96,7 +96,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Normalize(CQuaternion* q)
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Unit_Inverse(CQuaternion* q, CQuaternion* qi)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Unit_Inverse(CQuaternion* q, CQuaternion* qi)
 {
 	// this function computes the inverse of a unit quaternion
 	// and returns the result
@@ -107,7 +107,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Unit_Inverse(CQuaternion*
 	qi->z = -q->z;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Unit_Inverse(CQuaternion* q)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Unit_Inverse(CQuaternion* q)
 {
 	// this function computes the inverse of a unit quaternion
 	// in place
@@ -117,7 +117,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Unit_Inverse(CQuaternion*
 	q->z = -q->z;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Inverse(CQuaternion* q, CQuaternion* qi)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Inverse(CQuaternion* q, CQuaternion* qi)
 {
 	// this function computes the inverse of a general quaternion
 	// and returns result
@@ -132,7 +132,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Inverse(CQuaternion* q, C
 	qi->z = -q->z*norm2_inv;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Inverse(CQuaternion* q)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Inverse(CQuaternion* q)
 {
 	// this function computes the inverse of a general quaternion
 	// in place
@@ -147,7 +147,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Inverse(CQuaternion* q)
 	q->z = -q->z*norm2_inv;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Mul(CQuaternion* q1, CQuaternion* q2, CQuaternion* qprod)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Mul(CQuaternion* q1, CQuaternion* q2, CQuaternion* qprod)
 {
 	// this function multiplies two quaternions
 
@@ -180,7 +180,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Mul(CQuaternion* q1, CQua
 	qprod->z = prd_3 + prd_9 - prd_6;
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Triple_Product(CQuaternion* q1, CQuaternion* q2, CQuaternion* q3, CQuaternion* qprod)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Triple_Product(CQuaternion* q1, CQuaternion* q2, CQuaternion* q3, CQuaternion* qprod)
 {
 	// this function computes q1*q2*q3 in that order and returns 
 	// the results in qprod
@@ -190,7 +190,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Triple_Product(CQuaternio
 	QUAT_Mul(&qtmp, q3, qprod);
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::VECTOR3D_Theta_To_QUAT(CQuaternion* q, VECTOR3D_PTR v, float theta)
+void Sloong::Math::Quaternion::CQuaternion::VECTOR3D_Theta_To_QUAT(CQuaternion* q, VECTOR3D_PTR v, float theta)
 {
 	// initializes a quaternion based on a 3d direction vector and angle
 	// note the direction vector must be a unit vector
@@ -209,7 +209,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::VECTOR3D_Theta_To_QUAT(CQuater
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::VECTOR4D_Theta_To_QUAT(CQuaternion* q, VECTOR4D_PTR v, float theta)
+void Sloong::Math::Quaternion::CQuaternion::VECTOR4D_Theta_To_QUAT(CQuaternion* q, VECTOR4D_PTR v, float theta)
 {
 	// initializes a quaternion based on a 4d direction vector and angle
 	// note the direction vector must be a unit vector
@@ -229,7 +229,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::VECTOR4D_Theta_To_QUAT(CQuater
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::EulerZYX_To_QUAT(CQuaternion* q, float theta_z, float theta_y, float theta_x)
+void Sloong::Math::Quaternion::CQuaternion::EulerZYX_To_QUAT(CQuaternion* q, float theta_z, float theta_y, float theta_x)
 {
 	// this function intializes a quaternion based on the zyx
 	// multiplication order of the angles that are parallel to the
@@ -254,7 +254,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::EulerZYX_To_QUAT(CQuaternion* 
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_To_VECTOR3D_Theta(CQuaternion* q, VECTOR3D_PTR v, float *theta)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_To_VECTOR3D_Theta(CQuaternion* q, VECTOR3D_PTR v, float *theta)
 {
 	// this function converts a unit quaternion into a unit direction
 	// vector and rotation angle about that vector
@@ -275,7 +275,7 @@ void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_To_VECTOR3D_Theta(CQuater
 
 }
 
-void SoaringLoong::Math::Quaternion::CQuaternion::QUAT_Print(CQuaternion* q, char *name)
+void Sloong::Math::Quaternion::CQuaternion::QUAT_Print(CQuaternion* q, char *name)
 {
 	// this function prints out a quaternion
 	Write_Error("\n%s=%f+[(%f)i + (%f)j + (%f)k]",

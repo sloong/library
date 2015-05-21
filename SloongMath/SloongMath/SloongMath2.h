@@ -1,10 +1,10 @@
 #pragma once
 #include "SloongVector.h"
-using namespace SoaringLoong::Math::Vector;
+using namespace Sloong::Math::Vector;
 #include "SloongMatrix.h"
-using namespace SoaringLoong::Math::Matrix;
+using namespace Sloong::Math::Matrix;
 
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Math
 	{

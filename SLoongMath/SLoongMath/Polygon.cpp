@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
 #include "SloongMath.h"
-using namespace SoaringLoong::SloongMath;
+#include "SloongPlane.h"
+using namespace Sloong::Math;
 
 void CPolygon::Copy(CPolygon &pol)
 {

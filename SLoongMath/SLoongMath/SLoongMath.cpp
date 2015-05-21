@@ -5,7 +5,7 @@
 
 #include "SloongMath.h"
 
-using namespace SoaringLoong::SloongMath;
+using namespace Sloong::Math;
 
 CSLMath::CSLMath()
 {

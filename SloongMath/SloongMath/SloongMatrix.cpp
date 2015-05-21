@@ -2,10 +2,10 @@
 #include "SloongMatrix.h"
 #include "SloongVector.h"
 #include "SloongMath2.h"
-using namespace SoaringLoong::Math::Vector;
+using namespace Sloong::Math::Vector;
 
 
-int SoaringLoong::Math::Matrix::CMatrix3x2::Mat_Init_3X2(CMatrix3x2* ma, float m00, float m01, float m10, float m11, float m20, float m21)
+int Sloong::Math::Matrix::CMatrix3x2::Mat_Init_3X2(CMatrix3x2* ma, float m00, float m01, float m10, float m11, float m20, float m21)
 {
 	ma->M[0][0] = m00; ma->M[0][1] = m01;
 	ma->M[1][0] = m10; ma->M[1][1] = m11;
@@ -15,12 +15,12 @@ int SoaringLoong::Math::Matrix::CMatrix3x2::Mat_Init_3X2(CMatrix3x2* ma, float m
 	return(1);
 }
 
-int SoaringLoong::Math::Matrix::CMatrix3x2::Mat_Mul_1X2_3X2(CMatrix1x2* ma, CMatrix3x2* mb, CMatrix1x2* mprod)
+int Sloong::Math::Matrix::CMatrix3x2::Mat_Mul_1X2_3X2(CMatrix1x2* ma, CMatrix3x2* mb, CMatrix1x2* mprod)
 {
-	// this function multiplies a 1x2 matrix against a 
-	// 3x2 matrix - ma*mb and stores the result
+	// this function multiplies a 1x2 M against a 
+	// 3x2 M - ma*mb and stores the result
 	// using a dummy element for the 3rd element of the 1x2 
-	// to make the matrix multiply valid i.e. 1x3 X 3x2
+	// to make the M multiply valid i.e. 1x3 X 3x2
 
 	for (int col = 0; col < 2; col++)
 	{
@@ -48,7 +48,7 @@ int SoaringLoong::Math::Matrix::CMatrix3x2::Mat_Mul_1X2_3X2(CMatrix1x2* ma, CMat
 
 }
 
-int SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Mul_3X3(CMatrix3x3* ma, CMatrix3x3* mb, CMatrix3x3* mprod)
+int Sloong::Math::Matrix::CMatrix3x3::Mat_Mul_3X3(CMatrix3x3* ma, CMatrix3x3* mb, CMatrix3x3* mprod)
 {
 	// this function multiplies two matrices together and 
 	// and stores the result
@@ -78,7 +78,7 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Mul_3X3(CMatrix3x3* ma, CMatrix3
 	return(1);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Add_3X3(CMatrix3x3* ma, CMatrix3x3* mb, CMatrix3x3* msum)
+void Sloong::Math::Matrix::CMatrix3x3::Mat_Add_3X3(CMatrix3x3* ma, CMatrix3x3* mb, CMatrix3x3* msum)
 {
 	// this function adds two 3x3 matrices together and 
 	// and stores the result
@@ -95,10 +95,10 @@ void SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Add_3X3(CMatrix3x3* ma, CMatrix
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Mul_VECTOR3D_3X3(VECTOR3D_PTR va, CMatrix3x3* mb, VECTOR3D_PTR vprod)
+void Sloong::Math::Matrix::CMatrix3x3::Mat_Mul_VECTOR3D_3X3(VECTOR3D_PTR va, CMatrix3x3* mb, VECTOR3D_PTR vprod)
 {
 	// this function multiplies a VECTOR3D against a 
-	// 3x3 matrix - ma*mb and stores the result in mprod
+	// 3x3 M - ma*mb and stores the result in mprod
 
 	for (int col = 0; col < 3; col++)
 	{
@@ -119,7 +119,7 @@ void SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Mul_VECTOR3D_3X3(VECTOR3D_PTR v
 
 }
 
-int SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Inverse_3X3(CMatrix3x3* m, CMatrix3x3* mi)
+int Sloong::Math::Matrix::CMatrix3x3::Mat_Inverse_3X3(CMatrix3x3* m, CMatrix3x3* mi)
 {
 	// this function computes the inverse of a 3x3
 
@@ -153,9 +153,9 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Inverse_3X3(CMatrix3x3* m, CMatr
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Init_3X3(CMatrix3x3* ma, float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+void Sloong::Math::Matrix::CMatrix3x3::Mat_Init_3X3(CMatrix3x3* ma, float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
 {
-	// this function fills a 3x3 matrix with the sent data in row major form
+	// this function fills a 3x3 M with the sent data in row major form
 
 	ma->M00 = m00; ma->M01 = m01; ma->M02 = m02;
 	ma->M10 = m10; ma->M11 = m11; ma->M12 = m12;
@@ -164,9 +164,9 @@ void SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Init_3X3(CMatrix3x3* ma, float 
 }
 
 
-float SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Det_3X3(CMatrix3x3* m)
+float Sloong::Math::Matrix::CMatrix3x3::Mat_Det_3X3(CMatrix3x3* m)
 {
-	// computes the determinate of a 3x3 matrix using co-factor
+	// computes the determinate of a 3x3 M using co-factor
 	// expansion
 
 	return(m->M00*(m->M11*m->M22 - m->M21*m->M12) -
@@ -175,7 +175,7 @@ float SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Det_3X3(CMatrix3x3* m)
 
 }
 
-int SoaringLoong::Math::Matrix::CMatrix3x3::Solve_3X3_System(CMatrix3x3* A, MATRIX1X3_PTR X, MATRIX1X3_PTR B)
+int Sloong::Math::Matrix::CMatrix3x3::Solve_3X3_System(CMatrix3x3* A, MATRIX1X3_PTR X, MATRIX1X3_PTR B)
 {
 	// solves the system AX=B and computes X=A(-1)*B
 	// by using cramers rule and determinates
@@ -189,11 +189,11 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Solve_3X3_System(CMatrix3x3* A, MATR
 
 	// step 2: create x,y,z numerator matrices by taking A and
 	// replacing each column of it with B(transpose) and solve
-	MATRIX3X3 work_mat; // working matrix
+	MATRIX3X3 work_mat; // working M
 
 	// solve for x /////////////////
 
-	// copy A into working matrix
+	// copy A into working M
 	work_mat.Copy(A);
 
 	// swap out column 0 (x column)
@@ -207,7 +207,7 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Solve_3X3_System(CMatrix3x3* A, MATR
 
 	// solve for y /////////////////
 
-	// copy A into working matrix
+	// copy A into working M
 	work_mat.Copy(A);
 
 	// swap out column 1 (y column)
@@ -221,7 +221,7 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Solve_3X3_System(CMatrix3x3* A, MATR
 
 	// solve for z /////////////////
 
-	// copy A into working matrix
+	// copy A into working M
 	work_mat.Copy(A);
 
 	// swap out column 2 (z column)
@@ -237,22 +237,22 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Solve_3X3_System(CMatrix3x3* A, MATR
 	return(1);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix3x3::Copy(const CMatrix3x3& mSrc)
+void Sloong::Math::Matrix::CMatrix3x3::Copy(const CMatrix3x3& mSrc)
 {
 	Copy(&mSrc);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix3x3::Copy(const CMatrix3x3* mSrc)
+void Sloong::Math::Matrix::CMatrix3x3::Copy(const CMatrix3x3* mSrc)
 {
 	M00 = mSrc->M00; M01 = mSrc->M10; M02 = mSrc->M20;
 	M10 = mSrc->M01; M11 = mSrc->M11; M12 = mSrc->M21;
 	M20 = mSrc->M02; M21 = mSrc->M12; M22 = mSrc->M22;
 }
 
-int SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Mul_1X3_3X3(CMatrix1x3* ma, CMatrix3x3* mb, CMatrix1x3* mprod)
+int Sloong::Math::Matrix::CMatrix3x3::Mat_Mul_1X3_3X3(CMatrix1x3* ma, CMatrix3x3* mb, CMatrix1x3* mprod)
 {
-	// this function multiplies a 1x3 matrix against a 
-	// 3x3 matrix - ma*mb and stores the result
+	// this function multiplies a 1x3 M against a 
+	// 3x3 M - ma*mb and stores the result
 
 	for (int col = 0; col < 3; col++)
 	{
@@ -275,9 +275,9 @@ int SoaringLoong::Math::Matrix::CMatrix3x3::Mat_Mul_1X3_3X3(CMatrix1x3* ma, CMat
 	return(1);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Initialize(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
+void Sloong::Math::Matrix::CMatrix4x4::Initialize(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
 {
-	// this function fills a 4x4 matrix with the sent data in 
+	// this function fills a 4x4 M with the sent data in 
 	// row major form
 	this->M00 = m00; this->M01 = m01; this->M02 = m02; this->M03 = m03;
 	this->M10 = m10; this->M11 = m11; this->M12 = m12; this->M13 = m13;
@@ -286,7 +286,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::Initialize(float m00, float m01, fl
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Initialize(const CMatrix4x4& mSrc)
+void Sloong::Math::Matrix::CMatrix4x4::Initialize(const CMatrix4x4& mSrc)
 {
 	
 	this->M00 = mSrc.M00; this->M01 = mSrc.M01; this->M02 = mSrc.M02; this->M03 = mSrc.M03;
@@ -295,7 +295,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::Initialize(const CMatrix4x4& mSrc)
 	this->M30 = mSrc.M30; this->M31 = mSrc.M31; this->M32 = mSrc.M32; this->M33 = mSrc.M33;
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Mat_Add_4X4(CMatrix4x4* ma, CMatrix4x4* mb, CMatrix4x4* msum)
+void Sloong::Math::Matrix::CMatrix4x4::Mat_Add_4X4(CMatrix4x4* ma, CMatrix4x4* mb, CMatrix4x4* msum)
 {
 	// this function adds two 4x4 matrices together and 
 	// and stores the result
@@ -312,7 +312,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::Mat_Add_4X4(CMatrix4x4* ma, CMatrix
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Multiply(CMatrix4x4* ma, CMatrix4x4* mb)
+void Sloong::Math::Matrix::CMatrix4x4::Multiply(CMatrix4x4* ma, CMatrix4x4* mb)
 {
 	// this function multiplies two 4x4 matrices together and 
 	// and stores the result in mprod
@@ -344,10 +344,10 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::Multiply(CMatrix4x4* ma, CMatrix4x4
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Mat_Mul_1X4_4X4(MATRIX1X4_PTR ma, CMatrix4x4* mb, MATRIX1X4_PTR mprod)
+void Sloong::Math::Matrix::CMatrix4x4::Mat_Mul_1X4_4X4(MATRIX1X4_PTR ma, CMatrix4x4* mb, MATRIX1X4_PTR mprod)
 {
-	// this function multiplies a 1x4 matrix against a 
-	// 4x4 matrix - ma*mb and stores the result
+	// this function multiplies a 1x4 M against a 
+	// 4x4 M - ma*mb and stores the result
 	// no tricks or assumptions here, just a straight multiply
 
 	for (int col = 0; col < 4; col++)
@@ -368,10 +368,10 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::Mat_Mul_1X4_4X4(MATRIX1X4_PTR ma, C
 	} // end for col
 }
 
-CVector3D SoaringLoong::Math::Matrix::CMatrix4x4::Multiply( const CVector3D& va )
+CVector3D Sloong::Math::Matrix::CMatrix4x4::Multiply( const CVector3D& va )
 {
 	// this function multiplies a VECTOR3D against a 
-	// 4x4 matrix - ma*mb and stores the result in mprod
+	// 4x4 M - ma*mb and stores the result in mprod
 	// the function assumes that the vector refers to a 
 	// 4D homogenous vector, thus the function assumes that
 	// w=1 to carry out the multiply, also the function
@@ -401,20 +401,20 @@ CVector3D SoaringLoong::Math::Matrix::CMatrix4x4::Multiply( const CVector3D& va 
 	return vTemp;
 }
 
-CVector4D SoaringLoong::Math::Matrix::CMatrix4x4::Multiply( const CVector4D& va ) const
+CVector4D Sloong::Math::Matrix::CMatrix4x4::Multiply( const CVector4D& va ) const
 {
 	return CVector4D::Multiply(va,*this);
 }
 
-SoaringLoong::Math::Vector::CVector4D SoaringLoong::Math::Matrix::CMatrix4x4::Multiply(const CVector4D* va) const
+Sloong::Math::Vector::CVector4D Sloong::Math::Matrix::CMatrix4x4::Multiply(const CVector4D* va) const
 {
 	return CVector4D::Multiply(va, this);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x3::Mat_Mul_VECTOR4D_4X3(VECTOR4D_PTR va, CMatrix4x3* mb, VECTOR4D_PTR vprod)
+void Sloong::Math::Matrix::CMatrix4x3::Mat_Mul_VECTOR4D_4X3(VECTOR4D_PTR va, CMatrix4x3* mb, VECTOR4D_PTR vprod)
 {
 	// this function multiplies a VECTOR4D against a 
-	// 4x3 matrix - ma*mb and stores the result in mprod
+	// 4x3 M - ma*mb and stores the result in mprod
 	// the function assumes that the last column of
 	// mb is [0 0 0 1]t , thus w just gets replicated
 	// from the vector [x y z w]
@@ -441,7 +441,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x3::Mat_Mul_VECTOR4D_4X3(VECTOR4D_PTR v
 
 }
 
-int SoaringLoong::Math::Matrix::CMatrix4x4::Mat_Inverse_4X4(CMatrix4x4* m, CMatrix4x4* mi)
+int Sloong::Math::Matrix::CMatrix4x4::Mat_Inverse_4X4(CMatrix4x4* m, CMatrix4x4* mi)
 {
 	// computes the inverse of a 4x4, assumes that the last
 	// column is [0 0 0 1]t
@@ -481,7 +481,7 @@ int SoaringLoong::Math::Matrix::CMatrix4x4::Mat_Inverse_4X4(CMatrix4x4* m, CMatr
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::BuildMoveMatrix(const CVector4D& vMove)
+void Sloong::Math::Matrix::CMatrix4x4::BuildMoveMatrix(const CVector4D& vMove)
 {
 	Initialize(1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -489,20 +489,20 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildMoveMatrix(const CVector4D& vM
 		vMove.x, vMove.y, vMove.z, 1);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double y, double z)
+void Sloong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double y, double z)
 {
 	// this helper function takes a set if euler angles and computes
-	// a rotation matrix from them, usefull for object and camera
+	// a rotation M from them, usefull for object and camera
 	// work, also  we will do a little testing in the function to determine
 	// the rotations that need to be performed, since there's no
-	// reason to perform extra matrix multiplies if the angles are
+	// reason to perform extra M multiplies if the angles are
 	// zero!
 
 	MATRIX4X4 mx, my, mz, mtmp;       // working matrices
 	float sin_theta = 0, cos_theta = 0;   // used to initialize matrices
 	int rot_seq = 0;                  // 1 for x, 2 for y, 4 for z
 
-	// step 0: fill in with identity matrix
+	// step 0: fill in with identity M
 	Zero();
 
 	// step 1: based on zero and non-zero rotation angles, determine
@@ -531,7 +531,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(x);
 				sin_theta = Fast_Sin(x);
 
-				// set the matrix up 
+				// set the M up 
 				Initialize(1, 0, 0, 0,
 					0, cos_theta, sin_theta, 0,
 					0, -sin_theta, cos_theta, 0,
@@ -547,7 +547,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(y);
 				sin_theta = Fast_Sin(y);
 
-				// set the matrix up 
+				// set the M up 
 				Initialize(cos_theta, 0, -sin_theta, 0,
 					0, 1, 0, 0,
 					sin_theta, 0, cos_theta, 0,
@@ -563,7 +563,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(x);
 				sin_theta = Fast_Sin(x);
 
-				// set the matrix up 
+				// set the M up 
 				mx.Initialize(1, 0, 0, 0,
 					0, cos_theta, sin_theta, 0,
 					0, -sin_theta, cos_theta, 0,
@@ -573,7 +573,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(y);
 				sin_theta = Fast_Sin(y);
 
-				// set the matrix up 
+				// set the M up 
 				my.Initialize(cos_theta, 0, -sin_theta, 0,
 					0, 1, 0, 0,
 					sin_theta, 0, cos_theta, 0,
@@ -591,7 +591,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(z);
 				sin_theta = Fast_Sin(z);
 
-				// set the matrix up 
+				// set the M up 
 				Initialize(cos_theta, sin_theta, 0, 0,
 					-sin_theta, cos_theta, 0, 0,
 					0, 0, 1, 0,
@@ -607,7 +607,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(x);
 				sin_theta = Fast_Sin(x);
 
-				// set the matrix up 
+				// set the M up 
 				mx.Initialize(1, 0, 0, 0,
 					0, cos_theta, sin_theta, 0,
 					0, -sin_theta, cos_theta, 0,
@@ -617,7 +617,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(z);
 				sin_theta = Fast_Sin(z);
 
-				// set the matrix up 
+				// set the M up 
 				mz.Initialize(cos_theta, sin_theta, 0, 0,
 					-sin_theta, cos_theta, 0, 0,
 					0, 0, 1, 0,
@@ -635,7 +635,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(y);
 				sin_theta = Fast_Sin(y);
 
-				// set the matrix up 
+				// set the M up 
 				my.Initialize(cos_theta, 0, -sin_theta, 0,
 					0, 1, 0, 0,
 					sin_theta, 0, cos_theta, 0,
@@ -645,7 +645,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(z);
 				sin_theta = Fast_Sin(z);
 
-				// set the matrix up 
+				// set the M up 
 				mz.Initialize(cos_theta, sin_theta, 0, 0,
 					-sin_theta, cos_theta, 0, 0,
 					0, 0, 1, 0,
@@ -663,7 +663,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(x);
 				sin_theta = Fast_Sin(x);
 
-				// set the matrix up 
+				// set the M up 
 				mx.Initialize(1, 0, 0, 0,
 					0, cos_theta, sin_theta, 0,
 					0, -sin_theta, cos_theta, 0,
@@ -673,7 +673,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(y);
 				sin_theta = Fast_Sin(y);
 
-				// set the matrix up 
+				// set the M up 
 				my.Initialize(cos_theta, 0, -sin_theta, 0,
 					0, 1, 0, 0,
 					sin_theta, 0, cos_theta, 0,
@@ -683,7 +683,7 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 				cos_theta = Fast_Cos(z);
 				sin_theta = Fast_Sin(z);
 
-				// set the matrix up 
+				// set the M up 
 				mz.Initialize(cos_theta, sin_theta, 0, 0,
 					-sin_theta, cos_theta, 0, 0,
 					0, 0, 1, 0,
@@ -701,17 +701,17 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::BuildRotateMatrix(double x, double 
 }
 
 
-SoaringLoong::Math::Matrix::CMatrix4x4::CMatrix4x4()
+Sloong::Math::Matrix::CMatrix4x4::CMatrix4x4()
 {
 	Zero();
 }
 
-SoaringLoong::Math::Matrix::CMatrix4x4::~CMatrix4x4()
+Sloong::Math::Matrix::CMatrix4x4::~CMatrix4x4()
 {
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Zero()
+void Sloong::Math::Matrix::CMatrix4x4::Zero()
 {
 	Initialize(1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -719,15 +719,15 @@ void SoaringLoong::Math::Matrix::CMatrix4x4::Zero()
 		0, 0, 0, 1);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x4::Copy(const CMatrix4x4& mSrc)
+void Sloong::Math::Matrix::CMatrix4x4::Copy(const CMatrix4x4& mSrc)
 {
 	Initialize(mSrc);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix4x3::Mat_Mul_VECTOR3D_4X3(VECTOR3D_PTR va, CMatrix4x3* mb, VECTOR3D_PTR vprod)
+void Sloong::Math::Matrix::CMatrix4x3::Mat_Mul_VECTOR3D_4X3(VECTOR3D_PTR va, CMatrix4x3* mb, VECTOR3D_PTR vprod)
 {
 	// this function multiplies a VECTOR3D against a 
-	// 4x3 matrix - ma*mb and stores the result in mprod
+	// 4x3 M - ma*mb and stores the result in mprod
 	// the function assumes that the vector refers to a 
 	// 4D homogenous vector, thus the function assumes that
 	// w=1 to carry out the multiply, also the function
@@ -756,21 +756,21 @@ void SoaringLoong::Math::Matrix::CMatrix4x3::Mat_Mul_VECTOR3D_4X3(VECTOR3D_PTR v
 	} // end for col
 }
 
-void SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Init_2X2(CMatrix2x2* ma, float m00, float m01, float m10, float m11)
+void Sloong::Math::Matrix::CMatrix2x2::Mat_Init_2X2(CMatrix2x2* ma, float m00, float m01, float m10, float m11)
 {
-	// this function fills a 2x2 matrix with the sent data in 
+	// this function fills a 2x2 M with the sent data in 
 	// row major form
 	ma->M00 = m00; ma->M01 = m01;
 	ma->M10 = m10; ma->M11 = m11;
 
 }
 
-float SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Det_2X2(CMatrix2x2* m)
+float Sloong::Math::Matrix::CMatrix2x2::Mat_Det_2X2(CMatrix2x2* m)
 {
 	return(m->M00*m->M11 - m->M01*m->M10);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Add_2X2(CMatrix2x2* ma, CMatrix2x2* mb, CMatrix2x2* msum)
+void Sloong::Math::Matrix::CMatrix2x2::Mat_Add_2X2(CMatrix2x2* ma, CMatrix2x2* mb, CMatrix2x2* msum)
 {
 	// this function adds two 2x2 matrices together and stores
 	// the result in msum
@@ -781,7 +781,7 @@ void SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Add_2X2(CMatrix2x2* ma, CMatrix
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Mul_2X2(CMatrix2x2* ma, CMatrix2x2* mb, CMatrix2x2* mprod)
+void Sloong::Math::Matrix::CMatrix2x2::Mat_Mul_2X2(CMatrix2x2* ma, CMatrix2x2* mb, CMatrix2x2* mprod)
 {
 	// this function multiplies two 2x2 matrices together and 
 	// and stores the result in mprod
@@ -792,9 +792,9 @@ void SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Mul_2X2(CMatrix2x2* ma, CMatrix
 	mprod->M11 = ma->M10*mb->M01 + ma->M11*mb->M11;
 }
 
-int SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Inverse_2X2(CMatrix2x2* m, CMatrix2x2* mi)
+int Sloong::Math::Matrix::CMatrix2x2::Mat_Inverse_2X2(CMatrix2x2* m, CMatrix2x2* mi)
 {
-	// this function computes the inverse of a 2x2 matrix
+	// this function computes the inverse of a 2x2 M
 	// and stores the result in mi
 
 	// compute determinate
@@ -816,7 +816,7 @@ int SoaringLoong::Math::Matrix::CMatrix2x2::Mat_Inverse_2X2(CMatrix2x2* m, CMatr
 	return(1);
 }
 
-int SoaringLoong::Math::Matrix::CMatrix2x2::Solve_2X2_System(CMatrix2x2* A, MATRIX1X2_PTR X, MATRIX1X2_PTR B)
+int Sloong::Math::Matrix::CMatrix2x2::Solve_2X2_System(CMatrix2x2* A, MATRIX1X2_PTR X, MATRIX1X2_PTR B)
 {
 	// solves the system AX=B and computes X=A(-1)*B
 	// by using cramers rule and determinates
@@ -830,11 +830,11 @@ int SoaringLoong::Math::Matrix::CMatrix2x2::Solve_2X2_System(CMatrix2x2* A, MATR
 
 	// step 2: create x,y numerator matrices by taking A and
 	// replacing each column of it with B(transpose) and solve
-	MATRIX2X2 work_mat; // working matrix
+	MATRIX2X2 work_mat; // working M
 
 	// solve for x /////////////////
 
-	// copy A into working matrix
+	// copy A into working M
 	work_mat.Copy(A);
 
 	// swap out column 0 (x column)
@@ -848,7 +848,7 @@ int SoaringLoong::Math::Matrix::CMatrix2x2::Solve_2X2_System(CMatrix2x2* A, MATR
 
 	// solve for y /////////////////
 
-	// copy A into working matrix
+	// copy A into working M
 	work_mat.Copy(A);
 
 	// swap out column 1 (y column)
@@ -865,13 +865,267 @@ int SoaringLoong::Math::Matrix::CMatrix2x2::Solve_2X2_System(CMatrix2x2* A, MATR
 
 }
 
-void SoaringLoong::Math::Matrix::CMatrix2x2::Copy(const CMatrix2x2& mSrc)
+void Sloong::Math::Matrix::CMatrix2x2::Copy(const CMatrix2x2& mSrc)
 {
 	Copy(&mSrc);
 }
 
-void SoaringLoong::Math::Matrix::CMatrix2x2::Copy(const CMatrix2x2* mSrc)
+void Sloong::Math::Matrix::CMatrix2x2::Copy(const CMatrix2x2* mSrc)
 {
 	M00 = mSrc->M00; M01 = mSrc->M01;
 	M10 = mSrc->M10; M11 = mSrc->M11;
+}
+
+
+
+CMatrix4x4::CMatrix4x4(const CMatrix4x4 &m)
+{
+	M[0][0] = m.M[0][0];
+	M[0][1] = m.M[0][1];
+	M[0][2] = m.M[0][2];
+	M[0][3] = m.M[0][3];
+
+	M[1][0] = m.M[1][0];
+	M[1][1] = m.M[1][1];
+	M[1][2] = m.M[1][2];
+	M[1][3] = m.M[1][3];
+
+	M[2][0] = m.M[2][0];
+	M[2][1] = m.M[2][1];
+	M[2][2] = m.M[2][2];
+	M[2][3] = m.M[2][3];
+
+	M[3][0] = m.M[3][0];
+	M[3][1] = m.M[3][1];
+	M[3][2] = m.M[3][2];
+	M[3][3] = m.M[3][3];
+}
+
+
+CMatrix4x4::CMatrix4x4(float r11, float r12, float r13, float r14,
+	float r21, float r22, float r23, float r24,
+	float r31, float r32, float r33, float r34,
+	float r41, float r42, float r43, float r44)
+{
+	M[0][0] = r11; M[0][1] = r12; M[0][2] = r13; M[0][3] = r14;
+	M[1][0] = r21; M[1][1] = r22; M[1][2] = r23; M[1][3] = r24;
+	M[2][0] = r31; M[2][1] = r32; M[2][2] = r33; M[2][3] = r34;
+	M[3][0] = r41; M[3][1] = r42; M[3][2] = r43; M[3][3] = r44;
+}
+
+
+void CMatrix4x4::Identity()
+{
+	M[0][0] = 1.0f; M[0][1] = 0.0f; M[0][2] = 0.0f; M[0][3] = 0.0f;
+	M[1][0] = 0.0f; M[1][1] = 1.0f; M[1][2] = 0.0f; M[1][3] = 0.0f;
+	M[2][0] = 0.0f; M[2][1] = 0.0f; M[2][2] = 1.0f; M[2][3] = 0.0f;
+	M[3][0] = 0.0f; M[3][1] = 0.0f; M[3][2] = 0.0f; M[3][3] = 1.0f;
+}
+
+
+void CMatrix4x4::operator =(CMatrix4x4 &m)
+{
+	M[0][0] = m.M[0][0];
+	M[0][1] = m.M[0][1];
+	M[0][2] = m.M[0][2];
+	M[0][3] = m.M[0][3];
+
+	M[1][0] = m.M[1][0];
+	M[1][1] = m.M[1][1];
+	M[1][2] = m.M[1][2];
+	M[1][3] = m.M[1][3];
+
+	M[2][0] = m.M[2][0];
+	M[2][1] = m.M[2][1];
+	M[2][2] = m.M[2][2];
+	M[2][3] = m.M[2][3];
+
+	M[3][0] = m.M[3][0];
+	M[3][1] = m.M[3][1];
+	M[3][2] = m.M[3][2];
+	M[3][3] = m.M[3][3];
+}
+
+
+CMatrix4x4 CMatrix4x4::operator -(CMatrix4x4 &m)
+{
+	return CMatrix4x4(M[0][0] - m.M[0][0], M[0][1] - m.M[0][1], M[0][2] - m.M[0][2], M[0][3] - m.M[0][3],
+		M[1][0] - m.M[1][0], M[1][1] - m.M[1][1], M[1][2] - m.M[1][2], M[1][3] - m.M[1][3],
+		M[2][0] - m.M[2][0], M[2][1] - m.M[2][1], M[2][2] - m.M[2][2], M[2][1] - m.M[2][3],
+		M[3][0] - m.M[3][0], M[3][1] - m.M[3][1], M[3][2] - m.M[3][2], M[3][3] - m.M[3][3]);
+}
+
+
+CMatrix4x4 CMatrix4x4::operator +(CMatrix4x4 &m)
+{
+	return CMatrix4x4(M[0][0] + m.M[0][0], M[0][1] + m.M[0][1], M[0][2] + m.M[0][2], M[0][3] + m.M[0][3],
+		M[1][0] + m.M[1][0], M[1][1] + m.M[1][1], M[1][2] + m.M[1][2], M[1][3] + m.M[1][3],
+		M[2][0] + m.M[2][0], M[2][1] + m.M[2][1], M[2][2] + m.M[2][2], M[2][3] + m.M[2][3],
+		M[3][0] + m.M[3][0], M[3][1] + m.M[3][1], M[3][2] + m.M[3][2], M[3][3] + m.M[3][3]);
+}
+
+
+CMatrix4x4 CMatrix4x4::operator *(CMatrix4x4 &m)
+{
+	float fLine1[4] = { 0.0f };
+	fLine1[0] = M[0][0] * m.M[0][0] + M[1][0] * m.M[0][1] + M[2][0] * m.M[0][2] + M[3][0] * m.M[0][3];
+	fLine1[1] = M[0][1] * m.M[0][0] + M[1][1] * m.M[0][1] + M[2][1] * m.M[0][2] + M[3][1] * m.M[0][3];
+	fLine1[2] = M[0][2] * m.M[0][0] + M[1][2] * m.M[0][1] + M[2][2] * m.M[0][2] + M[3][2] * m.M[0][3];
+	fLine1[3] = M[0][3] * m.M[0][0] + M[1][3] * m.M[0][1] + M[2][3] * m.M[0][2] + M[3][3] * m.M[0][3];
+
+	float fLine2[4] = { 0.0f };
+	fLine2[0] = M[0][0] * m.M[1][0] + M[1][0] * m.M[1][1] + M[2][0] * m.M[1][2] + M[3][0] * m.M[1][3];
+	fLine2[1] = M[0][1] * m.M[1][0] + M[1][1] * m.M[1][1] + M[2][1] * m.M[1][2] + M[3][1] * m.M[1][3];
+	fLine2[2] = M[0][2] * m.M[1][0] + M[1][2] * m.M[1][1] + M[2][2] * m.M[1][2] + M[3][2] * m.M[1][3];
+	fLine2[3] = M[0][3] * m.M[1][0] + M[1][3] * m.M[1][1] + M[2][3] * m.M[1][2] + M[3][3] * m.M[1][3];
+
+	float fLine3[4] = { 0.0f };
+	fLine3[0] = M[0][0] * m.M[2][0] + M[1][0] * m.M[2][1] + M[2][0] * m.M[2][2] + M[3][0] * m.M[2][3];
+	fLine3[1] = M[0][1] * m.M[2][0] + M[1][1] * m.M[2][1] + M[2][1] * m.M[2][2] + M[3][1] * m.M[2][3];
+	fLine3[2] = M[0][2] * m.M[2][0] + M[1][2] * m.M[2][1] + M[2][2] * m.M[2][2] + M[3][2] * m.M[2][3];
+	fLine3[3] = M[0][3] * m.M[2][0] + M[1][3] * m.M[2][1] + M[2][3] * m.M[2][2] + M[3][3] * m.M[2][3];
+
+	float fLine4[4] = { 0.0f };
+	fLine4[0] = M[0][0] * m.M[3][0] + M[1][0] * m.M[3][1] + M[2][0] * m.M[3][2] + M[3][0] * m.M[3][3];
+	fLine4[1] = M[0][1] * m.M[3][0] + M[1][1] * m.M[3][1] + M[2][1] * m.M[3][2] + M[3][1] * m.M[3][3];
+	fLine4[2] = M[0][2] * m.M[3][0] + M[1][2] * m.M[3][1] + M[2][2] * m.M[3][2] + M[3][2] * m.M[3][3];
+	fLine4[3] = M[0][3] * m.M[3][0] + M[1][3] * m.M[3][1] + M[2][3] * m.M[3][2] + M[3][3] * m.M[3][3];
+
+	return CMatrix4x4(fLine1[0], fLine1[1], fLine1[2], fLine1[3],
+		fLine2[0], fLine2[1], fLine2[2], fLine2[3],
+		fLine3[0], fLine3[1], fLine3[2], fLine3[3],
+		fLine4[0], fLine4[1], fLine4[2], fLine4[3]);
+}
+
+
+CMatrix4x4 CMatrix4x4::operator *(float f)
+{
+	return CMatrix4x4(M[0][0] * f, M[0][1] * f, M[0][2] * f, M[0][3] * f,
+		M[1][0] * f, M[1][1] * f, M[1][2] * f, M[1][3] * f,
+		M[2][0] * f, M[2][1] * f, M[2][2] * f, M[2][3] * f,
+		M[3][0] * f, M[3][1] * f, M[3][2] * f, M[3][3] * f);
+}
+
+
+CMatrix4x4 CMatrix4x4::operator /(float f)
+{
+	if (f == 0) f = 1;
+	f = 1 / f;
+
+	return CMatrix4x4(M[0][0] * f, M[0][1] * f, M[0][2] * f, M[0][3] * f,
+		M[1][0] * f, M[1][1] * f, M[1][2] * f, M[1][3] * f,
+		M[2][0] * f, M[2][1] * f, M[2][2] * f, M[2][3] * f,
+		M[3][0] * f, M[3][1] * f, M[3][2] * f, M[3][3] * f);
+}
+
+
+void CMatrix4x4::operator +=(CMatrix4x4 &m)
+{
+	(*this) = (*this) + m;
+}
+
+
+void CMatrix4x4::operator -=(CMatrix4x4 &m)
+{
+	(*this) = (*this) - m;
+}
+
+
+void CMatrix4x4::operator *=(CMatrix4x4 &m)
+{
+	(*this) = (*this) * m;
+}
+
+
+void CMatrix4x4::operator *=(float f)
+{
+	(*this) = (*this) * f;
+}
+
+
+void CMatrix4x4::operator /=(float f)
+{
+	(*this) = (*this) / f;
+}
+
+
+void CMatrix4x4::Translate(CVector3D &Translate)
+{
+	M[3][0] = Translate.x;
+	M[3][1] = Translate.y;
+	M[3][2] = Translate.z;
+	M[3][3] = 1.0f;
+}
+
+
+void CMatrix4x4::Translate(float x, float y, float z)
+{
+	M[3][0] = x;
+	M[3][1] = y;
+	M[3][2] = z;
+	M[3][3] = 1.0f;
+}
+
+
+void CMatrix4x4::inverseTranslate()
+{
+	M[3][0] = -M[3][0];
+	M[3][1] = -M[3][1];
+	M[3][2] = -M[3][2];
+}
+
+
+void CMatrix4x4::Rotate(double angle, int x, int y, int z)
+{
+	angle = angle * PI / 180;
+	float cosAngle = cosf((float)angle);
+	float sineAngle = sinf((float)angle);
+
+	if (z)
+	{
+		M[0][0] = cosAngle;
+		M[0][1] = sineAngle;
+		M[1][0] = -sineAngle;
+		M[1][1] = cosAngle;
+	}
+
+	if (y)
+	{
+		M[0][0] = cosAngle;
+		M[0][2] = -sineAngle;
+		M[2][0] = sineAngle;
+		M[2][2] = cosAngle;
+	}
+
+	if (x)
+	{
+		M[1][1] = cosAngle;
+		M[1][2] = sineAngle;
+		M[2][1] = -sineAngle;
+		M[2][2] = cosAngle;
+	}
+}
+
+
+CVector3D CMatrix4x4::VectorMatrixMultiply(CVector3D &v)
+{
+	CVector3D out;
+
+	out.x = (v.x * M[0][0]) + (v.y * M[1][0]) + (v.z * M[2][0]) + M[3][0];
+	out.y = (v.x * M[0][1]) + (v.y * M[1][1]) + (v.z * M[2][1]) + M[3][1];
+	out.z = (v.x * M[0][2]) + (v.y * M[1][2]) + (v.z * M[2][2]) + M[3][2];
+
+	return out;
+}
+
+
+CVector3D CMatrix4x4::VectorMatrixMultiply3x3(CVector3D &v)
+{
+	CVector3D out;
+
+	out.x = (v.x * M[0][0]) + (v.y * M[1][0]) + (v.z * M[2][0]);
+	out.y = (v.x * M[0][1]) + (v.y * M[1][1]) + (v.z * M[2][1]);
+	out.z = (v.x * M[0][2]) + (v.y * M[1][2]) + (v.z * M[2][2]);
+
+	return out;
 }

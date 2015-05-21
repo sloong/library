@@ -1,7 +1,9 @@
 #include "stdafx.h"
 
 #include "SloongMath.h"
-using namespace SoaringLoong::SloongMath;
+#include "SloongPlane.h"
+
+using namespace Sloong::Math;
 
 bool CRay::Intersect(CVector3 &pos, float radius, float *dist)
 {

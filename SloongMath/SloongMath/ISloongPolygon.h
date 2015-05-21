@@ -3,9 +3,9 @@
 #include "SloongVertex.h"
 #include "SloongMatrix.h"
 #include "SloongVector.h"
-using namespace SoaringLoong::Math::Vertex;
-using namespace SoaringLoong::Math::Vector;
-using namespace SoaringLoong::Math::Matrix;
+using namespace Sloong::Math::Vertex;
+using namespace Sloong::Math::Vector;
+using namespace Sloong::Math::Matrix;
 
 
 // states of polygons and faces
@@ -30,7 +30,7 @@ using namespace SoaringLoong::Math::Matrix;
 #define POLY4DV1_ATTR_SHADE_MODE_TEXTURE    0x0200 
 
 
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Graphics
 	{

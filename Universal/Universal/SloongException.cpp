@@ -3,20 +3,17 @@
 
 using namespace Sloong::Universal;
 
-CException::CException(LPCTSTR lpStr)
+
+
+CException::CException(wstring strMessage)
 {
-	m_strMessage = lpStr;
+	m_strMessage = strMessage;
 }
 
-CException::CException(LPCTSTR lpStr, HRESULT hRes)
+CException::CException(wstring lpStr, HRESULT hRes)
 {
 	m_strMessage = lpStr;
 	m_hResult = hRes;
-}
-
-CException::CException(CString strMessage)
-{
-	m_strMessage = strMessage;
 }
 
 
@@ -24,9 +21,10 @@ CException::~CException()
 {
 }
 
-ctstring CException::GetException() const
+
+wstring CException::GetException() const
 {
-	return m_strMessage.GetString();
+	return m_strMessage;
 }
 
 HRESULT CException::GetResult() const

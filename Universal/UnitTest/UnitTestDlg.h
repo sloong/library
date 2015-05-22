@@ -4,7 +4,7 @@
 
 #pragma once
 #import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
-#include "IUniversal.h"
+#include "SloongUniversal.h"
 #include "TestLogDlg.h"
 #include "afxcmn.h"
 #pragma comment(lib,"Universal.lib")

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SloongFile.h"
-#include "SloongString.h"
 #include "SloongException.h"
+#include "SloongUniversal.h"
 
 using namespace Sloong::Universal;
 // This function will load one line string from file.
@@ -13,7 +13,7 @@ LPCTSTR Sloong::Universal::CFile::GetLine()
 
 	while (true)
 	{
-		if (!fgetts(m_szBuffer, 256, m_pFileStream))
+		if (!fgetws(m_szBuffer, 256, m_pFileStream))
 		{
 			return NULL;
 		}
@@ -62,7 +62,7 @@ errno_t Sloong::Universal::CFile::OpenStream(LPCTSTR szFileName, LPCTSTR szMode)
 {
 	if (!Access(szFileName, Exist))
 	{
-		throw CException(CString(_T("Can't open file stream %s, the file is not existing."), szFileName));
+		throw CException(CUniversal::Format(L"Can't open file stream %s, the file is not existing.", szFileName));
 	}
 	return _tfopen_s(&m_pFileStream, szFileName, szMode);
 }

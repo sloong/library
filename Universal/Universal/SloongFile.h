@@ -1,6 +1,4 @@
 #pragma once
-#include "SloongString.h"
-#include <tchar.h>
 namespace Sloong
 {
 	namespace Universal
@@ -27,7 +25,7 @@ namespace Sloong
 		public:
 			TCHAR m_szBuffer[256];
 			FILE* m_pFileStream;
-			CString m_strFileName;
+			wstring m_strFileName;
 		};
 	}
 }

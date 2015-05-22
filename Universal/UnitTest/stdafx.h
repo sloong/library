@@ -38,7 +38,8 @@
 #import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
 
 
-
+#include <string>
+using namespace std;
 
 
 #ifdef _UNICODE

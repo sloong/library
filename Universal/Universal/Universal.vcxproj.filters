@@ -16,9 +16,6 @@
     <Filter Include="TinyXML">
       <UniqueIdentifier>{5a6eb328-f42d-4483-b150-7d593b646c5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="COM Files">
-      <UniqueIdentifier>{8c417788-8554-4876-baa6-b946d7be7ed3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="IDE Files">
       <UniqueIdentifier>{96c18fa1-ffba-4645-a937-8ee238eafcf9}</UniqueIdentifier>
     </Filter>
@@ -48,29 +45,11 @@
     <ClInclude Include="XMLParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Universal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LogSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LinkList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XMLPro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CMDParser.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IUniversal.h">
-      <Filter>COM Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Factory.h">
-      <Filter>COM Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>IDE Files</Filter>
@@ -80,9 +59,6 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SloongString.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SloongFile.h">
       <Filter>Header Files</Filter>
@@ -99,11 +75,17 @@
     <ClInclude Include="SloongLuaWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SloongUniversal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SloongLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Universal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TinyXML\tinystr.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
@@ -119,12 +101,6 @@
     <ClCompile Include="CMDParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LinkList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LogSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PropertyScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -137,20 +113,8 @@
     <ClCompile Include="XMLPro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Exception.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>COM Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Factory.cpp">
-      <Filter>COM Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>IDE Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SloongString.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SloongFile.cpp">
       <Filter>Source Files</Filter>
@@ -167,6 +131,15 @@
     <ClCompile Include="SloongLuaWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongUniversal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SloongLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Universal.rc">
@@ -175,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="universal.def">
-      <Filter>COM Files</Filter>
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
 </Project>

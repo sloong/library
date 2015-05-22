@@ -1,5 +1,5 @@
 #pragma once
-#include "IUniversal.h"
+#include "SloongUniversal.h"
 namespace Sloong
 {
 	namespace Universal

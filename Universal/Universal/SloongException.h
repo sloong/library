@@ -1,5 +1,4 @@
 #pragma once
-#include "SloongString.h"
 #include <exception>
 namespace Sloong
 {
@@ -9,18 +8,17 @@ namespace Sloong
 		class CException : public exception
 		{
 		public:
-			CException(LPCTSTR lpStr);
-			CException(LPCTSTR lpStr, HRESULT hRes);
-			CException(CString strMessage);
+			CException(wstring lpstr);
+			CException(wstring lpStr, HRESULT hRes);
 			~CException();
 
 		public:
-			ctstring GetException() const;
+			wstring GetException() const;
 			HRESULT GetResult() const;
 
 		protected:
 			HRESULT m_hResult;
-			CString m_strMessage;
+			wstring m_strMessage;
 		};
 	}
 }

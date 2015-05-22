@@ -13,4 +13,16 @@
 
 
 // TODO: reference additional headers your program requires here
-#import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
+//#import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
+#include <tchar.h>
+#include <assert.h>
+#include <time.h>
+#include <stdio.h>
+#include <fstream>
+
+#include <map>
+#include <vector>
+#include <list>
+#include <string>
+#include <fstream>
+using namespace std;

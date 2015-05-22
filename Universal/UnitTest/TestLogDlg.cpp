@@ -5,8 +5,9 @@
 #include "UnitTest.h"
 #include "TestLogDlg.h"
 #include "afxdialogex.h"
-#include "IUniversal.h"
-using namespace Sloong;
+#include "SloongUniversal.h"
+#include "SloongLog.h"
+using namespace Sloong::Universal;
 
 // CTestLogDlg dialog
 
@@ -45,15 +46,7 @@ void CTestLogDlg::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
 	// Create ILogSystem from IUniversal::CreateLogSystem interface.
-	ILogSystem* pLog = NULL;
-	pUniversal->CreateLogSystem(pUniversal, &pLog);
-	pLog->WriteLine(TEXT("TestLog"));
-	pLog->WriteLine(pUniversal->HelloWorld());
-	pLog->Release();
-	// Create ILogSystem by CoCreateInstance interface.
-	ILogSystem* pLog2 = NULL;
-	CoCreateInstance(CLSID_SLOONGUniversal, NULL, CLSCTX_INPROC_SERVER, IID_ILogSystem, (LPVOID*)&pLog2);
-	pLog2->Initialize(pUniversal, TEXT("Log2.Log"));
-	pLog2->WriteLine(TEXT("TEST2"));
-	pLog2->Release();
+	CLog pLog;
+	pLog.WriteLine(TEXT("TestLog"));
+	pLog.WriteLine(CUniversal::Version());
 }

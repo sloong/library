@@ -2,7 +2,7 @@
 // /* 				TokenParser.cpp --- Token Parser Implement              */
 // /************************************************************************/
  #include "stdafx.h"
-// #include "Universal/IUniversal.h"
+// #include "Universal/CUniversal.h"
 // 
 // // This is Token max size
 // #define TOKEN_SIZE	256	

@@ -7,6 +7,7 @@
 #include "UnitTestDlg.h"
 #include "afxdialogex.h"
 #include "resource.h"
+#include "SloongUniversal.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -53,10 +54,6 @@ CUnitTestDlg::CUnitTestDlg(CWnd* pParent /*=NULL*/)
 {
 	m_pUniversal = NULL;
 	CoInitialize(NULL);
-	if (FAILED(Sloong::CreateUniversal(&m_pUniversal)))
-	{
-		MessageBox(_T("Create Universal failed."));
-	}
 	m_page2 = new CTestLogDlg(m_pUniversal);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -134,8 +131,8 @@ BOOL CUnitTestDlg::OnInitDialog()
 	m_page2->MoveWindow(&rec);
 	//ÏÔÊ¾×ÓÒ³Ãæ
 	m_page2->ShowWindow(SW_HIDE);
-	LPCTSTR str = m_pUniversal->HelloWorld();
-	MessageBox(str);
+	auto str = CUniversal::Version();
+	MessageBox(str.c_str());
 //	EnableControl(false);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -208,7 +205,6 @@ void CUnitTestDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 
 BOOL CUnitTestDlg::DestroyWindow()
 {
-	m_pUniversal->Release();
 	delete m_page2;
 	CoUninitialize();
 	return CDialogEx::DestroyWindow();

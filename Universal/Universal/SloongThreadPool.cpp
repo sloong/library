@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "IUniversal.h"
+#include "SloongUniversal.h"
 #include "SloongThreadPool.h"
-using namespace SoaringLoong::Universal;
+using namespace Sloong::Universal;
 
-list<ThreadParam*>* SoaringLoong::Universal::CThreadPool::m_pJobList;
+list<ThreadParam*>* Sloong::Universal::CThreadPool::m_pJobList;
 
-HANDLE SoaringLoong::Universal::CThreadPool::g_pMutex;
+HANDLE Sloong::Universal::CThreadPool::g_pMutex;
 CRITICAL_SECTION g_pData;
-SoaringLoong::Universal::CThreadPool::CThreadPool()
+Sloong::Universal::CThreadPool::CThreadPool()
 {
 	m_pThreadList = new vector<HANDLE>;
 	m_pJobList = new list<ThreadParam*>;
 }
 
-SoaringLoong::Universal::CThreadPool::~CThreadPool()
+Sloong::Universal::CThreadPool::~CThreadPool()
 {
 	SAFE_DELETE(m_pThreadList);
 	SAFE_DELETE(m_pJobList);
 }
 
-void SoaringLoong::Universal::CThreadPool::Initialize(int nThreadNum)
+void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 {
 	for (int i = 0; i < nThreadNum; i++)
 	{
@@ -28,7 +28,7 @@ void SoaringLoong::Universal::CThreadPool::Initialize(int nThreadNum)
 	}
 }
 
-void SoaringLoong::Universal::CThreadPool::Start()
+void Sloong::Universal::CThreadPool::Start()
 {
 	g_pMutex = CreateMutex(NULL, FALSE, _T("SloongThreadPoolMutex"));
 	// 	for each (auto& item in *m_pThreadList)
@@ -36,7 +36,7 @@ void SoaringLoong::Universal::CThreadPool::Start()
 	// 	}
 }
 
-DWORD SoaringLoong::Universal::CThreadPool::ThreadWorkLoop(LPVOID lpParam)
+DWORD Sloong::Universal::CThreadPool::ThreadWorkLoop(LPVOID lpParam)
 {
 	while (true)
 	{
@@ -60,12 +60,12 @@ DWORD SoaringLoong::Universal::CThreadPool::ThreadWorkLoop(LPVOID lpParam)
 	return 0;
 }
 
-void SoaringLoong::Universal::CThreadPool::End()
+void Sloong::Universal::CThreadPool::End()
 {
 
 }
 
-int SoaringLoong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam)
+int Sloong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam)
 {
 	ThreadParam* pItem = new ThreadParam();
 	pItem->pJob = pJob;
@@ -76,17 +76,17 @@ int SoaringLoong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pP
 	return m_pJobList->size();
 }
 
-void SoaringLoong::Universal::CThreadPool::RemoveTask(int index)
+void Sloong::Universal::CThreadPool::RemoveTask(int index)
 {
 
 }
 
-int SoaringLoong::Universal::CThreadPool::GetTaskTotal()
+int Sloong::Universal::CThreadPool::GetTaskTotal()
 {
 	return m_pJobList->size();
 }
 
-HANDLE SoaringLoong::Universal::CThreadPool::GetJobListMutex()
+HANDLE Sloong::Universal::CThreadPool::GetJobListMutex()
 {
 	return g_pMutex;
 }

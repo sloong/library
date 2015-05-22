@@ -1,15 +1,17 @@
 #pragma once
 
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Universal
 	{
+
 		typedef LPTHREAD_START_ROUTINE LPCALLBACKFUNC;
 		struct ThreadParam
 		{
 			LPCALLBACKFUNC	pJob;
 			LPVOID			pParam;
 		};
+
 		class CThreadPool
 		{
 		public:

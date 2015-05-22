@@ -106,10 +106,13 @@
       <ModuleDefinitionFile>universal.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
+      <Command>copy "$(ProjectDir)*.h" "$(SolutionDir)Include\*.h"
+del "$(SolutionDir)Include\resource.h"
+del "$(SolutionDir)Include\stdafx.h"
+del "$(SolutionDir)Include\targetver.h"
+del "$(SolutionDir)Include\version.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
+copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -131,8 +134,7 @@ regsvr32 /s/c "$(TargetPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
+copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -160,8 +162,7 @@ regsvr32 /s/c "$(TargetPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
+copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -189,8 +190,7 @@ regsvr32 /s/c "$(TargetPath)"</Command>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)IUniversal.h" "$(SolutionDir)Include\IUniversal.h"
 copy "$(OutDir)Universal.lib" "$(SolutionDir)Include\$(PlatformTarget)\Universal.lib"
-copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"
-regsvr32 /s/c "$(TargetPath)"</Command>
+copy "$(OutDir)Universal.dll" "$(SolutionDir)Include\$(PlatformTarget)\Universal.dll"</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;NDEBUG;UNIVERSAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -201,44 +201,37 @@ regsvr32 /s/c "$(TargetPath)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMDParser.h" />
-    <ClInclude Include="Exception.h" />
-    <ClInclude Include="Factory.h" />
-    <ClInclude Include="LinkList.h" />
-    <ClInclude Include="LogSystem.h" />
     <ClInclude Include="PropertyScript.h" />
     <ClInclude Include="SloongException.h" />
     <ClInclude Include="SloongFile.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptParsing.h" />
     <ClInclude Include="SLoongError.h" />
+    <ClInclude Include="SloongLog.h" />
     <ClInclude Include="SloongLua.h" />
     <ClInclude Include="SloongLuaWindow.h" />
-    <ClInclude Include="SloongString.h" />
     <ClInclude Include="SloongThreadPool.h" />
+    <ClInclude Include="SloongUniversal.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="IUniversal.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
     <ClInclude Include="TokenParser.h" />
-    <ClInclude Include="Universal.h" />
+    <ClInclude Include="Version.h" />
     <ClInclude Include="XMLParser.h" />
     <ClInclude Include="XMLPro.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMDParser.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Exception.cpp" />
-    <ClCompile Include="Factory.cpp" />
-    <ClCompile Include="LinkList.cpp" />
-    <ClCompile Include="LogSystem.cpp" />
     <ClCompile Include="PropertyScript.cpp" />
     <ClCompile Include="SloongException.cpp" />
     <ClCompile Include="SloongFile.cpp" />
+    <ClCompile Include="SloongLog.cpp" />
     <ClCompile Include="SloongLua.cpp" />
     <ClCompile Include="SloongLuaWindow.cpp" />
-    <ClCompile Include="SloongString.cpp" />
     <ClCompile Include="SloongThreadPool.cpp" />
+    <ClCompile Include="SloongUniversal.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -250,7 +243,6 @@ regsvr32 /s/c "$(TargetPath)"</Command>
     <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="TokenParser.cpp" />
-    <ClCompile Include="Universal.cpp" />
     <ClCompile Include="XMLParser.cpp" />
     <ClCompile Include="XMLPro.cpp" />
   </ItemGroup>

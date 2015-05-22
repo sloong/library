@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "SloongLua.h"
-#include "SloongString.h"
 #include "SloongException.h"
 using namespace Sloong::Universal;
+
+typedef int(*LuaFunc)(lua_State* pLuaState);
 
 CLua::CLua()
 {
@@ -21,9 +22,9 @@ CLua::~CLua()
 	CloseHandle(m_pMutex);
 }
 
-static string findScript(LPCTSTR strFullName)
+static wstring findScript(wstring strFullName)
 {
-	CString str(strFullName);
+	string strFileName = CUniversal::ToString(strFullName);
 	
 	FILE* fFind;
 
@@ -32,7 +33,7 @@ static string findScript(LPCTSTR strFullName)
 	char szFileName[MAX_PATH];
 	char szExtension[MAX_PATH];
 
-	_splitpath_s(str.GetStringA().c_str(), szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, szExtension, MAX_PATH);
+	_splitpath_s(strFileName.c_str(), szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, szExtension, MAX_PATH);
 
 	string strTestFile = (string)szDrive + szDir + ("Scripts\\") + szFileName + (".LUB");
 	fopen_s(&fFind,strTestFile.c_str(), "r");
@@ -59,24 +60,25 @@ static string findScript(LPCTSTR strFullName)
 		fclose(fFind);
 	}
 
-	return strTestFile;
+	return CUniversal::ToWString(strTestFile);
 }
 
-bool CLua::RunScript(LPCTSTR strFileName)
+bool CLua::RunScript(wstring strFileName)
 {
 	WaitForSingleObject(m_pMutex, INFINITE);
-	CString strFullName(findScript(strFileName).c_str());
 
-	if ( 0 != luaL_loadfile(m_pScriptContext, strFullName.GetStringA().c_str()))
+	wstring strFullName = findScript(strFileName);
+
+	if ( 0 != luaL_loadfile(m_pScriptContext, CUniversal::ToString(strFullName).c_str()))
 	{
-		HandlerError(_T("Load Script"), strFullName.GetString().c_str());
+		HandlerError(_T("Load Script"), strFullName.c_str());
 		ReleaseMutex(m_pMutex);
 		return false;
 	}
 
 	if ( 0 != lua_pcall(m_pScriptContext,0,LUA_MULTRET,0))
 	{
-		HandlerError(_T("Run Script"), strFullName.GetString().c_str());
+		HandlerError(_T("Run Script"), strFullName.c_str());
 		ReleaseMutex(m_pMutex);
 		return false;
 	}
@@ -89,35 +91,33 @@ bool CLua::RunBuffer( LPCSTR pBuffer,size_t sz)
 {
 	if (0 != luaL_loadbuffer(m_pScriptContext, (LPCSTR)pBuffer, sz, NULL))
 	{
-		CString str(pBuffer);
-		HandlerError(_T("Load Buffer"), str.GetString().c_str());
+		string str(pBuffer);
+		HandlerError(_T("Load Buffer"), CUniversal::ToWString(str).c_str());
 		return false;
 	}
 
 	if (0 != lua_pcall(m_pScriptContext, 0, LUA_MULTRET, 0))
 	{
-		CString str(pBuffer);
-		HandlerError(_T("Run Buffer"), str.GetString().c_str());
+		string str(pBuffer);
+		HandlerError(_T("Run Buffer"), CUniversal::ToWString(str).c_str());
 		return false;
 	}
 	return true;
 }
 
-bool CLua::RunString(LPCTSTR strCommand)
+bool CLua::RunString(wstring strCommand)
 {
-	CString str(strCommand);
-
 	WaitForSingleObject(m_pMutex, INFINITE);
-	if (0 != luaL_loadstring(m_pScriptContext, str.GetStringA().c_str()))
+	if (0 != luaL_loadstring(m_pScriptContext, CUniversal::ToString(strCommand).c_str()))
 	{
-		HandlerError(_T("String Load"), strCommand);
+		HandlerError(_T("String Load"), strCommand.c_str());
 		ReleaseMutex(m_pMutex);
 		return false;
 	}
 
 	if (0 != lua_pcall(m_pScriptContext, 0, LUA_MULTRET, 0))
 	{
-		HandlerError(_T("Run String"), strCommand);
+		HandlerError(_T("Run String"), strCommand.c_str());
 		ReleaseMutex(m_pMutex);
 		return false;
 	}
@@ -126,29 +126,27 @@ bool CLua::RunString(LPCTSTR strCommand)
 	return true;
 }
 
-tstring CLua::GetErrorString()
+wstring CLua::GetErrorString()
 {
-	CString strError(luaL_checkstring(m_pScriptContext, -1));
+	string strError(luaL_checkstring(m_pScriptContext, -1));
 
-	return strError.GetString();
+	return CUniversal::ToWString(strError);
 }
 
 
-bool CLua::AddFunction( LPCTSTR pFunctionName, LuaFunctionType pFunction)
+bool CLua::AddFunction( wstring pFunctionName, LuaFunctionType pFunction)
 {
-	CString FunctionName(pFunctionName);
-	lua_register(m_pScriptContext, FunctionName.GetStringA().c_str(), pFunction);
+	LuaFunc pFunc = (LuaFunc)pFunction;
+	lua_register(m_pScriptContext, CUniversal::ToString(pFunctionName).c_str(), pFunc);
 	return true;
 }
 
 
-tstring CLua::GetStringArgument(int num, LPCTSTR pDefault)
+wstring CLua::GetStringArgument(int num, wstring pDefault)
 {
-	CString str(pDefault);
+	auto str = luaL_optstring(m_pScriptContext, num, CUniversal::ToString(pDefault).c_str());
 
-	str = luaL_optstring(m_pScriptContext, num, str.GetStringA().c_str());
-
-	return str.GetString();
+	return CUniversal::ToWString(str);
 }
 
 double CLua::GetNumberArgument(int num, double dDefault)
@@ -156,10 +154,9 @@ double CLua::GetNumberArgument(int num, double dDefault)
 	return luaL_optnumber(m_pScriptContext, num, dDefault);
 }
 
-void CLua::PushString(LPCTSTR pString)
+void CLua::PushString(wstring pString)
 {
-	CString str(pString);
-	lua_pushstring(m_pScriptContext, str.GetStringA().c_str());
+	lua_pushstring(m_pScriptContext, CUniversal::ToString(pString).c_str());
 }
 
 void CLua::PushNumber(double value)
@@ -167,28 +164,25 @@ void CLua::PushNumber(double value)
 	lua_pushnumber(m_pScriptContext, value);
 }
 
-bool CLua::RunFunction(LPCTSTR strFunctionName, LPCTSTR args)
+bool CLua::RunFunction(wstring strFunctionName, wstring args)
 {
-
-	CString str;
-	str.Format(_T("%s(%s)"), strFunctionName, args);
-	return RunString(str.GetString().c_str());
+	auto str = CUniversal::Format(L"%s(%s)", strFunctionName.c_str(), args.c_str());
+	return RunString(str);
 }
 
-void Sloong::CLua::HandlerError(LPCTSTR strErrorType,LPCTSTR strCmd)
+void CLua::HandlerError(wstring strErrorType, wstring strCmd)
 {
 	if (m_pErrorHandler)
 	{
-		CString strMessage;
-		strMessage.Format(_T("\n Error - %s:\n %s\n Error Message:%s"), strErrorType, strCmd, GetErrorString().c_str());
-		m_pErrorHandler(strMessage.GetString().c_str());
+		auto str = CUniversal::Format(L"\n Error - %s:\n %s\n Error Message:%s", strErrorType.c_str(), strCmd.c_str(), GetErrorString().c_str());
+		m_pErrorHandler(str.c_str());
 	}
 }
 
-map<tstring, tstring> Sloong::CLua::GetTableParam(int index)
+map<wstring, wstring> CLua::GetTableParam(int index)
 {
 	auto L = m_pScriptContext;
-	map<tstring, tstring> data;
+	map<wstring, wstring> data;
 	lua_pushnil(L);
 	// 现在的栈：-1 => nil; index => table
 	if ( index >= lua_gettop(L))
@@ -203,10 +197,10 @@ map<tstring, tstring> Sloong::CLua::GetTableParam(int index)
 		lua_pushvalue(L, -2);
 		// 现在的栈：-1 => key; -2 => value; -3 => key; index => table
 
-		CString key = lua_tostring(L, -1);
-		CString value = lua_tostring(L, -2);
+		wstring key = CUniversal::ToWString(lua_tostring(L, -1));
+		wstring value = CUniversal::ToWString(lua_tostring(L, -2));
 
-		data[key.GetString()] = value.GetString();
+		data[key] = value;
 		// 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数
 		lua_pop(L, 2);
 		// 现在的栈：-1 => key; index => table
@@ -217,31 +211,40 @@ map<tstring, tstring> Sloong::CLua::GetTableParam(int index)
 
 }
 
-Sloong::LuaType Sloong::CLua::CheckType(int index)
+LuaType CLua::CheckType(int index)
 {
 	int nType = lua_type(m_pScriptContext, index);
 	return (LuaType)nType;
 }
 
-size_t Sloong::CLua::StringToNumber(LPCTSTR string)
+size_t CLua::StringToNumber(wstring string)
 {
-	CString str(string);
-	lua_stringtonumber(m_pScriptContext, str.GetStringA().c_str());
+	lua_stringtonumber(m_pScriptContext, CUniversal::ToString(string).c_str());
 	
 	return lua_tonumber(m_pScriptContext, -1);
 }
 
-inline lua_State* Sloong::CLua::GetScriptContext()
+inline lua_State* CLua::GetScriptContext()
 {
 	return m_pScriptContext;
 }
 
-inline void Sloong::CLua::SetErrorHandle(void(*pErrHandler)(LPCTSTR strError))
+inline void CLua::SetErrorHandle(void(*pErrHandler)(wstring strError))
 {
 	m_pErrorHandler = pErrHandler;
 }
 
-void Sloong::CLua::InitializeWindow(HWND hWnd)
+void CLua::InitializeWindow(HWND hWnd)
+{
+
+}
+
+void Sloong::Universal::CLua::ShowLuaWindow()
+{
+
+}
+
+void Sloong::Universal::CLua::RenderLuaWindow()
 {
 
 }

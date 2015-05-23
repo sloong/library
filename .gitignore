@@ -27,3 +27,8 @@
 /Universal/SloongLua/x64/Debug/SloongLua.tlog
 /Universal/SloongLua/x64/Debug
 /Universal/SloongLua/x64/Release/SloongLua.tlog
+ipch
+Debug
+Release
+tlog
+*.user

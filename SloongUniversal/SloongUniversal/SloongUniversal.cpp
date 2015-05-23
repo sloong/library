@@ -759,7 +759,7 @@ const int MAX_BUFFER = 2048;
 string CUniversal::ToString(wstring strWide)
 {
 	string strResult;
-	int nLen = strWide.size();
+	int nLen = (int)strWide.size();
 	LPSTR szMulti = new CHAR[nLen + 1];
 	memset(szMulti, 0, nLen + 1);
 	WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), nLen, szMulti, nLen, NULL, FALSE);
@@ -771,7 +771,7 @@ string CUniversal::ToString(wstring strWide)
 wstring CUniversal::ToWString(string strMulti)
 {
 	wstring strResult;
-	int nLen = strMulti.size();
+	int nLen = (int)strMulti.size();
 	LPWSTR strWide = new WCHAR[nLen + 1];
 	memset(strWide, 0, sizeof(WCHAR)*(nLen + 1));
 	MultiByteToWideChar(CP_ACP, 0, strMulti.c_str(), nLen, strWide, nLen);

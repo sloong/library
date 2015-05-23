@@ -39,7 +39,7 @@ namespace Sloong
 		};
 
 
-		class CLua
+		class UNIVERSAL_API CLua
 		{
 		public:
 			CLua();
@@ -60,7 +60,7 @@ namespace Sloong
 			lua_State*	GetScriptContext();
 			map<wstring, wstring> GetTableParam(int index);
 			LuaType	CheckType(int index);
-			size_t  StringToNumber(wstring string);
+			double  StringToNumber(wstring string);
 			void	InitializeWindow(HWND hWnd);
 			void	ShowLuaWindow();
 			void	RenderLuaWindow();

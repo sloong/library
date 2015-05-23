@@ -39,7 +39,7 @@ namespace Sloong
 		};
 
 
-		class CLua
+		class UNIVERSAL_API CLua
 		{
 		public:
 			CLua();

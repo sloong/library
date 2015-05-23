@@ -14,7 +14,7 @@ class TiXmlAttribute;
 #include "SloongUniversal.h"
 typedef map<wstring,LPVOID> ILinkList;
 
-class CXMLParser
+class UNIVERSAL_API CXMLParser
 {
 public:
 	TiXmlDocument*	m_pDoc;

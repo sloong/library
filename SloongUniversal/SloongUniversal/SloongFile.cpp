@@ -18,7 +18,7 @@ LPCTSTR Sloong::Universal::CFile::GetLine()
 			return NULL;
 		}
 
-		for (length = _tcslen(m_szBuffer), index = 0; isspace(m_szBuffer[index]); index++);
+		for (length = (int)_tcslen(m_szBuffer), index = 0; isspace(m_szBuffer[index]); index++);
 
 		if (index >= length || m_szBuffer[index] == '#')
 		{

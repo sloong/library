@@ -1,11 +1,12 @@
 #pragma once
 
-#ifdef UNIVERSAL_EXPORTS
+#ifdef SLOONGUNIVERSAL_EXPORTS
 #define UNIVERSAL_API __declspec(dllexport)
+#define EXPIMP_TEMPLATE
 #else
 #define UNIVERSAL_API __declspec(dllimport)
+#define EXPIMP_TEMPLATE extern
 #endif
-
 
 
 #pragma region Sloong Universal Defines
@@ -118,6 +119,7 @@ namespace Sloong
 
 	namespace Universal
 	{
+		EXPIMP_TEMPLATE template class UNIVERSAL_API std::basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >;
 		class UNIVERSAL_API CUniversal
 		{
 		public:

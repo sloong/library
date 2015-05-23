@@ -217,7 +217,7 @@ LuaType CLua::CheckType(int index)
 	return (LuaType)nType;
 }
 
-size_t CLua::StringToNumber(wstring string)
+double CLua::StringToNumber(wstring string)
 {
 	lua_stringtonumber(m_pScriptContext, CUniversal::ToString(string).c_str());
 	

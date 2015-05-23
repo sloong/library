@@ -7,7 +7,7 @@
 #include "SloongUniversal.h"
 #include "TestLogDlg.h"
 #include "afxcmn.h"
-#pragma comment(lib,"Universal.lib")
+#pragma comment(lib,"SloongUniversal.lib")
 using namespace Sloong::Universal;
 // CUnitTestDlg dialog
 class CUnitTestDlg : public CDialogEx

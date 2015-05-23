@@ -73,7 +73,7 @@ int Sloong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam)
 	WaitForSingleObject(g_pMutex, INFINITE);
 	m_pJobList->push_back(pItem);
 	ReleaseMutex(g_pMutex);
-	return m_pJobList->size();
+	return (int)m_pJobList->size();
 }
 
 void Sloong::Universal::CThreadPool::RemoveTask(int index)
@@ -83,7 +83,7 @@ void Sloong::Universal::CThreadPool::RemoveTask(int index)
 
 int Sloong::Universal::CThreadPool::GetTaskTotal()
 {
-	return m_pJobList->size();
+	return (int)m_pJobList->size();
 }
 
 HANDLE Sloong::Universal::CThreadPool::GetJobListMutex()

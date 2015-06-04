@@ -4,7 +4,7 @@
 
 #include "SLoongBitmap.h"
 
-using namespace SoaringLoong::Graphics;
+using namespace Sloong::Graphics;
 
 CBitmap::CBitmap()
 {
@@ -264,17 +264,17 @@ int CBitmap::Scan_Image_Bitmap(LPDIRECTDRAWSURFACE7 lpdds, int cx, int cy)      
 
 } // end Scan_Image_Bitmap
 
-LONG SoaringLoong::Graphics::CBitmap::GetBitmapHeight()
+LONG CBitmap::GetBitmapHeight()
 {
 	return m_stInfoHeader.biHeight;
 }
 
-LONG SoaringLoong::Graphics::CBitmap::GetBitmapWidth()
+LONG CBitmap::GetBitmapWidth()
 {
 	return m_stInfoHeader.biWidth;
 }
 
-int SoaringLoong::Graphics::CBitmap::GetBiemapBPP()
+int CBitmap::GetBiemapBPP()
 {
 	return m_stInfoHeader.biBitCount;
 }

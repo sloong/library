@@ -13,7 +13,6 @@
 
 
 // DEFINES ////////////////////////////////////////////////
-#include "IUniversal.h"
 #include <ddraw.h>    // directX includes
 // default screen values, these are all overriden by the 
 // call to DDraw_Init() and are just here to have something
@@ -64,6 +63,11 @@
 // TYPES //////////////////////////////////////////////////
 namespace Sloong
 {
+	namespace Universal
+	{
+		class CRect;
+	}
+	using namespace Universal;
 	namespace Graphics
 	{
 		// blinking light structure
@@ -89,7 +93,7 @@ namespace Sloong
 			~CDDraw();
 
 		public:// Static function
-
+			static void WINAPI DrawLine_API(int x1, int x2, int y1, int y2, COLORREF dwColor);
 			static HRESULT DrawClipLine(int x0, int y0, int x1, int y1, COLORREF color, LPBYTE lpVideoBuffer, int lpitch, RECT rcScreen);
 			static int Clip_Line(int &x1, int &y1, int &x2, int &y2, RECT rcScreen);
 			static int Draw_Line(int xo, int yo, int x1, int y1, COLORREF color, LPBYTE vb_start, int lpitch);
@@ -219,7 +223,7 @@ namespace Sloong
 			int m_nBPP;
 			// is this a windowed app?   
 			bool m_bIsWindowed;
-			Sloong::CRect m_rcWindows;
+			RECT m_rcWindows;
 			DWORD                start_clock_count;
 			// DirectDraw Object
 			LPDIRECTDRAW7			m_pDDraw;
@@ -235,6 +239,7 @@ namespace Sloong
 			// Status
 			LPDIRECTDRAWCLIPPER		m_pWindowClipper;
 			DDSURFACEDESC2			m_stSurfaceDesc;
+			static	CDDraw*			m_pThis;
 		};
 	}
 }

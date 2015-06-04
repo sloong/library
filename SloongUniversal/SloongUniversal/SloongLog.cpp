@@ -316,7 +316,7 @@ void CLog::Initialize(wstring szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 	}
 	else
 	{
-		SetConfiguration(szPathName, NULL, NULL, NULL);
+		SetConfiguration(szPathName, L"", NULL, NULL);
 	}
 
 	WriteLine(g_szStart);

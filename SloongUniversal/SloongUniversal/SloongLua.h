@@ -14,7 +14,7 @@ namespace Sloong
 		}
 #pragma comment(lib,"SloongLua.lib")
 
-		typedef int(*LuaFunctionType)(LPVOID pLuaState);
+		typedef int(*LuaFunctionType)(lua_State* pLuaState);
 
 		struct LuaFunctionRegistr
 		{

@@ -21,9 +21,4 @@
 #include <stdio.h>
 #include <fstream>
 
-#include <map>
-#include <vector>
-#include <list>
-#include <string>
-#include <fstream>
-using namespace std;
+#include "SloongUniversal.h"

@@ -1,9 +1,9 @@
 #pragma once
 
-#ifdef SLOONGGRAPHIC_EXPORTS
-#define SLOONGGRAPHIC_API __declspec(dllexport)
+#ifdef SLOONGGRAPHICS_EXPORTS
+#define SLOONGGRAPHICS_API __declspec(dllexport)
 #else
-#define SLOONGGRAPHIC_API __declspec(dllimport)
+#define SLOONGGRAPHICS_API __declspec(dllimport)
 #endif
 
 
@@ -11,7 +11,7 @@
 #define BITMAP_ATTR_LOADED   128
 
 #include <ddraw.h>    // directX includes
-namespace SoaringLoong
+namespace Sloong
 {
 	namespace Graphics
 	{
@@ -21,7 +21,7 @@ namespace SoaringLoong
 			BITMAP_EXTRACT_MODE_CELL = 1,
 		};
 
-		class SLOONGGRAPHIC_API CBitmap
+		class SLOONGGRAPHICS_API CBitmap
 		{
 		public:
 			CBitmap();

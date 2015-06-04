@@ -5,7 +5,7 @@
 #include "IUniversal.h"
 #include "SloongMath.h"
 
-#pragma comment(lib,"Universal.lib")
+#pragma comment(lib,"SloongUniversal.lib")
 #pragma comment(lib,"SloongMath.lib")
 #pragma comment(lib,"ddraw.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -13,10 +13,12 @@
 using namespace Sloong;
 using namespace Sloong::Graphics;
 
-#define WIN32_LEAN_AND_MEAN  
+CDDraw* Sloong::Graphics::CDDraw::m_pThis;
+
 
 CDDraw::CDDraw()
 {
+	m_pThis = this;
 	m_nWidth = 1024;            // width of screen
 	m_nHeight = 768;           // height of screen
 	m_nBPP = 32;              // bits per pixel
@@ -3165,4 +3167,12 @@ int Sloong::Graphics::CDDraw::GetBackPitch()
 bool Sloong::Graphics::CDDraw::IsBackSurfaceLocked()
 {
 	return m_bBackSurfaceLocked;
+}
+
+void WINAPI Sloong::Graphics::CDDraw::DrawLine_API(int x1, int x2, int y1, int y2, COLORREF dwColor)
+{
+	if (m_pThis)
+	{
+		m_pThis->DrawClipLine(x1, x2, y1, y2, dwColor);
+	}
 }

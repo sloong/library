@@ -7,7 +7,7 @@
 #include "UnitTestDlg.h"
 #include "afxdialogex.h"
 #include "resource.h"
-#include "SloongUniversal.h"
+#include "univ\\univ.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

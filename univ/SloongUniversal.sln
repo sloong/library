@@ -8,9 +8,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTe
 		{A3A8387F-9C65-4C46-8C0F-8B3B9CA4C4F5} = {A3A8387F-9C65-4C46-8C0F-8B3B9CA4C4F5}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SloongLua", "SloongLua\SloongLua.vcxproj", "{D42BA7CC-64EA-49B6-8731-9D571C5D3A3B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua\lua.vcxproj", "{D42BA7CC-64EA-49B6-8731-9D571C5D3A3B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SloongUniversal", "SloongUniversal\SloongUniversal.vcxproj", "{A3A8387F-9C65-4C46-8C0F-8B3B9CA4C4F5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "univ", "univ\univ.vcxproj", "{A3A8387F-9C65-4C46-8C0F-8B3B9CA4C4F5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D42BA7CC-64EA-49B6-8731-9D571C5D3A3B} = {D42BA7CC-64EA-49B6-8731-9D571C5D3A3B}
 	EndProjectSection

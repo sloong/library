@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SloongException.h"
+#include "exception.h"
 
 using namespace Sloong::Universal;
 

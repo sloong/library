@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -13,19 +13,19 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A3A8387F-9C65-4C46-8C0F-8B3B9CA4C4F5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SloongUniversal</RootNamespace>
+    <RootNamespace>Universal</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -85,14 +85,14 @@
     <ClInclude Include="PropertyScript.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptParsing.h" />
-    <ClInclude Include="SLoongError.h" />
-    <ClInclude Include="SloongException.h" />
-    <ClInclude Include="SloongFile.h" />
-    <ClInclude Include="SloongLog.h" />
-    <ClInclude Include="SloongLua.h" />
-    <ClInclude Include="SloongLuaWindow.h" />
-    <ClInclude Include="SloongThreadPool.h" />
-    <ClInclude Include="SloongUniversal.h" />
+    <ClInclude Include="error.h" />
+    <ClInclude Include="exception.h" />
+    <ClInclude Include="file.h" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="lua.h" />
+    <ClInclude Include="luawin.h" />
+    <ClInclude Include="threadpool.h" />
+    <ClInclude Include="univ.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
@@ -113,13 +113,13 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PropertyScript.cpp" />
-    <ClCompile Include="SloongException.cpp" />
-    <ClCompile Include="SloongFile.cpp" />
-    <ClCompile Include="SloongLog.cpp" />
-    <ClCompile Include="SloongLua.cpp" />
-    <ClCompile Include="SloongLuaWindow.cpp" />
-    <ClCompile Include="SloongThreadPool.cpp" />
-    <ClCompile Include="SloongUniversal.cpp" />
+    <ClCompile Include="exception.cpp" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="log.cpp" />
+    <ClCompile Include="lua.cpp" />
+    <ClCompile Include="luawin.cpp" />
+    <ClCompile Include="threadpool.cpp" />
+    <ClCompile Include="univ.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

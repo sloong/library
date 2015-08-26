@@ -3,8 +3,8 @@
 /************************************************************************/
 //--- 2013/7/5 --- WCB --- Add
 #include "StdAfx.h"
-#include "SloongUniversal.h"
-#include "SLoongError.h"
+#include "univ.h"
+#include "error.h"
 #include "TinyXML/tinyxml.h"
 #include "XMLParser.h"
 

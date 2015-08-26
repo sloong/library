@@ -4,10 +4,10 @@
 
 #pragma once
 #import "C:\Program Files\Common Files\System\ado\msado15.dll" no_namespace rename("EOF","rstEOF") rename("BOF","rstBOF")
-#include "SloongUniversal.h"
+#include "univ\\univ.h"
 #include "TestLogDlg.h"
 #include "afxcmn.h"
-#pragma comment(lib,"SloongUniversal.lib")
+#pragma comment(lib,"univ.lib")
 using namespace Sloong::Universal;
 // CUnitTestDlg dialog
 class CUnitTestDlg : public CDialogEx

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "SloongLuaWindow.h"
+#include "luawin.h"
 
 using namespace Sloong::Universal;
 

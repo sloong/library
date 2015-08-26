@@ -11,7 +11,7 @@ class TiXmlDocument;
 class TiXmlElement;
 class TiXmlAttribute;
 
-#include "SloongUniversal.h"
+#include "univ.h"
 typedef map<wstring,LPVOID> ILinkList;
 
 class CXMLParser

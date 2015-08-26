@@ -5,8 +5,8 @@
 #include "UnitTest.h"
 #include "TestLogDlg.h"
 #include "afxdialogex.h"
-#include "SloongUniversal.h"
-#include "SloongLog.h"
+#include "univ\\univ.h"
+#include "univ\\log.h"
 using namespace Sloong::Universal;
 
 // CTestLogDlg dialog

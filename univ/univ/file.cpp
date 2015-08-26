@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "SloongFile.h"
-#include "SloongException.h"
-#include "SloongUniversal.h"
+#include "file.h"
+#include "exception.h"
+#include "univ.h"
 
 using namespace Sloong::Universal;
 // This function will load one line string from file.

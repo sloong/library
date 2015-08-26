@@ -2,7 +2,7 @@
 // /*			 CMDParser.h --- Command Parsing Class Declaration			*/
 // /************************************************************************/
  #include "stdafx.h"
-// #include "SLoongError.h"
+// #include "error.h.h"
 // #include "CUniversal.h"
 // 
 // using namespace SoaringLoong;

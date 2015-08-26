@@ -2,8 +2,8 @@
 /* 				StrandedError.cpp --- Error Message                     */
 /************************************************************************/
 #include "stdafx.h"
-#include "SloongUniversal.h"
-#include "SloongLog.h"
+#include "univ.h"
+#include "log.h"
 
 using namespace Sloong;
 

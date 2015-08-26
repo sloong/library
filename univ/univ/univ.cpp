@@ -6,9 +6,9 @@
 #include <windows.h>
 #include <winerror.h>
 #include <map>
-#include "SLoongError.h"
-#include "SloongLog.h"
-#include "SloongUniversal.h"
+#include "error.h"
+#include "log.h"
+#include "univ.h"
 #include "Version.h"
 
 using namespace std;

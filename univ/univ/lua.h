@@ -2,17 +2,17 @@
 
 #define LuaRes extern "C" int
 
-#include "SloongUniversal.h"
+#include "univ.h"
 namespace Sloong
 {
 	namespace Universal
 	{
 		extern "C" {
-#include "..\\SloongLua\\lua-5.3.0\\src\\lua.h"
-#include "..\\SloongLua\\lua-5.3.0\\src\\lualib.h"
-#include "..\\SloongLua\\lua-5.3.0\\src\\lauxlib.h"
+#include "..\\lua\\src\\lua.h"
+#include "..\\lua\\src\\lualib.h"
+#include "..\\lua\\src\\lauxlib.h"
 		}
-#pragma comment(lib,"SloongLua.lib")
+#pragma comment(lib,"lua.lib")
 
 		typedef int(*LuaFunctionType)(lua_State* pLuaState);
 

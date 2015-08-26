@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "SloongUniversal.h"
-#include "SloongThreadPool.h"
+#include "univ.h"
+#include "threadpool.h"
 using namespace Sloong::Universal;
 
 list<ThreadParam*>* Sloong::Universal::CThreadPool::m_pJobList;

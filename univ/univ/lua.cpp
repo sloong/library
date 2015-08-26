@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "SloongLua.h"
-#include "SloongException.h"
+#include "lua.h"
+#include "exception.h"
 using namespace Sloong::Universal;
 
 typedef int(*LuaFunc)(lua_State* pLuaState);

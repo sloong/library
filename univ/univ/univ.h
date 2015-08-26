@@ -75,7 +75,9 @@ EXPIMP_TEMPLATE template class UNIVERSAL_API std::basic_string<wchar_t, char_tra
 #define UNSIGNED
 #define __STR2WSTR(str) L##str
 #define _STR2WSTR(str) __STR2WSTR(str)
+#ifndef __FUNCTIONW__
 #define __FUNCTIONW__ _STR2WSTR(__FUNCTION__)
+#endif
 #define __TFILE__		__FILEW__
 #define __TFUNCTION__	__FUNCTIONW__
 typedef wstring tstring;

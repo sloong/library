@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SloongPolygon.h"
 #include "SloongVector.h"
-#include "IUniversal.h"
+#include "univ\\univ.h"
 using namespace Sloong::Graphics;
 using namespace Sloong::Math::Vector;
 using namespace Sloong::Math::Polygon;

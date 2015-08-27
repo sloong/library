@@ -3,12 +3,13 @@
 /************************************************************************/
 #include "stdafx.h"
 
-#include "LinkList.h"
+#include <map>
+using std::map;
 #include "resource.h"
 
 #include "ResLibrary.h"
 
-#pragma comment(lib,"LinkList.lib")
+//#pragma comment(lib,"LinkList.lib")
 
 // This is an example of an exported variable
 RESLIBRARY_API CLinkList* g_pButtonResList = NULL;
@@ -25,8 +26,8 @@ extern LRESULT Initialize()
 		Shutdown();
 	}
 
-	g_pButtonResList = new CLinkList;
-	g_pBackGroundResList = new CLinkList;
+//	g_pButtonResList = new CLinkList;
+//	g_pBackGroundResList = new CLinkList;
 
 	BTNRES ButtonRes[] = 
 	{
@@ -53,7 +54,7 @@ extern LRESULT Initialize()
 		pBtnID[1] = ButtonRes[i].m_nBtnDownID;
 		pBtnID[2] = ButtonRes[i].m_nBtnOverID;
 
-		g_pButtonResList->AddToList( pBtnID, ButtonRes[i].m_szBtnName, TEXT("int[3]"));
+	//	g_pButtonResList->AddToList( pBtnID, ButtonRes[i].m_szBtnName, TEXT("int[3]"));
 	}
 
 	int nBGNum = sizeof( BackGroundRes ) / sizeof( BGRES );
@@ -62,7 +63,7 @@ extern LRESULT Initialize()
 		LPINT pBGID = new int;
 		*pBGID = BackGroundRes[i].m_nBGID;
 
-		g_pBackGroundResList->AddToList( pBGID, BackGroundRes[i].m_szBGName, TEXT("int") );
+	//	g_pBackGroundResList->AddToList( pBGID, BackGroundRes[i].m_szBGName, TEXT("int") );
 	}
 	return S_OK;
 }
@@ -72,8 +73,8 @@ extern LRESULT Initialize()
 //		Delete all memory resource 
 extern void Shutdown()
 {
-	SAFE_DESTROY( g_pBackGroundResList );
-	SAFE_DESTROY( g_pButtonResList );
+	//SAFE_DESTROY( g_pBackGroundResList );
+	//SAFE_DESTROY( g_pButtonResList );
 }
 
 //--- 2013/7/5 --- WCB --- Add
@@ -88,14 +89,14 @@ RESLIBRARY_API LRESULT GetButtonResourceID( LPCTSTR szResourceName , int& nUpID,
 	}
 
 	CLinkList* pNode = NULL;
-	pNode = g_pButtonResList->Locate( szResourceName );
+	//pNode = g_pButtonResList->Locate( szResourceName );
 	if ( NULL == pNode )
 	{
 		return S_FALSE;
 	}
 
 	int* pData = NULL;
-	pData = (int*)pNode->GetData();
+	//pData = (int*)pNode->GetData();
 	if ( NULL == pData )
 	{
 		return S_FALSE;
@@ -123,14 +124,14 @@ RESLIBRARY_API LRESULT GetBackGroundResourceID( LPCTSTR szResourceName, int& nBG
 
 	CLinkList* pNode = NULL;
 	//--- WCB --- 2013/7/18 --- Modify ---
-	pNode = g_pBackGroundResList->Locate( szResourceName );
+	//pNode = g_pBackGroundResList->Locate( szResourceName );
 	if ( NULL == pNode )
 	{
 		return S_FALSE;
 	}
 
 	LPINT pData = NULL;
-	pData = (LPINT)pNode->GetData();
+	//pData = (LPINT)pNode->GetData();
 	if ( NULL == pData )
 	{
 		return S_FALSE;

@@ -72,6 +72,7 @@ EXPIMP_TEMPLATE template class UNIVERSAL_API std::basic_string<wchar_t, char_tra
 #define _tcscat_s		wcscat_s
 #define _ttoi			_wtoi
 #define _tstring		wstring
+#define _tcslen			wcslen
 #define UNSIGNED
 #define __STR2WSTR(str) L##str
 #define _STR2WSTR(str) __STR2WSTR(str)

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "IUniversal.h"
+#include "univ\\univ.h"
 
 #include "SLoongBitmap.h"
 

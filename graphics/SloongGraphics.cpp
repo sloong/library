@@ -2,10 +2,9 @@
 //
 #include "stdafx.h"
 #include "SloongGraphics.h"
-#include "IUniversal.h"
-#include "SloongMath.h"
+#include "math\\SloongMath.h"
 
-#pragma comment(lib,"SloongUniversal.lib")
+#pragma comment(lib,"univ.lib")
 #pragma comment(lib,"SloongMath.lib")
 #pragma comment(lib,"ddraw.lib")
 #pragma comment(lib,"dxguid.lib")

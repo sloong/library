@@ -1,5 +1,6 @@
 #pragma once
 #include "univ.h"
+#include "string/string.h"
 namespace Sloong
 {
 	namespace Universal
@@ -18,15 +19,15 @@ namespace Sloong
 			virtual ~CFile();
 
 			virtual LPCTSTR GetLine();
-			virtual HRESULT Open(LPCTSTR szFileName, OpenFileAccess emMode);
-			virtual errno_t OpenStream(LPCTSTR szFileName, LPCTSTR szMode);
+			virtual HRESULT Open(CString szFileName, OpenFileAccess emMode);
+			virtual errno_t OpenStream(CString szFileName, CString szMode);
 			virtual void Close();
 		public:
-			static bool Access(LPCTSTR szFileName, OpenFileAccess emMode);
+			static bool Access(CString szFileName, OpenFileAccess emMode);
 		public:
 			TCHAR m_szBuffer[256];
 			FILE* m_pFileStream;
-			wstring m_strFileName;
+			CString m_strFileName;
 		};
 	}
 }

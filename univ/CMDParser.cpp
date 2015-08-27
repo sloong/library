@@ -5,7 +5,7 @@
 // #include "error.h.h"
 // #include "CUniversal.h"
 // 
-// using namespace SoaringLoong;
+// using namespace Sloong;
 // 
 // //--- 0000011 --- 2013/10/12 --- WCB --- Add
 // // Remarks:

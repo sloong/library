@@ -19,8 +19,8 @@
 #define	VERSION_PRODUCTNAME					"Universal Libaray"
 #endif // _DEBUG
 #define VERSION_INTERNALNAME				"ScriptParsing.dll"
-#define VERSION_COMPANYNAME 				"SoaringLoong, Inc."
-#define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2013 SoaringLoong, Inc."
+#define VERSION_COMPANYNAME 				"Sloong, Inc."
+#define	VERSION_LEGALCOPYRIGHT				"Copyright (C) 2013 Sloong, Inc."
 #else
 #define SCRIPTPARSING_API __declspec(dllimport)
 #endif

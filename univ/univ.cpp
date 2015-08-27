@@ -780,7 +780,7 @@ wstring CUniversal::ToWString(string strMulti)
 	return strResult;
 }
 
-string Sloong::Universal::CUniversal::Format(string lpStr, ...)
+string Sloong::Universal::CUniversal::FormatA(string lpStr, ...)
 {
 	//string strRes;
 	va_list args;
@@ -792,7 +792,7 @@ string Sloong::Universal::CUniversal::Format(string lpStr, ...)
 	return szBuffer;
 }
 
-wstring Sloong::Universal::CUniversal::Format(wstring lpStr, ...)
+wstring Sloong::Universal::CUniversal::FormatW(wstring lpStr, ...)
 {
 	va_list args;
 	va_start(args, lpStr);

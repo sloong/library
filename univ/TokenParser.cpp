@@ -7,7 +7,7 @@
 // // This is Token max size
 // #define TOKEN_SIZE	256	
 // 
-// using namespace SoaringLoong;
+// using namespace Sloong;
 // 
 // //--- 0000014 --- 2013/10/25 --- WCB --- Add
 // // Remarks:

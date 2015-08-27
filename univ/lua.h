@@ -3,6 +3,7 @@
 #define LuaRes extern "C" int
 
 #include "univ.h"
+#include "string/string.h"
 namespace Sloong
 {
 	namespace Universal
@@ -45,29 +46,29 @@ namespace Sloong
 			CLua();
 			virtual ~CLua();
 
-			bool	RunScript(wstring strFileName);
+			bool	RunScript(CString strFileName);
 			bool	RunBuffer(LPCSTR pBuffer, size_t sz);
-			bool	RunString(wstring strCommand);
-			bool	RunFunction(wstring strFunctionName, wstring args);
-			wstring	GetErrorString();
-			void	HandlerError(wstring strErrorType, wstring strCmd);
-			bool	AddFunction(wstring strFunctionName, LuaFunctionType pFunction);
-			wstring	GetStringArgument(int nNum, wstring pDefault = L"");
+			bool	RunString(CString strCommand);
+			bool	RunFunction(CString strFunctionName, CString args);
+			CString	GetErrorString();
+			void	HandlerError(CString strErrorType, CString strCmd);
+			bool	AddFunction(CString strFunctionName, LuaFunctionType pFunction);
+			CString	GetStringArgument(int nNum, CString pDefault = L"");
 			double	GetNumberArgument(int nNum, double pDefault = -1.0f);
-			void	PushString(wstring strString);
+			void	PushString(CString strString);
 			void	PushNumber(double dValue);
-			void	SetErrorHandle(void(*pErrHandler)(wstring strError));
+			void	SetErrorHandle(void(*pErrHandler)(CString strError));
 			lua_State*	GetScriptContext();
 			map<wstring, wstring> GetTableParam(int index);
 			LuaType	CheckType(int index);
-			double  StringToNumber(wstring string);
+			double  StringToNumber(CString string);
 			void	InitializeWindow(HWND hWnd);
 			void	ShowLuaWindow();
 			void	RenderLuaWindow();
 
 		private:
 			lua_State *m_pScriptContext;
-			void(*m_pErrorHandler)(wstring strError);
+			void(*m_pErrorHandler)(CString strError);
 			HANDLE	m_pMutex;
 		};
 

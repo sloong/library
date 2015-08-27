@@ -1,12 +1,10 @@
 #pragma once
 #include "univ.h"
-#include <exception>
 namespace Sloong
 {
 	namespace Universal
 	{
-		using std::exception;
-		class UNIVERSAL_API CException : public exception
+		class UNIVERSAL_API CException
 		{
 		public:
 			CException(wstring lpstr);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "univ.h"
+#include "string/string.h"
+#pragma comment(lib,"string.lib")
 using namespace Sloong::Universal;
 
 
@@ -32,30 +34,30 @@ namespace Sloong
 			CLog();
 			~CLog();
 
-			virtual void Initialize(wstring szPathName = L"Log.log", LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize(CString szPathName = L"Log.log", LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 
-			virtual DWORD Write(wstring szMessage);
-			virtual void WriteLine(wstring szLog);
-			virtual void Log(LOGLEVEL emLevel, DWORD dwCode, wstring strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
-			virtual void SetConfiguration(wstring szFileName, wstring szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
+			virtual DWORD Write(CString szMessage);
+			virtual void WriteLine(CString szLog);
+			virtual void Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
+			virtual void SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
 			virtual bool IsOpen();
 			virtual void Close();
-			virtual wstring GetFileName();
-			virtual wstring GetPath();
+			virtual CString GetFileName();
+			virtual CString GetPath();
 
 		protected:
-			wstring FormatFatalMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			wstring FormatErrorMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			wstring FormatWarningMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			wstring FormatInformationMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			CString FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			CString FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			CString FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			CString FormatInformationMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
 			HRESULT OpenFile();
 
 		protected:
 			LOGLEVEL	m_emLevel;
 			HANDLE		m_hFileHandle;
-			wstring		m_szFilePath;
-			wstring		m_szFileName;
-			wstring		m_szLastDate;
+			CString		m_szFilePath;
+			CString		m_szFileName;
+			CString		m_szLastDate;
 			int			m_emType;
 			bool		m_bIsCoverPrev;
 			HRESULT g_hRes;

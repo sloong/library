@@ -23,7 +23,7 @@ CLog::~CLog()
 	Close();
 }
 
-wstring CLog::FormatFatalMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+CString CLog::FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (FATAL <= m_emLevel)
 	{
@@ -38,11 +38,11 @@ wstring CLog::FormatFatalMessage(DWORD dwCode, wstring strErrorText, bool bForma
 	}
 	else
 	{
-		return NULL;
+		return "";
 	}
 }
 
-wstring CLog::FormatErrorMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+CString CLog::FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (ERR <= m_emLevel)
 	{
@@ -57,11 +57,11 @@ wstring CLog::FormatErrorMessage(DWORD dwCode, wstring strErrorText, bool bForma
 	}
 	else
 	{
-		return NULL;
+		return "";
 	}
 }
 
-wstring CLog::FormatWarningMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+CString CLog::FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (WARN <= m_emLevel)
 	{
@@ -76,11 +76,11 @@ wstring CLog::FormatWarningMessage(DWORD dwCode, wstring strErrorText, bool bFor
 	}
 	else
 	{
-		return NULL;
+		return "";
 	}
 }
 
-wstring CLog::FormatInformationMessage(DWORD dwCode, wstring strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+CString CLog::FormatInformationMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (INF <= m_emLevel)
 	{
@@ -88,14 +88,14 @@ wstring CLog::FormatInformationMessage(DWORD dwCode, wstring strErrorText, bool 
 	}
 	else
 	{
-		return NULL;
+		return "";
 	}
 }
 
 
-void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, wstring strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
+void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
-	wstring strLogText;
+	CString strLogText;
 
 	if (ERROR_SUCCESS != g_hRes || false == bJustFailedWrite || INF == emLevel)
 	{
@@ -137,7 +137,7 @@ void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, wstring strErrorText, bool bForma
 	}
 }
 
-void CLog::WriteLine(wstring szLog)
+void CLog::WriteLine(CString szLog)
 {
 	if (szLog.empty())
 		return;
@@ -151,7 +151,7 @@ void CLog::WriteLine(wstring szLog)
 	Write(TEXT("\r\n"));
 }
 
-DWORD CLog::Write(wstring szMessage)
+DWORD CLog::Write(CString szMessage)
 {
 	DWORD dwWriteLength = 0;
 
@@ -194,7 +194,7 @@ HRESULT CLog::OpenFile()
 	}
 }
 
-wstring CLog::GetFileName()
+CString CLog::GetFileName()
 {
 	return m_szFileName;
 }
@@ -215,12 +215,13 @@ bool CLog::IsOpen()
 		//		TCHAR szTmpPath[MAX_PATH] = {0};
 		if (m_szLastDate.empty() || m_szLastDate != szCurrentDate)
 		{
-			wstring szTemp = m_szFilePath + L"\\" + szCurrentDate + L".log";
+			CString szTemp(L"%s\\%s.log", m_szFilePath.c_str(), szCurrentDate);
+			
 			// 			_tcscpy_s(szTmpPath, MAX_PATH, m_szFilePath );
 			// 			_tcscat_s(szTmpPath,MAX_PATH, TEXT("\\"));
 			// 			_tcscat_s(szTmpPath,MAX_PATH, szCurrentDate);
 			// 			_tcscat_s(szTmpPath,MAX_PATH, TEXT(".log"));
-			SetConfiguration(szTemp, NULL, NULL, NULL);
+			SetConfiguration(szTemp, "", NULL, NULL);
 			//m_pUniversal->CopyStringToPoint(m_szLastDate, szCurrentDate);
 			m_szLastDate = szCurrentDate;
 			Close();
@@ -248,12 +249,12 @@ void CLog::Close()
 }
 
 
-wstring CLog::GetPath()
+CString CLog::GetPath()
 {
 	return m_szFilePath;
 }
 
-void CLog::SetConfiguration(wstring szFileName, wstring szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel)
+void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel)
 {
 	if (!szFileName.empty())
 	{
@@ -296,7 +297,7 @@ void CLog::SetConfiguration(wstring szFileName, wstring szFilePath, LOGTYPE* pTy
 }
 
 
-void CLog::Initialize(wstring szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	// All value init
 	g_hRes = S_OK;
@@ -312,7 +313,7 @@ void CLog::Initialize(wstring szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 	m_bIsCoverPrev = bIsCoverPrev;
 	if (emType != LOGTYPE::ONEFILE)
 	{
-		SetConfiguration(NULL, szPathName, NULL, NULL);
+		SetConfiguration("", szPathName, NULL, NULL);
 	}
 	else
 	{

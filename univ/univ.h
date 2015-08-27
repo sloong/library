@@ -2,10 +2,8 @@
 
 #ifdef SLOONGUNIVERSAL_EXPORTS
 #define UNIVERSAL_API __declspec(dllexport)
-#define EXPIMP_TEMPLATE
 #else
 #define UNIVERSAL_API __declspec(dllimport)
-#define EXPIMP_TEMPLATE extern
 #endif
 
 #include <map>
@@ -14,8 +12,6 @@
 #include <string>
 #include <fstream>
 using namespace std;
-
-EXPIMP_TEMPLATE template class UNIVERSAL_API std::basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >;
 
 #pragma region Sloong Universal Defines
 
@@ -127,15 +123,14 @@ typedef const string ctstring;
 
 namespace Sloong
 {
-
 	namespace Universal
 	{
 		class UNIVERSAL_API CUniversal
 		{
 		public:
 			static wstring Version();
-			static wstring Format(wstring lpstr, ...);
-			static string Format(string lpstr, ...);
+			static wstring FormatW(wstring lpstr, ...);
+			static string FormatA(string lpstr, ...);
 			static wstring ToWString(string str);
 			static string ToString(wstring str);
 			static void CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);

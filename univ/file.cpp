@@ -44,7 +44,7 @@ Sloong::Universal::CFile::~CFile()
 
 }
 
-HRESULT Sloong::Universal::CFile::Open(LPCTSTR strFileName, OpenFileAccess emMode)
+HRESULT Sloong::Universal::CFile::Open(CString strFileName, OpenFileAccess emMode)
 {
 	if (!Access(strFileName, emMode))
 		return S_FALSE;
@@ -58,18 +58,18 @@ void Sloong::Universal::CFile::Close()
 
 }
 
-errno_t Sloong::Universal::CFile::OpenStream(LPCTSTR szFileName, LPCTSTR szMode)
+errno_t Sloong::Universal::CFile::OpenStream(CString szFileName, CString szMode)
 {
 	if (!Access(szFileName, Exist))
 	{
-		throw CException(CUniversal::Format(L"Can't open file stream %s, the file is not existing.", szFileName));
+		throw CException(CUniversal::FormatW(L"Can't open file stream %s, the file is not existing.", szFileName));
 	}
-	return _tfopen_s(&m_pFileStream, szFileName, szMode);
+	return _tfopen_s(&m_pFileStream, szFileName.c_str(), szMode.c_str());
 }
 
-bool Sloong::Universal::CFile::Access(LPCTSTR szFileName, OpenFileAccess emMode)
+bool Sloong::Universal::CFile::Access(CString szFileName, OpenFileAccess emMode)
 {
-	if (0 == _taccess_s(szFileName, emMode))
+	if (0 == _taccess_s(szFileName.c_str(), emMode))
 		return true;
 	else
 		return false;

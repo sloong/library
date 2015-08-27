@@ -5,7 +5,7 @@
 #include "math\\SloongMath.h"
 
 #pragma comment(lib,"univ.lib")
-#pragma comment(lib,"SloongMath.lib")
+#pragma comment(lib,"math.lib")
 #pragma comment(lib,"ddraw.lib")
 #pragma comment(lib,"dxguid.lib")
 

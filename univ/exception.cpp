@@ -5,12 +5,12 @@ using namespace Sloong::Universal;
 
 
 
-CException::CException(wstring strMessage)
+CException::CException(CString strMessage)
 {
 	m_strMessage = strMessage;
 }
 
-CException::CException(wstring lpStr, HRESULT hRes)
+CException::CException(CString lpStr, HRESULT hRes)
 {
 	m_strMessage = lpStr;
 	m_hResult = hRes;
@@ -22,7 +22,7 @@ CException::~CException()
 }
 
 
-wstring CException::GetException() const
+CString CException::GetException() const
 {
 	return m_strMessage;
 }

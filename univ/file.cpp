@@ -64,12 +64,12 @@ errno_t Sloong::Universal::CFile::OpenStream(CString szFileName, CString szMode)
 	{
 		throw CException(CUniversal::FormatW(L"Can't open file stream %s, the file is not existing.", szFileName));
 	}
-	return _tfopen_s(&m_pFileStream, szFileName.c_str(), szMode.c_str());
+	return _tfopen_s(&m_pFileStream, szFileName.t_str(), szMode.t_str());
 }
 
 bool Sloong::Universal::CFile::Access(CString szFileName, OpenFileAccess emMode)
 {
-	if (0 == _taccess_s(szFileName.c_str(), emMode))
+	if (0 == _taccess_s(szFileName.t_str(), emMode))
 		return true;
 	else
 		return false;

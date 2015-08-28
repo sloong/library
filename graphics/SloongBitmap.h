@@ -11,8 +11,11 @@
 #define BITMAP_ATTR_LOADED   128
 
 #include <ddraw.h>    // directX includes
+#include "string/string.h"
+#pragma comment(lib,"string.lib")
 namespace Sloong
 {
+	using namespace Universal;
 	namespace Graphics
 	{
 		enum BITMAP_LOAD_MODE
@@ -28,7 +31,7 @@ namespace Sloong
 			~CBitmap();
 
 			HRESULT Initialize();
-			HRESULT LoadBitmapFromFile(LPCTSTR strFileName);
+			HRESULT LoadBitmapFromFile(CString strFileName);
 
 			LONG GetBitmapHeight();
 			LONG GetBitmapWidth();

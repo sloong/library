@@ -107,6 +107,8 @@ wstring CUniversal::FormatWindowsErrorMessage( DWORD dwErrCode)
 	return strError;
 }
 
+
+#ifdef _WINDOWS
 // CSize
 inline CSize::CSize() throw()
 {
@@ -754,6 +756,8 @@ inline CRect CRect::MulDiv(
 		::MulDiv(right, nMultiplier, nDivisor),
 		::MulDiv(bottom, nMultiplier, nDivisor));
 }
+#endif
+
 const int MAX_BUFFER = 2048;
 
 string CUniversal::ToString(wstring strWide)

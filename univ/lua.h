@@ -9,9 +9,9 @@ namespace Sloong
 	namespace Universal
 	{
 		extern "C" {
-#include "..\\lua\\src\\lua.h"
-#include "..\\lua\\src\\lualib.h"
-#include "..\\lua\\src\\lauxlib.h"
+#include "lua/src/lua.h"
+#include "lua/src/lualib.h"
+#include "lua/src/lauxlib.h"
 		}
 #pragma comment(lib,"lua.lib")
 
@@ -62,14 +62,11 @@ namespace Sloong
 			map<wstring, wstring> GetTableParam(int index);
 			LuaType	CheckType(int index);
 			double  StringToNumber(CString string);
-			void	InitializeWindow(HWND hWnd);
-			void	ShowLuaWindow();
-			void	RenderLuaWindow();
 
 		private:
 			lua_State *m_pScriptContext;
 			void(*m_pErrorHandler)(CString strError);
-			HANDLE	m_pMutex;
+			//HANDLE	m_pMutex;
 		};
 
 	}

@@ -4,18 +4,20 @@
 // 任何其他项目上不应定义此符号。这样，源文件中包含此文件的任何其他项目都会将
 // STRING_API 函数视为是从 DLL 导入的，而此 DLL 则将用此宏定义的
 // 符号视为是被导出的。
-#ifdef STRING_EXPORTS
-#define STRING_API __declspec(dllexport)
+#ifdef _WINDOWS
+	#ifdef STRING_EXPORTS
+		#define STRING_API_CLASS class __declspec(dllexport)
+	#else
+		#define STRING_API_CLASS class __declspec(dllimport)
+	#endif
 #else
-#define STRING_API __declspec(dllimport)
+	#define STRING_API_CLASS class
 #endif
-#pragma once
 
-#ifdef UNICODE
-#define		tstring		wstring
-#else
-#defint		tstring		string
-#endif // !UNICODE
+#ifndef STRING_H
+#define STRING_H
+
+#include "defines.h"
 
 #pragma warning( disable:4251 )
 
@@ -26,7 +28,7 @@ namespace Sloong
 {
 	namespace Universal
 	{
-		class STRING_API CString
+		STRING_API_CLASS CString
 		{
 		public:
 			CString();
@@ -80,3 +82,5 @@ namespace Sloong
 	}
 
 }
+
+#endif //STRING_H

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "lua.h"
 #include "exception.h"
-#include "string\\string.h"
 using namespace Sloong::Universal;
 
 typedef int(*LuaFunc)(lua_State* pLuaState);
@@ -237,17 +236,3 @@ inline void CLua::SetErrorHandle(void(*pErrHandler)(CString strError))
 	m_pErrorHandler = pErrHandler;
 }
 
-void CLua::InitializeWindow(HWND hWnd)
-{
-
-}
-
-void Sloong::Universal::CLua::ShowLuaWindow()
-{
-
-}
-
-void Sloong::Universal::CLua::RenderLuaWindow()
-{
-
-}

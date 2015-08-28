@@ -53,13 +53,13 @@ CString::~CString()
 	if (m_strString)
 	{
 		delete m_strString;
-		m_strString = nullptr;
+		m_strString = NULL;
 	}
 
 	if (m_strTemp)
 	{
 		delete m_strTemp;
-		m_strTemp = nullptr;
+		m_strTemp = NULL;
 	}
 }
 
@@ -68,9 +68,11 @@ string CString::UnicodeToANSI(LPCWSTR strWide)
 {
 	string strResult;
 	int nLen = (int)wcslen(strWide);
-	LPSTR szMulti = new CHAR[nLen + 1];
+	LPSTR szMulti = new char[nLen + 1];
 	memset(szMulti, 0, nLen + 1);
-	WideCharToMultiByte(CP_ACP, 0, strWide, (int)wcslen(strWide), szMulti, nLen, NULL, FALSE);
+	// use the c standard library function to convert
+	wcstombs(szMulti,strWide,nLen);
+	//WideCharToMultiByte(CP_ACP, 0, strWide, (int)wcslen(strWide), szMulti, nLen, NULL, FALSE);
 	strResult = szMulti;
 	delete[] szMulti;
 	return strResult;
@@ -82,7 +84,8 @@ wstring CString::ANSIToUnicode(LPCSTR strMulti)
 	int nLen = (int)strlen(strMulti);
 	LPWSTR strWide = new WCHAR[nLen + 1];
 	memset(strWide, 0, sizeof(TCHAR)*(nLen + 1));
-	MultiByteToWideChar(CP_ACP, 0, strMulti, (int)strlen(strMulti), strWide, nLen);
+	mbstowcs(strWide,strMulti,nLen);
+	//MultiByteToWideChar(CP_ACP, 0, strMulti, (int)strlen(strMulti), strWide, nLen);
 	strResult = strWide;
 	delete[] strWide;
 	return strResult;
@@ -104,7 +107,7 @@ void Sloong::Universal::CString::FormatA(LPCSTR lpStr, ...)
 	va_list args;
 	va_start(args, lpStr);
 	char szBuffer[MAX_BUFFER];
-	vsprintf_s(szBuffer, MAX_BUFFER, lpStr, args);
+	vsnprintf(szBuffer, MAX_BUFFER, lpStr, args);
 	(*m_strString) = ANSIToUnicode(szBuffer);
 	va_end(args);
 }
@@ -114,7 +117,7 @@ void Sloong::Universal::CString::FormatW(LPCWSTR lpStr, ...)
 	va_list args;
 	va_start(args, lpStr);
 	WCHAR szBuffer[MAX_BUFFER];
-	vswprintf_s(szBuffer, MAX_BUFFER, lpStr, args);
+	vswprintf(szBuffer, MAX_BUFFER, lpStr, args);
 	va_end(args);
 	(*m_strString) = szBuffer;
 }

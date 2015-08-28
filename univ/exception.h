@@ -1,5 +1,7 @@
 #pragma once
 #include "univ.h"
+#include "string/string.h"
+#pragma comment(lib,"string.lib")
 namespace Sloong
 {
 	namespace Universal
@@ -7,17 +9,17 @@ namespace Sloong
 		class UNIVERSAL_API CException
 		{
 		public:
-			CException(wstring lpstr);
-			CException(wstring lpStr, HRESULT hRes);
+			CException(CString lpstr);
+			CException(CString lpStr, HRESULT hRes);
 			~CException();
 
 		public:
-			wstring GetException() const;
+			CString GetException() const;
 			HRESULT GetResult() const;
 
 		protected:
 			HRESULT m_hResult;
-			wstring m_strMessage;
+			CString m_strMessage;
 		};
 	}
 }

@@ -7,7 +7,62 @@ using Sloong::Universal::CString;
 CString::CString()
 {
 	m_strString = new wstring();
+	m_strTemp = new string();
 }
+
+
+Sloong::Universal::CString::CString(LPCSTR lpStr, ...)
+{
+	new(this) CString();
+	va_list args;
+	va_start(args, lpStr);
+	FormatA(lpStr, args);
+	va_end(args);
+}
+
+Sloong::Universal::CString::CString(LPCWSTR lpStr, ...)
+{
+	new(this) CString();
+	va_list args;
+	va_start(args, lpStr);
+	FormatW(lpStr, args);
+	va_end(args);
+}
+
+Sloong::Universal::CString::CString(string lpStr)
+{
+	new(this) CString();
+	(*m_strString) = ANSIToUnicode(lpStr.c_str());
+}
+
+Sloong::Universal::CString::CString(wstring lpStr)
+{
+	new(this) CString();
+	(*m_strString) = lpStr;
+}
+
+Sloong::Universal::CString::CString(const CString& str)
+{
+	new(this) CString();
+	(*m_strString) = (*str.m_strString);
+}
+
+
+CString::~CString()
+{
+	if (m_strString)
+	{
+		delete m_strString;
+		m_strString = nullptr;
+	}
+
+	if (m_strTemp)
+	{
+		delete m_strTemp;
+		m_strTemp = nullptr;
+	}
+}
+
 
 string CString::UnicodeToANSI(LPCWSTR strWide)
 {
@@ -33,14 +88,6 @@ wstring CString::ANSIToUnicode(LPCSTR strMulti)
 	return strResult;
 }
 
-CString::~CString()
-{
-	if (m_strString)
-	{
-		delete m_strString;
-		m_strString = nullptr;
-	}
-}
 
 string CString::GetStringA() const
 {
@@ -84,33 +131,31 @@ CString& Sloong::Universal::CString::operator=(LPCWSTR lpStr)
 	return *this;
 }
 
-Sloong::Universal::CString::CString(LPCSTR lpStr, ...)
-{
-	new(this) CString();
-	va_list args;
-	va_start(args, lpStr);
-	FormatA(lpStr, args);
-	va_end(args);
-}
-
-Sloong::Universal::CString::CString(LPCWSTR lpStr, ...)
-{
-	new(this) CString();
-	va_list args;
-	va_start(args, lpStr);
-	FormatW(lpStr, args);
-	va_end(args);
-}
-
-
-Sloong::Universal::CString::CString(string lpStr)
+CString& Sloong::Universal::CString::operator=(string lpStr)
 {
 	(*m_strString) = ANSIToUnicode(lpStr.c_str());
+	return *this;
 }
 
-Sloong::Universal::CString::CString(wstring lpStr)
+CString& Sloong::Universal::CString::operator=(wstring lpStr)
 {
 	(*m_strString) = lpStr;
+	return *this;
 }
 
+CString& Sloong::Universal::CString::operator=(const CString& str)
+{
+	(*m_strString) = (*str.m_strString);
+	return *this;
+}
 
+LPCWSTR Sloong::Universal::CString::w_str() const
+{
+	return m_strString->c_str();
+}
+
+LPCSTR Sloong::Universal::CString::a_str() const
+{
+	(*m_strTemp) = UnicodeToANSI(m_strString->c_str());
+	return m_strTemp->c_str();
+}

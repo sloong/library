@@ -13,7 +13,7 @@ const TCHAR g_szEnd[] = { TEXT("----------------------------------End-----------
 
 CLog::CLog()
 {
-
+	m_bInit = false;
 }
 
 
@@ -21,6 +21,7 @@ CLog::~CLog()
 {
 	WriteLine(g_szEnd);
 	Close();
+	m_bInit = false;
 }
 
 CString CLog::FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
@@ -121,7 +122,7 @@ void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bForma
 
 	if (strLogText.empty())
 	{
-		WriteLine(strLogText.c_str());
+		WriteLine(strLogText);
 	}
 
 	if (ERROR_SUCCESS != g_hRes && true == bFormatWinMsg)
@@ -157,7 +158,7 @@ DWORD CLog::Write(CString szMessage)
 
 	if (IsOpen())
 	{
-		WriteFile(m_hFileHandle, szMessage.c_str(), (DWORD)szMessage.size()*sizeof(wchar_t), &dwWriteLength, NULL);
+		WriteFile(m_hFileHandle, szMessage.w_str(), (DWORD)szMessage.size()*sizeof(wchar_t), &dwWriteLength, NULL);
 #ifdef _DEBUG
 		FlushFileBuffers(m_hFileHandle);
 #endif // _DEBUG
@@ -174,12 +175,12 @@ HRESULT CLog::OpenFile()
 	if (m_szFileName.empty())
 		return S_FALSE;
 
-	m_hFileHandle = CreateFile(m_szFileName.c_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+	m_hFileHandle = CreateFile(m_szFileName.w_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
 		NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (m_bIsCoverPrev == true)
 	{
-		m_hFileHandle = CreateFile(m_szFileName.c_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+		m_hFileHandle = CreateFile(m_szFileName.w_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
 			NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	}
 
@@ -201,6 +202,8 @@ CString CLog::GetFileName()
 
 bool CLog::IsOpen()
 {
+	if (!m_bInit)
+		throw exception("No Initialize!");
 	if (m_emType != LOGTYPE::ONEFILE)
 	{
 		TCHAR szCurrentDate[10];
@@ -215,7 +218,7 @@ bool CLog::IsOpen()
 		//		TCHAR szTmpPath[MAX_PATH] = {0};
 		if (m_szLastDate.empty() || m_szLastDate != szCurrentDate)
 		{
-			CString szTemp(L"%s\\%s.log", m_szFilePath.c_str(), szCurrentDate);
+			CString szTemp(L"%s\\%s.log", m_szFilePath.w_str(), szCurrentDate);
 			
 			// 			_tcscpy_s(szTmpPath, MAX_PATH, m_szFilePath );
 			// 			_tcscat_s(szTmpPath,MAX_PATH, TEXT("\\"));
@@ -258,7 +261,7 @@ void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pTy
 {
 	if (!szFileName.empty())
 	{
-		assert(szFileName.c_str());
+		assert(szFileName.w_str());
 		//SAFE_DELETE_ARR( m_szFileName );
 		Close();
 		m_szFileName = szFileName;
@@ -267,18 +270,18 @@ void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pTy
 
 	if (!szFilePath.empty())
 	{
-		assert(szFilePath.c_str());
+		assert(szFilePath.w_str());
 		WIN32_FIND_DATA wfd;
 		TCHAR temp[MAX_PATH + 1] = { 0 };
 
-		if (FindFirstFile(szFilePath.c_str(), &wfd) == INVALID_HANDLE_VALUE && CreateDirectory(szFilePath.c_str(), NULL) == 0)
+		if (FindFirstFile(szFilePath.t_str(), &wfd) == INVALID_HANDLE_VALUE && CreateDirectory(szFilePath.t_str(), NULL) == 0)
 		{
 			assert(false);
 			exit(1);
 		}
 		else
 		{
-			GetFullPathName(szFilePath.c_str(), MAX_PATH, temp, NULL);
+			GetFullPathName(szFilePath.t_str(), MAX_PATH, temp, NULL);
 			//SAFE_DELETE_ARR(m_szFilePath);
 			//m_pUniversal->CopyStringToPoint(m_szFilePath, temp);
 			m_szFilePath = temp;
@@ -301,6 +304,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 {
 	// All value init
 	g_hRes = S_OK;
+	m_bInit = true;
 	m_emLevel = emLevel;
 	m_hFileHandle = INVALID_HANDLE_VALUE;
 	m_szFilePath.clear();

@@ -60,7 +60,8 @@ namespace Sloong
 			CString		m_szLastDate;
 			int			m_emType;
 			bool		m_bIsCoverPrev;
-			HRESULT g_hRes;
+			HRESULT		g_hRes;
+			bool		m_bInit;
 		};
 	}
 }

@@ -5,6 +5,7 @@
 #include "SLoongBitmap.h"
 
 using namespace Sloong::Graphics;
+using namespace Sloong::Universal;
 
 CBitmap::CBitmap()
 {
@@ -23,14 +24,14 @@ HRESULT CBitmap::Shutdown()
 	return S_OK;
 }
 
-HRESULT CBitmap::LoadBitmapFromFile(LPCTSTR strFileName)
+HRESULT CBitmap::LoadBitmapFromFile(CString strFileName)
 {
 	HANDLE nFileHandle;
 	DWORD nSize = 0;
 
 	LPVOID lpTempBuffer = NULL;
 
-	nFileHandle = CreateFile(strFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING,
+	nFileHandle = CreateFile(strFileName.t_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if (INVALID_HANDLE_VALUE == nFileHandle)
 	{

@@ -34,31 +34,36 @@ namespace Sloong
 			CString(LPCWSTR lpStr, ...);
 			CString(string lpStr);
 			CString(wstring lpStr);
+			CString(const CString& str);
 			~CString();
 
 			CString& operator=(LPCSTR lpStr);
 			CString& operator=(LPCWSTR lpStr);
 			CString& operator=(string lpStr);
 			CString& operator=(wstring lpstr);
+			CString& operator=(const CString& str);
 
 			void FormatA(LPCSTR lpStr, ...);
 			void FormatW(LPCWSTR lpStr, ...);
-			void Format(LPCTSTR lpStr, ...);
 
 			string GetStringA() const;
 			wstring GetStringW() const;
-			tstring GetString() const;
+
+			LPCWSTR	w_str() const;
+			LPCSTR	a_str() const;
 
 #ifdef UNICODE
 #define		GetString	GetStringW
 #define		Format		FormatW
+#define		t_str		w_str
 #else
 #define		GetString	GetStringA
 #define		Format		FormatA
+#define		t_str		a_str
 #endif // !UNICODE
 
 			bool empty() const{ return GetString().empty(); }
-			LPCTSTR c_str() const { return GetString().c_str(); }
+			
 			size_t size() const { return GetString().size(); }
 			bool operator!= (LPCTSTR str) const { return GetString() != str; }
 			bool operator== (LPCTSTR str) const { return GetString() == str; }
@@ -69,6 +74,7 @@ namespace Sloong
 			static string UnicodeToANSI(LPCWSTR strWide);
 			static wstring ANSIToUnicode(LPCSTR strMulti);
 		protected:
+			string*	m_strTemp;	// this object just used to return the ANSI string. no used to compute. 
 			wstring* m_strString;
 		};
 	}

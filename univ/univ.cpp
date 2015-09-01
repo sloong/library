@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 #include <iostream>
-#include <windows.h>
-#include <winerror.h>
 #include <map>
 #include "error.h"
 #include "log.h"
@@ -108,7 +106,6 @@ wstring CUniversal::FormatWindowsErrorMessage( DWORD dwErrCode)
 }
 
 
-#ifdef _WINDOWS
 // CSize
 inline CSize::CSize() throw()
 {
@@ -195,15 +192,6 @@ inline CPoint CSize::operator-(_In_ POINT point) const throw()
 	return CPoint(cx - point.x, cy - point.y);
 }
 
-inline CRect CSize::operator+(_In_ const RECT* lpRect) const throw()
-{
-	return CRect(lpRect) + *this;
-}
-
-inline CRect CSize::operator-(_In_ const RECT* lpRect) const throw()
-{
-	return CRect(lpRect) - *this;
-}
 
 // CPoint
 inline CPoint::CPoint() throw()
@@ -323,6 +311,23 @@ inline CSize CPoint::operator-(_In_ POINT point) const throw()
 	return CSize(x - point.x, y - point.y);
 }
 
+
+
+#ifdef _WINDOWS
+
+
+inline CRect CSize::operator+(_In_ const RECT* lpRect) const throw()
+{
+	return CRect(lpRect) + *this;
+}
+
+inline CRect CSize::operator-(_In_ const RECT* lpRect) const throw()
+{
+	return CRect(lpRect) - *this;
+}
+
+
+
 inline CRect CPoint::operator+(_In_ const RECT* lpRect) const throw()
 {
 	return CRect(lpRect) + *this;
@@ -332,6 +337,7 @@ inline CRect CPoint::operator-(_In_ const RECT* lpRect) const throw()
 {
 	return CRect(lpRect) - *this;
 }
+
 
 // CRect
 inline CRect::CRect() throw()
@@ -756,7 +762,10 @@ inline CRect CRect::MulDiv(
 		::MulDiv(right, nMultiplier, nDivisor),
 		::MulDiv(bottom, nMultiplier, nDivisor));
 }
-#endif
+
+#endif // _WINDOWS
+
+
 
 const int MAX_BUFFER = 2048;
 

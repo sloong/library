@@ -1,3 +1,5 @@
+#ifdef _WINDOWS
+
 #pragma once
 
 class XMLProc
@@ -38,3 +40,4 @@ public:
 	void Exit();
 
 };
+#endif // _WINDOWS

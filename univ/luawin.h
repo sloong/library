@@ -1,4 +1,7 @@
-#pragma once
+#ifndef LUAWIN_H
+#define LUAWIN_H
+
+
 #include "univ.h"
 namespace Sloong
 {
@@ -24,3 +27,5 @@ namespace Sloong
 		};
 	}
 }
+
+#endif // !LUAWIN_H

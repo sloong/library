@@ -58,7 +58,9 @@ distribution.
 
 #ifdef _UNICODE
 //typedef wchar_t TCHAR;
+#ifndef TCHAR
 #define TCHAR wchar_t
+#endif
 #define strlen wcslen
 #define strcmp wcscmp 
 #define strcpy wcscpy

@@ -8,34 +8,111 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+// close warning
+#pragma warning(disable:4996)
+
+
+#ifndef _WINDOWS
+
+
 #ifndef 	LPCWSTR
-	#define		LPCWSTR		const wchar_t*
+#define		LPCWSTR		const wchar_t*
 #endif
 #ifndef 	LPWSTR
-	#define		LPWSTR		wchar_t*
+#define		LPWSTR		wchar_t*
 #endif
 #ifndef 	LPCSTR
-	#define		LPCSTR		const char*
+#define		LPCSTR		const char*
 #endif
 #ifndef 	LPSTR
-	#define		LPSTR		char*
+#define		LPSTR		char*
 #endif
 #ifndef 	TRUE
-	#define		TRUE		1
+#define		TRUE		1
 #endif
 #ifndef 	FALSE
-	#define		FALSE		0
+#define		FALSE		0
 #endif
 #ifndef		WCHAR
-	#define 	WCHAR		wchar_t
+#define 	WCHAR		wchar_t
 #endif
 #ifndef		CHAR
-	#define 	CHAR		char
+#define 	CHAR		char
 #endif
 
 #ifndef		DWORD
-	#define		DWORD		unsigned long
+#define		DWORD		unsigned long
 #endif
+
+#ifndef LPVOID
+#define LPVOID	void*
+#endif // !LPVOID
+
+#ifndef HRESULT
+typedef long HRESULT
+#endif // !HRESULT
+
+#ifndef LONG
+typedef long                LONG;
+#endif // !LONG
+
+#ifndef SHORT
+typedef short               SHORT;
+#endif // !SHORT
+
+
+#ifndef tagRECT
+typedef struct tagRECT
+{
+	LONG    left;
+	LONG    top;
+	LONG    right;
+	LONG    bottom;
+} RECT, *PRECT;
+#endif // !tagRECT
+
+#ifndef tagPOINT
+typedef struct tagPOINT
+{
+	LONG  x;
+	LONG  y;
+} POINT, *PPOINT;
+#endif // !tagPOINT
+
+#ifndef tagSIZE
+typedef struct tagSIZE
+{
+	LONG        cx;
+	LONG        cy;
+} SIZE, *PSIZE, *LPSIZE;
+#endif // !tagSIZE
+
+#ifndef tagPOINTS
+typedef struct tagPOINTS
+{
+	SHORT   x;
+	SHORT   y;
+} POINTS, *PPOINTS, *LPPOINTS;
+#endif // !tagPOINTS
+
+#ifndef S_OK
+#define S_OK                            ((HRESULT)0L)
+#endif // !S_OK
+
+#ifndef S_FALSE
+#define S_FALSE                                ((HRESULT)1L)
+#endif // !S_FALSE
+
+
+#ifndef S_FAILED
+#define S_FAILED						((HRESULT)-1L)
+#endif // !S_FAILED
+
+#define SUCCEEDED(hr)   (((HRESULT)(hr)) >= 0)
+#define FAILED(hr)      (((HRESULT)(hr)) < 0)
+
+#endif // !_WINDOWS
+
 
 #ifdef UNICODE
 	#define		tstring		wstring
@@ -127,8 +204,6 @@
 #endif
 #define __TFILE__		__FILEW__
 #define __TFUNCTION__	__FUNCTIONW__
-typedef wstring tstring;
-typedef const wstring ctstring;
 #define stscanf swscanf
 #define stscanf_s swscanf_s
 #define fgetts fgetws
@@ -162,8 +237,6 @@ typedef const wstring ctstring;
 #define _tstring		string
 #define __TFILE__		__FILE__
 #define __TFUNCTION__	__FUNCTION__
-typedef string tstring;
-typedef const string ctstring;
 #define stscanf sscanf
 #define stscanf_s swscanf_s
 #define fgetts fgets

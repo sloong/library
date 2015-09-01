@@ -1,5 +1,3 @@
-
-
 #ifdef _WINDOWS
 	#ifdef SLOONGUNIVERSAL_EXPORTS
 		#define UNIVERSAL_API __declspec(dllexport)
@@ -40,7 +38,7 @@ namespace Sloong
 		};
 
 #pragma region Windows Define
-#ifdef _WINDOWS
+
 		class CSize;
 		class CPoint;
 		class CRect;
@@ -139,6 +137,7 @@ namespace Sloong
 			CRect operator-( const RECT* lpRect) const throw();
 		};
 
+#ifdef _WINDOWS
 		/////////////////////////////////////////////////////////////////////////////
 		// CRect - A 2-D rectangle, similar to Windows RECT structure.
 		class UNIVERSAL_API CRect : public tagRECT
@@ -149,23 +148,23 @@ namespace Sloong
 			CRect() throw();
 			// from left, top, right, and bottom
 			CRect(
-				 int l,
-				 int t,
-				 int r,
-				 int b) throw();
+				int l,
+				int t,
+				int r,
+				int b) throw();
 			// copy constructor
-			CRect( const RECT& srcRect) throw();
+			CRect(const RECT& srcRect) throw();
 
 			// from a pointer to another rect
-			CRect( LPCRECT lpSrcRect) throw();
+			CRect(LPCRECT lpSrcRect) throw();
 			// from a point and size
 			CRect(
-				 POINT point,
-				 SIZE size) throw();
+				POINT point,
+				SIZE size) throw();
 			// from two points
 			CRect(
-				 POINT topLeft,
-				 POINT bottomRight) throw();
+				POINT topLeft,
+				POINT bottomRight) throw();
 
 			// Attributes (in addition to RECT members)
 
@@ -198,119 +197,119 @@ namespace Sloong
 			// returns TRUE if rectangle is at (0,0) and has no area
 			BOOL IsRectNull() const throw();
 			// returns TRUE if point is within rectangle
-			BOOL PtInRect( POINT point) const throw();
+			BOOL PtInRect(POINT point) const throw();
 
 			// Operations
 
 			// set rectangle from left, top, right, and bottom
 			void SetRect(
-				 int x1,
-				 int y1,
-				 int x2,
-				 int y2) throw();
+				int x1,
+				int y1,
+				int x2,
+				int y2) throw();
 			void SetRect(
-				 POINT topLeft,
-				 POINT bottomRight) throw();
+				POINT topLeft,
+				POINT bottomRight) throw();
 			// empty the rectangle
 			void SetRectEmpty() throw();
 			// copy from another rectangle
-			void CopyRect( LPCRECT lpSrcRect) throw();
+			void CopyRect(LPCRECT lpSrcRect) throw();
 			// TRUE if exactly the same as another rectangle
-			BOOL EqualRect( LPCRECT lpRect) const throw();
+			BOOL EqualRect(LPCRECT lpRect) const throw();
 
 			// Inflate rectangle's width and height by
 			// x units to the left and right ends of the rectangle
 			// and y units to the top and bottom.
 			void InflateRect(
-				 int x,
-				 int y) throw();
+				int x,
+				int y) throw();
 			// Inflate rectangle's width and height by
 			// size.cx units to the left and right ends of the rectangle
 			// and size.cy units to the top and bottom.
-			void InflateRect( SIZE size) throw();
+			void InflateRect(SIZE size) throw();
 			// Inflate rectangle's width and height by moving individual sides.
 			// Left side is moved to the left, right side is moved to the right,
 			// top is moved up and bottom is moved down.
-			void InflateRect( LPCRECT lpRect) throw();
+			void InflateRect(LPCRECT lpRect) throw();
 			void InflateRect(
-				 int l,
-				 int t,
-				 int r,
-				 int b) throw();
+				int l,
+				int t,
+				int r,
+				int b) throw();
 
 			// deflate the rectangle's width and height without
 			// moving its top or left
 			void DeflateRect(
-				 int x,
-				 int y) throw();
-			void DeflateRect( SIZE size) throw();
-			void DeflateRect( LPCRECT lpRect) throw();
+				int x,
+				int y) throw();
+			void DeflateRect(SIZE size) throw();
+			void DeflateRect(LPCRECT lpRect) throw();
 			void DeflateRect(
-				 int l,
-				 int t,
-				 int r,
-				 int b) throw();
+				int l,
+				int t,
+				int r,
+				int b) throw();
 
 			// translate the rectangle by moving its top and left
 			void OffsetRect(
-				 int x,
-				 int y) throw();
-			void OffsetRect( SIZE size) throw();
-			void OffsetRect( POINT point) throw();
+				int x,
+				int y) throw();
+			void OffsetRect(SIZE size) throw();
+			void OffsetRect(POINT point) throw();
 			void NormalizeRect() throw();
 
 			// absolute position of rectangle
-			void MoveToY( int y) throw();
-			void MoveToX( int x) throw();
+			void MoveToY(int y) throw();
+			void MoveToX(int x) throw();
 			void MoveToXY(
-				 int x,
-				 int y) throw();
-			void MoveToXY( POINT point) throw();
+				int x,
+				int y) throw();
+			void MoveToXY(POINT point) throw();
 
 			// set this rectangle to intersection of two others
 			BOOL IntersectRect(
-				 LPCRECT lpRect1,
-				 LPCRECT lpRect2) throw();
+				LPCRECT lpRect1,
+				LPCRECT lpRect2) throw();
 
 			// set this rectangle to bounding union of two others
 			BOOL UnionRect(
-				 LPCRECT lpRect1,
-				 LPCRECT lpRect2) throw();
+				LPCRECT lpRect1,
+				LPCRECT lpRect2) throw();
 
 			// set this rectangle to minimum of two others
 			BOOL SubtractRect(
-				 LPCRECT lpRectSrc1,
-				 LPCRECT lpRectSrc2) throw();
+				LPCRECT lpRectSrc1,
+				LPCRECT lpRectSrc2) throw();
 
 			// Additional Operations
-			void operator=( const RECT& srcRect) throw();
-			BOOL operator==( const RECT& rect) const throw();
-			BOOL operator!=( const RECT& rect) const throw();
-			void operator+=( POINT point) throw();
-			void operator+=( SIZE size) throw();
-			void operator+=( LPCRECT lpRect) throw();
-			void operator-=( POINT point) throw();
-			void operator-=( SIZE size) throw();
-			void operator-=( LPCRECT lpRect) throw();
-			void operator&=( const RECT& rect) throw();
-			void operator|=( const RECT& rect) throw();
+			void operator=(const RECT& srcRect) throw();
+			BOOL operator==(const RECT& rect) const throw();
+			BOOL operator!=(const RECT& rect) const throw();
+			void operator+=(POINT point) throw();
+			void operator+=(SIZE size) throw();
+			void operator+=(LPCRECT lpRect) throw();
+			void operator-=(POINT point) throw();
+			void operator-=(SIZE size) throw();
+			void operator-=(LPCRECT lpRect) throw();
+			void operator&=(const RECT& rect) throw();
+			void operator|=(const RECT& rect) throw();
 
 			// Operators returning CRect values
-			CRect operator+( POINT point) const throw();
-			CRect operator-( POINT point) const throw();
-			CRect operator+( LPCRECT lpRect) const throw();
-			CRect operator+( SIZE size) const throw();
-			CRect operator-( SIZE size) const throw();
-			CRect operator-( LPCRECT lpRect) const throw();
-			CRect operator&( const RECT& rect2) const throw();
-			CRect operator|( const RECT& rect2) const throw();
+			CRect operator+(POINT point) const throw();
+			CRect operator-(POINT point) const throw();
+			CRect operator+(LPCRECT lpRect) const throw();
+			CRect operator+(SIZE size) const throw();
+			CRect operator-(SIZE size) const throw();
+			CRect operator-(LPCRECT lpRect) const throw();
+			CRect operator&(const RECT& rect2) const throw();
+			CRect operator|(const RECT& rect2) const throw();
 			CRect MulDiv(
-				 int nMultiplier,
-				 int nDivisor) const throw();
+				int nMultiplier,
+				int nDivisor) const throw();
 		};
+#endif // !_WINDOWS
 
 #pragma endregion
-#endif
 
 	}
 }

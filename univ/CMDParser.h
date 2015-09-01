@@ -1,3 +1,6 @@
+#ifndef CMDPARSER_H
+#define CMDPARSER_H
+
 class CCMDParser
 {
 public:
@@ -95,3 +98,6 @@ private:
 	int		m_nCurrentLineChar;
 	LPTSTR*	m_pStrScript;
 };
+
+#endif // !CMDPARSER_H
+

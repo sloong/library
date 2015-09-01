@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LOG_H
+#define LOG_H
+
 
 #include "univ.h"
 #include "string/string.h"
@@ -27,7 +29,7 @@ namespace Sloong
 			INF,
 			All,
 		}LOGLEVEL;
-		
+
 		class UNIVERSAL_API CLog
 		{
 		public:
@@ -65,3 +67,6 @@ namespace Sloong
 		};
 	}
 }
+
+#endif // !LOG_H
+

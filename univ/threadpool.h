@@ -1,5 +1,12 @@
-#pragma once
+#ifndef THREADPOOL_H
+#define THREADPOOL_H
 
+#include <thread>
+#include <mutex>
+#include <queue>
+using std::queue;
+using std::thread;
+using std::mutex;
 namespace Sloong
 {
 	namespace Universal
@@ -10,6 +17,10 @@ namespace Sloong
 		{
 			LPCALLBACKFUNC	pJob;
 			LPVOID			pParam;
+			~ThreadParam()
+			{
+				SAFE_DELETE(pParam);
+			}
 		};
 
 		class UNIVERSAL_API CThreadPool
@@ -24,15 +35,20 @@ namespace Sloong
 			virtual void End();
 			// Add a task to job list, and return the task index.
 			virtual int AddTask(LPCALLBACKFUNC pJob, LPVOID pParam);
+			// Add work thread 
+			virtual int AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nThreadNum = 1);
+
 			// remove a task from job list.
 			virtual void RemoveTask(int index);
 			virtual int GetTaskTotal();
-			virtual HANDLE GetJobListMutex();
 		protected:
-			vector<HANDLE>* m_pThreadList;
-			static list<ThreadParam*>*	m_pJobList;
-			static DWORD WINAPI ThreadWorkLoop(LPVOID lpParam);
-			static HANDLE g_pMutex;
+			vector<thread*>* m_pThreadList;
+			static queue<ThreadParam*>*	m_pJobList;
+			static void WINAPI ThreadWorkLoop(void);
+			static mutex g_oMutex;
 		};
 	}
 }
+
+#endif // !THREADPOOL_H
+

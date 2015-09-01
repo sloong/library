@@ -1,4 +1,7 @@
-#pragma once
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
+
+
 #include "univ.h"
 #include "string/string.h"
 #pragma comment(lib,"string.lib")
@@ -23,3 +26,5 @@ namespace Sloong
 		};
 	}
 }
+
+#endif // !EXCEPTION_H

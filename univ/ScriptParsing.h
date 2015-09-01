@@ -1,7 +1,7 @@
 /************************************************************************/
 /*		ScriptParsing.h --- Script Parsing Classes Declaration			*/
 /************************************************************************/
-#pragma once
+
 
 #ifdef SCRIPTPARSING_EXPORTS
 #define SCRIPTPARSING_API __declspec(dllexport)
@@ -25,5 +25,7 @@
 #define SCRIPTPARSING_API __declspec(dllimport)
 #endif
 
-// Include Dependent Library Defines. the user must used it.
-#include "CUniversal.h"
+#ifndef SCRIPTPARSING_H
+#define SCRIPTPARSING_H
+
+#endif // !SCRIPTPARSING_H

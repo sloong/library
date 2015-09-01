@@ -7,7 +7,7 @@ using Sloong::Universal::CString;
 CString::CString()
 {
 	m_strString = new wstring();
-	m_strTemp = new string();
+	m_strTemp = NULL;
 }
 
 
@@ -116,8 +116,8 @@ void Sloong::Universal::CString::FormatW(LPCWSTR lpStr, ...)
 {
 	va_list args;
 	va_start(args, lpStr);
-	WCHAR szBuffer[MAX_BUFFER];
-	vswprintf(szBuffer, MAX_BUFFER, lpStr, args);
+	WCHAR szBuffer[MAX_BUFFER] = {0};
+	_vsnwprintf(szBuffer, MAX_BUFFER, lpStr, args);
 	va_end(args);
 	(*m_strString) = szBuffer;
 }
@@ -159,6 +159,11 @@ LPCWSTR Sloong::Universal::CString::w_str() const
 
 LPCSTR Sloong::Universal::CString::a_str() const
 {
+	if ( m_strTemp == NULL )
+	{
+		const_cast<string*>(m_strTemp) = new string();
+	}
+
 	(*m_strTemp) = UnicodeToANSI(m_strString->c_str());
 	return m_strTemp->c_str();
 }

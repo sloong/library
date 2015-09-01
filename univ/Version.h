@@ -1,4 +1,7 @@
-#pragma once
+#ifndef VERSION_H
+#define VERSION_H
+
+
 // Version
 #define VERSION_NUMBER						2,0,0,77
 #define VERSION_FILEVERSION					TEXT("2.0.0.77")
@@ -15,3 +18,6 @@
 #define VERSION_INTERNALNAME				TEXT("Universal.dll")
 #define VERSION_COMPANYNAME 				TEXT("Sloong, Inc.")
 #define	VERSION_LEGALCOPYRIGHT				TEXT("Copyright (C) 2014-2015 Sloong, Inc.")
+
+
+#endif // !VERSION_H

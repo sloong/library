@@ -16,15 +16,15 @@
 	#include <time.h>
 	#include <stdio.h>
 	#include <fstream>
+	#include <windows.h>
+	#include <winerror.h>
 #else
 	#include <stdarg.h>
 	#include <string.h>
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <wchar.h>
-	
 #endif
 #include "univ.h"
 
-// TODO:  在此处引用程序需要的其他头文件
 #endif //STDAFX_H

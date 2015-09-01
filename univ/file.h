@@ -1,4 +1,7 @@
-#pragma once
+#ifndef FILE_H
+#define FILE_H
+
+
 #include "univ.h"
 #include "string/string.h"
 namespace Sloong
@@ -32,3 +35,4 @@ namespace Sloong
 	}
 }
 
+#endif // !FILE_H

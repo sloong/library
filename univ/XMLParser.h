@@ -1,7 +1,10 @@
 /************************************************************************/
 /*			 XMLParser.h --- XML Parsing Class Declaration				*/
 /************************************************************************/
-#pragma once
+#ifndef XMLPARSER_H
+#define XMLPARSER_H
+
+
 
 #define CHAR_SWAP_SIZE	2048
 
@@ -12,7 +15,7 @@ class TiXmlElement;
 class TiXmlAttribute;
 
 #include "univ.h"
-typedef map<wstring,LPVOID> ILinkList;
+typedef map<wstring, LPVOID> ILinkList;
 
 class CXMLParser
 {
@@ -41,3 +44,4 @@ public:
 	HRESULT GetParentNode(TiXmlElement* pChildNode, TiXmlElement*& pParentNode);
 	HRESULT g_hRes;
 };
+#endif // !XMLPARSER_H

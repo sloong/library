@@ -5,13 +5,14 @@ using namespace Sloong::Universal;
 
 typedef int(*LuaFunc)(lua_State* pLuaState);
 
+#define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
+
 CLua::CLua()
 {
 	m_pErrorHandler = NULL;
 
 	m_pScriptContext = luaL_newstate();
 	luaL_openlibs(m_pScriptContext);
-	m_pMutex = CreateMutex(NULL, FALSE, _T("SloongLuaMutex"));
 }
 
 CLua::~CLua()
@@ -19,7 +20,6 @@ CLua::~CLua()
 	if (m_pScriptContext)
 		lua_close(m_pScriptContext);
 
-	CloseHandle(m_pMutex);
 }
 
 static wstring findScript(CString strFullName)
@@ -65,24 +65,20 @@ static wstring findScript(CString strFullName)
 
 bool CLua::RunScript(CString strFileName)
 {
-	WaitForSingleObject(m_pMutex, INFINITE);
-
+	LOCK_GUARD(m_oMutex);
 	wstring strFullName = findScript(strFileName);
 
 	if ( 0 != luaL_loadfile(m_pScriptContext, CUniversal::ToString(strFullName).c_str()))
 	{
 		HandlerError(_T("Load Script"), strFullName.c_str());
-		ReleaseMutex(m_pMutex);
 		return false;
 	}
 
 	if ( 0 != lua_pcall(m_pScriptContext,0,LUA_MULTRET,0))
 	{
 		HandlerError(_T("Run Script"), strFullName.c_str());
-		ReleaseMutex(m_pMutex);
 		return false;
 	}
-	ReleaseMutex(m_pMutex);
 	return true;
 }
 
@@ -107,22 +103,19 @@ bool CLua::RunBuffer( LPCSTR pBuffer,size_t sz)
 
 bool CLua::RunString(CString strCommand)
 {
-	WaitForSingleObject(m_pMutex, INFINITE);
-	if (0 != luaL_loadstring(m_pScriptContext, strCommand.GetStringA().c_str()))
+	LOCK_GUARD(m_oMutex);
+	if (0 != luaL_loadstring(m_pScriptContext, strCommand.a_str()))
 	{
 		HandlerError(_T("String Load"), strCommand);
-		ReleaseMutex(m_pMutex);
 		return false;
 	}
 
 	if (0 != lua_pcall(m_pScriptContext, 0, LUA_MULTRET, 0))
 	{
 		HandlerError(_T("Run String"), strCommand);
-		ReleaseMutex(m_pMutex);
 		return false;
 	}
 
-	ReleaseMutex(m_pMutex);
 	return true;
 }
 
@@ -137,14 +130,14 @@ CString CLua::GetErrorString()
 bool CLua::AddFunction( CString pFunctionName, LuaFunctionType pFunction)
 {
 	LuaFunc pFunc = (LuaFunc)pFunction;
-	lua_register(m_pScriptContext, pFunctionName.GetStringA().c_str(), pFunc);
+	lua_register(m_pScriptContext, pFunctionName.a_str(), pFunc);
 	return true;
 }
 
 
 CString CLua::GetStringArgument(int num, CString pDefault)
 {
-	auto str = luaL_optstring(m_pScriptContext, num, pDefault.GetStringA().c_str());
+	auto str = luaL_optstring(m_pScriptContext, num, pDefault.a_str());
 
 	return str;
 }
@@ -156,7 +149,7 @@ double CLua::GetNumberArgument(int num, double dDefault)
 
 void CLua::PushString(CString pString)
 {
-	lua_pushstring(m_pScriptContext, pString.GetStringA().c_str());
+	lua_pushstring(m_pScriptContext, pString.a_str());
 }
 
 void CLua::PushNumber(double value)
@@ -167,7 +160,7 @@ void CLua::PushNumber(double value)
 bool CLua::RunFunction(CString strFunctionName, CString args)
 {
 	CString cmd;
-	cmd.FormatA("%s(%s)", strFunctionName.GetStringA().c_str(), args.GetStringA().c_str());
+	cmd.FormatW(L"%s(%s)", strFunctionName.w_str(), args.w_str());
 	return RunString(cmd);
 }
 
@@ -176,7 +169,7 @@ void CLua::HandlerError(CString strErrorType, CString strCmd)
 	if (m_pErrorHandler)
 	{
 		CString msg;
-		msg.FormatW(L"\n Error - %s:\n %s\n Error Message:%s", strErrorType.GetStringW().c_str(), strCmd.GetStringW().c_str(), GetErrorString().GetStringW().c_str());
+		msg.FormatW(L"\n Error - %s:\n %s\n Error Message:%s", strErrorType.w_str(), strCmd.w_str(), GetErrorString().w_str());
 		m_pErrorHandler(msg);
 	}
 }
@@ -210,7 +203,6 @@ map<wstring, wstring> CLua::GetTableParam(int index)
 	// 现在的栈：index => table （最后 lua_next 返回 0 的时候它已经把上一次留下的 key 给弹出了）
 	// 所以栈已经恢复到进入这个函数时的状态
 	return data;
-
 }
 
 LuaType CLua::CheckType(int index)
@@ -221,7 +213,7 @@ LuaType CLua::CheckType(int index)
 
 double CLua::StringToNumber(CString string)
 {
-	lua_stringtonumber(m_pScriptContext, string.GetStringA().c_str());
+	lua_stringtonumber(m_pScriptContext, string.a_str());
 	
 	return lua_tonumber(m_pScriptContext, -1);
 }

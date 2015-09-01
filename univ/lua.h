@@ -1,6 +1,11 @@
-#pragma once
+#ifndef LUA_H
+#define LUA_H
+
 
 #define LuaRes extern "C" int
+
+#include <mutex>
+using std::mutex;
 
 #include "univ.h"
 #include "string/string.h"
@@ -12,6 +17,7 @@ namespace Sloong
 #include "lua/src/lua.h"
 #include "lua/src/lualib.h"
 #include "lua/src/lauxlib.h"
+
 		}
 #pragma comment(lib,"lua.lib")
 
@@ -66,9 +72,12 @@ namespace Sloong
 		private:
 			lua_State *m_pScriptContext;
 			void(*m_pErrorHandler)(CString strError);
-			//HANDLE	m_pMutex;
+			mutex	m_oMutex;
 		};
 
 	}
-	
+
 }
+
+#endif // !LUA_H
+

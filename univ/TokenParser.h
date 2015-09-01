@@ -1,10 +1,13 @@
-#pragma once
+#ifndef TOKENPARSER_H
+#define TOKENPARSER_H
+
+
 class CTokenParser
 {
 public:
 	CTokenParser(void);
 	~CTokenParser(void);
-	LRESULT Initialize( LPCTSTR strFilePath );
+	LRESULT Initialize(LPCTSTR strFilePath);
 	void Shutdown();
 	//--- Reset Function annotation ---
 	// Parameters:
@@ -22,7 +25,7 @@ public:
 	//		
 	// Remarks:
 	//		It just used in TokenStream mode
-	LRESULT SetTokenStream( LPTSTR strData );
+	LRESULT SetTokenStream(LPTSTR strData);
 
 	//--- GetNextToken Function annotation ---
 	// Parameters:
@@ -31,8 +34,8 @@ public:
 	//		
 	// Remarks:
 	//		It just used in TokenStream Mode.
-	LRESULT GetNextToken( LPTSTR buffer, UINT BufSize );
-	LRESULT GetNextToken( LPTSTR token, LPTSTR buffer, UINT nBufSize );
+	LRESULT GetNextToken(LPTSTR buffer, UINT BufSize);
+	LRESULT GetNextToken(LPTSTR token, LPTSTR buffer, UINT nBufSize);
 
 	//--- IsValidIdentifier Function annotation ---
 	// Parameters:
@@ -41,7 +44,7 @@ public:
 	//		
 	// Remarks:
 	//		Just used in TokenStream Mode.
-	bool IsValidIdentifier( TCHAR c );
+	bool IsValidIdentifier(TCHAR c);
 
 	//--- MoveToNextLine Function annotation ---
 	// Parameters:
@@ -50,7 +53,7 @@ public:
 	//		
 	// Remarks:
 	//		Just used in TokenStream
-	bool MoveToNextLine( LPTSTR buffer, int BufSize );
+	bool MoveToNextLine(LPTSTR buffer, int BufSize);
 	//--- 0000014 --- 2013/10/24 --- WCB --- Add
 	// Just used in TokenStream Mode.
 	//--- 0000017 --- 2013/10/25 --- WCB --- Modify
@@ -127,3 +130,5 @@ protected:
 
 	LPTSTR m_strData;
 };
+
+#endif // !TOKENPARSER_H

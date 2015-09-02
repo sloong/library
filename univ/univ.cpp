@@ -4,10 +4,11 @@
 #include "stdafx.h"
 #include <iostream>
 #include <map>
-#include "error.h"
 #include "log.h"
 #include "univ.h"
 #include "Version.h"
+#include <assert.h>
+#include <libgen.h>
 
 using namespace std;
 using namespace Sloong::Universal;
@@ -20,77 +21,152 @@ wstring CUniversal::Version()
 	return VERSION_LEGALCOPYRIGHT;
 }
 
-typedef struct stMessageMap
-{
-	int nErrorCode;
-	LPCTSTR strErrorText;
-} MESSAGEMAP;
-
-
-MESSAGEMAP g_Map[] =
-{
-	S_FALSE, TXT_ERR_FALSE,
-	S_ERROR_REGISTRY_CANNOT_READ, TXT_ERR_REGISTRY_CANNOT_WRITE,
-	S_ERROR_REGISTRY_CANNOT_WRITE, TXT_ERR_REGISTRY_CANNOT_READ,
-	S_ERROR_REGISTRY_READ_FAILED, TXT_ERR_REGISTRY_READ_FAILED,
-	S_ERROR_CREATE_WINDOW_FAILED, TXT_ERR_CREATE_WINDOW_FAILED,
-	S_ERROR_CREATE_ENGINE_FAILED, TXT_ERR_CREATE_ENGINE_FAILED,
-	S_ERROR_ENGINE_INIT_FAILED, TXT_ERR_ENGINE_INIT_FAILED,
-	S_ERROR_GAME_INIT_FAILED, TXT_ERR_GAME_INIT_FAILED,
-	S_ERROR_MUTEX_EXIST, TXT_ERR_MUTEX_EXIST,
-	S_ERROR_LOAD_SCRIPT_FILE, TXT_ERR_LOAD_SCRIPT_FILE,
-	S_ERROR_PARAM_VALUE, TXT_ERR_PARAM_VALUE,
-	S_ERROR_CREATE_DEVICE, TXT_ERR_CREATE_DEVICE,
-	S_ERROR_GET_SWAP_CHAIN_BUFFER, TXT_ERR_GET_SWAP_CHAIN_BUFFER,
-	S_ERROR_CREATE_RENDER_TARGET_VIEW, TXT_ERR_CREATE_RENDER_TARGET_VIEW,
-	S_ERROR_OPEN_LOG_FILE, TXT_ERR_OPEN_LOG_FILE,
-	S_ERROR_NO_OPEN_FILE, TXT_ERR_NO_OPEN_FILE,
-	S_ERROR_CREATE_OBJECT, TXT_ERR_CREATE_OBJECT,
-	S_ERROR_FIND_OBJECT, TXT_ERR_FIND_OBJECT,
-	S_ERROR_CREATE_TEXUTE, TXT_ERR_CREATE_TEXUTE,
-	S_WARNING_FUNCTION_DISABLE, TEXT_WARN_FUNCTION_DISABLE,
-};
-
 bool g_bIsInst = false;
 
-//--- 0000010 --- 2013/9/30 --- WCB --- Add
-// Remarks:
-//		Format the error message with the error code
-HRESULT FormatErrorMessage(LPTSTR szErrText, DWORD dwSize, HRESULT nErrorCode)
-{
-	// if error code map is not initialize, do it.
-	if (false == g_bIsInst)
-	{
-		for (int i = 0; i < ARRAYSIZE(g_Map); i++)
-		{
-			g_MessageMap.insert(map<int, _tstring>::value_type(g_Map[i].nErrorCode, g_Map[i].strErrorText));
-		}
-		g_bIsInst = true;
-	}
-
-	// find the message with error code.
-	MSGMAP::iterator Key = g_MessageMap.find((int)nErrorCode);
-	if (Key == g_MessageMap.end())
-	{
-		_ASSERT(NULL);
-		_stprintf_s(szErrText, dwSize, TEXT("Unknow error, code = %d"), nErrorCode);
-		return S_OK;
-	}
-	else
-	{
-		_tcscpy_s(szErrText, dwSize / 2, Key->second.c_str());
-		return S_OK;
-	}
-}
-
-void CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
+void CUniversal::CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom)
 {
 	SAFE_DELETE_ARR(lpTarget);
-	UINT nLength = (UINT)_tcslen(lpFrom);
-	lpTarget = new TCHAR[nLength + 1];
+	int nLength = (int)strlen(lpFrom);
+	lpTarget = new char[nLength + 1];
 	assert(lpTarget);
-	_tcscpy_s(lpTarget, nLength + 1, lpFrom);
+	strncpy(lpTarget, lpFrom, nLength);
 }
+
+void CUniversal::CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom)
+{
+	SAFE_DELETE_ARR(lpTarget);
+	int nLength = (int)wcslen(lpFrom);
+	lpTarget = new wchar_t[nLength + 1];
+	assert(lpTarget);
+	wcsncpy(lpTarget, lpFrom, nLength);
+}
+
+#ifndef _WINDOWS
+
+ void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext)
+{
+
+ char *tmp_path;
+ int conut;
+ char tmp[MAX_PATH];
+ char tmp_name[MAX_PATH];
+ char tmp_ext[MAX_PATH];
+ int  check=0;
+ int check_1=0;
+ int i,j=0,k=0;
+ int conut_1,conut_2, conut_3;
+
+ tmp_path = NULL;
+ if( ( realpath(path, tmp_path) == NULL) )
+ {
+  tmp_path = (char*)path;
+ }
+
+ conut=0;
+ do
+ {
+  if( tmp_path[conut] == ':')
+  {
+   check=1;
+   conut_1 = conut;
+  }
+  if (tmp_path[conut] == '/')
+  {
+   conut_2 = conut;
+  }
+  if (tmp_path[conut] == '.')
+  {
+   check_1 = 1;
+   conut_3 = conut;
+  }
+  conut++;
+ }while(tmp_path[conut] != '\0');
+
+ if ( check == 1)
+ {
+  fname = basename(tmp_path);
+  dir = dirname(tmp_path);
+  for( i = 0 ; i< conut; i++)
+  {
+   if ( dir[i] != ':')
+   {
+    if( i>=2 )
+    {
+     tmp[i-2]=dir[i];
+    }
+   }
+   else
+   {
+	strncpy(drive,&dir[i-1],1);
+    //drive=dir[i-1];
+    
+   }
+  }
+
+  memset(dir,0,sizeof(dir));
+  strcpy(dir,tmp); 
+  
+ }
+ else
+ {
+  fname = basename(tmp_path);
+  dir = dirname(tmp_path);
+  
+ }
+
+ if (check_1 == 1)
+ {
+  while( fname[j] != '\0')
+  {
+
+   if ( fname[j] == '.')
+   {
+    k=j+1;
+   }
+   else
+   {
+    tmp_name[j]=fname[j];
+    if (j >=k && k != 0)
+    {
+
+     tmp_ext[j-k]=fname[j];
+    } 
+   }
+
+if ( fname[j] == '.')
+   {
+    k=j;
+   }
+
+   if ( j >= k && k !=0 )
+   {
+     tmp_ext[j-k]=fname[j ];
+   }
+   else
+   {
+    tmp_name[j]= fname[j];
+
+   }
+   j++;
+  }
+  memset(ext,0,sizeof(ext));
+  memset(fname, 0, sizeof(fname));
+  strcpy(fname, tmp_name);
+  strcpy(ext,tmp_ext);
+
+ }
+ printf("drive=====%c\n",drive);
+ printf("dir=======%s\n",dir);
+ printf("fname========%s\n",fname);
+ printf("ext======%s\n",ext);
+
+}
+
+#endif
+
+
+#ifdef _WINDOWS
+
 
 // Remarks:
 //		Format the windows error message
@@ -312,8 +388,6 @@ inline CSize CPoint::operator-(_In_ POINT point) const throw()
 }
 
 
-
-#ifdef _WINDOWS
 
 
 inline CRect CSize::operator+(_In_ const RECT* lpRect) const throw()
@@ -764,53 +838,3 @@ inline CRect CRect::MulDiv(
 }
 
 #endif // _WINDOWS
-
-
-
-const int MAX_BUFFER = 2048;
-
-string CUniversal::ToString(wstring strWide)
-{
-	string strResult;
-	int nLen = (int)strWide.size();
-	LPSTR szMulti = new CHAR[nLen + 1];
-	memset(szMulti, 0, nLen + 1);
-	WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), nLen, szMulti, nLen, NULL, FALSE);
-	strResult = szMulti;
-	SAFE_DELETE_ARR(szMulti);
-	return strResult;
-}
-
-wstring CUniversal::ToWString(string strMulti)
-{
-	wstring strResult;
-	int nLen = (int)strMulti.size();
-	LPWSTR strWide = new WCHAR[nLen + 1];
-	memset(strWide, 0, sizeof(WCHAR)*(nLen + 1));
-	MultiByteToWideChar(CP_ACP, 0, strMulti.c_str(), nLen, strWide, nLen);
-	strResult = strWide;
-	SAFE_DELETE_ARR(strWide);
-	return strResult;
-}
-
-string Sloong::Universal::CUniversal::FormatA(string lpStr, ...)
-{
-	//string strRes;
-	va_list args;
-	va_start(args, lpStr);
-	char szBuffer[MAX_BUFFER];
-	vsprintf_s(szBuffer, MAX_BUFFER, lpStr.c_str(), args);
-	//strRes = szBuffer;
-	va_end(args);
-	return szBuffer;
-}
-
-wstring Sloong::Universal::CUniversal::FormatW(wstring lpStr, ...)
-{
-	va_list args;
-	va_start(args, lpStr);
-	WCHAR szBuffer[MAX_BUFFER];
-	vswprintf_s(szBuffer, MAX_BUFFER, lpStr.c_str(), args);
-	va_end(args);
-	return szBuffer;
-}

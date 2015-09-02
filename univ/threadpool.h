@@ -12,7 +12,9 @@ namespace Sloong
 	namespace Universal
 	{
 
-		typedef LPTHREAD_START_ROUTINE LPCALLBACKFUNC;
+//		typedef LPTHREAD_START_ROUTINE LPCALLBACKFUNC;
+		typedef LPVOID(*pCallBack)(LPVOID);
+		typedef pCallBack LPCALLBACKFUNC;
 		struct ThreadParam
 		{
 			LPCALLBACKFUNC	pJob;
@@ -44,7 +46,7 @@ namespace Sloong
 		protected:
 			vector<thread*>* m_pThreadList;
 			static queue<ThreadParam*>*	m_pJobList;
-			static void WINAPI ThreadWorkLoop(void);
+			static void ThreadWorkLoop(void);
 			static mutex g_oMutex;
 		};
 	}

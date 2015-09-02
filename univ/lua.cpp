@@ -33,26 +33,26 @@ static wstring findScript(CString strFullName)
 	char szFileName[MAX_PATH];
 	char szExtension[MAX_PATH];
 
-	_splitpath_s(strFileName.c_str(), szDrive, MAX_PATH, szDir, MAX_PATH, szFileName, MAX_PATH, szExtension, MAX_PATH);
+	_splitpath(strFileName.c_str(), szDrive, szDir, szFileName, szExtension);
 
 	string strTestFile = (string)szDrive + szDir + ("Scripts\\") + szFileName + (".LUB");
-	fopen_s(&fFind,strTestFile.c_str(), "r");
+	fFind = fopen(strTestFile.c_str(), "r");
 	if (!fFind)
 	{
 		strTestFile = (string)szDrive + szDir + ("Scripts\\") + szFileName + (".LUA");
-		fopen_s(&fFind, strTestFile.c_str(), "r");
+		fFind = fopen(strTestFile.c_str(), "r");
 	}
 
 	if (!fFind)
 	{
 		strTestFile = (string)szDrive + szDir + szFileName + (".LUB");
-		fopen_s(&fFind, strTestFile.c_str(), "r");
+		fFind = fopen(strTestFile.c_str(), "r");
 	}
 
 	if (!fFind)
 	{
 		strTestFile = (string)szDrive + szDir + szFileName + (".LUA");
-		fopen_s(&fFind, strTestFile.c_str(), "r");
+		fFind = fopen(strTestFile.c_str(), "r");
 	}
 
 	if (fFind)
@@ -70,13 +70,13 @@ bool CLua::RunScript(CString strFileName)
 
 	if ( 0 != luaL_loadfile(m_pScriptContext, CUniversal::ToString(strFullName).c_str()))
 	{
-		HandlerError(_T("Load Script"), strFullName.c_str());
+		HandlerError("Load Script", strFullName);
 		return false;
 	}
 
 	if ( 0 != lua_pcall(m_pScriptContext,0,LUA_MULTRET,0))
 	{
-		HandlerError(_T("Run Script"), strFullName.c_str());
+		HandlerError("Run Script", strFullName);
 		return false;
 	}
 	return true;
@@ -87,15 +87,15 @@ bool CLua::RunBuffer( LPCSTR pBuffer,size_t sz)
 {
 	if (0 != luaL_loadbuffer(m_pScriptContext, (LPCSTR)pBuffer, sz, NULL))
 	{
-		string str(pBuffer);
-		HandlerError(_T("Load Buffer"), CUniversal::ToWString(str).c_str());
+		CString str(pBuffer);
+		HandlerError("Load Buffer", str);
 		return false;
 	}
 
 	if (0 != lua_pcall(m_pScriptContext, 0, LUA_MULTRET, 0))
 	{
-		string str(pBuffer);
-		HandlerError(_T("Run Buffer"), CUniversal::ToWString(str).c_str());
+		CString str(pBuffer);
+		HandlerError("Run Buffer", str);
 		return false;
 	}
 	return true;
@@ -106,13 +106,13 @@ bool CLua::RunString(CString strCommand)
 	LOCK_GUARD(m_oMutex);
 	if (0 != luaL_loadstring(m_pScriptContext, strCommand.a_str()))
 	{
-		HandlerError(_T("String Load"), strCommand);
+		HandlerError("String Load", strCommand);
 		return false;
 	}
 
 	if (0 != lua_pcall(m_pScriptContext, 0, LUA_MULTRET, 0))
 	{
-		HandlerError(_T("Run String"), strCommand);
+		HandlerError("Run String", strCommand);
 		return false;
 	}
 
@@ -182,7 +182,7 @@ map<wstring, wstring> CLua::GetTableParam(int index)
 	// ÏÖÔÚµÄÕ»£º-1 => nil; index => table
 	if ( index >= lua_gettop(L))
 	{
-		throw CException(_T("The index is too big."));
+		throw CException("The index is too big.");
 	}
 
 	while (lua_next(L, index))

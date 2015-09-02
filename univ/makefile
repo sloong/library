@@ -88,7 +88,7 @@ HDREXTS = .h .H .hh .hpp .HPP .h++ .hxx .hp
 # The pre-processor and compiler options.  
 # Users can override those variables from the command line.  
 CFLAGS  =  
-CXXFLAGS= -shared -fPIC -I../
+CXXFLAGS= -std=c++11 -shared -fPIC -I../ 
   
 # The C program compiler.  
 #CC	 = gcc  

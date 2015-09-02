@@ -38,7 +38,7 @@ namespace Sloong
 
 			virtual void Initialize(CString szPathName = L"Log.log", LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 
-			virtual DWORD Write(CString szMessage);
+			virtual void Write(CString szMessage);
 			virtual void WriteLine(CString szLog);
 			virtual void Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
 			virtual void SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
@@ -52,18 +52,19 @@ namespace Sloong
 			CString FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
 			CString FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
 			CString FormatInformationMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			HRESULT OpenFile();
+			bool OpenFile();
 
 		protected:
 			LOGLEVEL	m_emLevel;
-			HANDLE		m_hFileHandle;
+			ofstream	m_oFile;
 			CString		m_szFilePath;
 			CString		m_szFileName;
 			CString		m_szLastDate;
-			int			m_emType;
+			int		m_emType;
 			bool		m_bIsCoverPrev;
 			HRESULT		g_hRes;
 			bool		m_bInit;
+            static      g_bDebug;
 		};
 	}
 }

@@ -49,17 +49,28 @@
 #endif // !LPVOID
 
 #ifndef HRESULT
-typedef long HRESULT
+#define HRESULT long
 #endif // !HRESULT
 
 #ifndef LONG
-typedef long                LONG;
+#define LONG long
 #endif // !LONG
 
 #ifndef SHORT
-typedef short               SHORT;
+#define SHORT short
 #endif // !SHORT
 
+#ifndef BOOL
+#define BOOL int
+#endif // !BOOL
+
+#ifndef MAX_PATH
+#define MAX_PATH 256
+#endif
+
+#ifndef _T
+#define _T(x) L ## X
+#endif // !_T
 
 #ifndef tagRECT
 typedef struct tagRECT

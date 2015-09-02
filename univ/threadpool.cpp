@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "threadpool.h"
+#ifndef _WINDOWS
+#include <unistd.h>
+#endif
+
 using namespace Sloong::Universal;
 
 queue<ThreadParam*>* Sloong::Universal::CThreadPool::m_pJobList;
 
 mutex Sloong::Universal::CThreadPool::g_oMutex;
-CRITICAL_SECTION g_pData;
 Sloong::Universal::CThreadPool::CThreadPool()
 {
 	m_pThreadList = new vector<thread*>;
@@ -24,7 +27,6 @@ void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 	for (int i = 0; i < nThreadNum; i++)
 	{
 		thread* pThread = new thread(ThreadWorkLoop);
-		//auto pThread = CreateThread(NULL, NULL, ThreadWorkLoop, NULL, NULL, NULL);
 		m_pThreadList->push_back(pThread);
 	}
 }
@@ -46,7 +48,7 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 		{
 			if (m_pJobList->empty() || 0 == m_pJobList->size())
 			{
-				Sleep(1);
+				sleep(1);
 				continue;
 			}
 			std::lock_guard<mutex> lck(g_oMutex);

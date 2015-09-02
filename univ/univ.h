@@ -25,20 +25,18 @@ namespace Sloong
 {
 	namespace Universal
 	{
+	 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 		class UNIVERSAL_API CUniversal
 		{
 		public:
 			static wstring Version();
-			static wstring FormatW(wstring lpstr, ...);
-			static string FormatA(string lpstr, ...);
-			static wstring ToWString(string str);
-			static string ToString(wstring str);
-			static void CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
+			static void CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom);
+			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
 		};
 
 #pragma region Windows Define
-
+#ifdef _WINDOWS
 		class CSize;
 		class CPoint;
 		class CRect;
@@ -137,7 +135,7 @@ namespace Sloong
 			CRect operator-( const RECT* lpRect) const throw();
 		};
 
-#ifdef _WINDOWS
+
 		/////////////////////////////////////////////////////////////////////////////
 		// CRect - A 2-D rectangle, similar to Windows RECT structure.
 		class UNIVERSAL_API CRect : public tagRECT

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "lua.h"
+#include "exception.h"
 using namespace Sloong::Universal;
 
 typedef int(*LuaFunc)(lua_State* pLuaState);
@@ -181,7 +182,7 @@ map<wstring, wstring> CLua::GetTableParam(int index)
 	// ÏÖÔÚµÄÕ»£º-1 => nil; index => table
 	if ( index >= lua_gettop(L))
 	{
-		throw exception("The index is too big.");
+		throw normal_except("The index is too big.");
 	}
 
 	while (lua_next(L, index))

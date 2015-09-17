@@ -2,7 +2,7 @@
 /*				XML.cpp --- XML Parsing Classes Implement				*/
 /************************************************************************/
 //--- 2013/7/5 --- WCB --- Add
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "univ.h"
 #include "TinyXML/tinyxml.h"
 #include "XMLParser.h"
@@ -96,7 +96,7 @@ LPCTSTR CXMLParser::GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttr
 		}
 	}
 	hRes = false;
-	return TEXT("");
+	return _T("");
 }
 
 
@@ -235,25 +235,25 @@ ULONG CXMLParser::GetAttributeARGB( LPCTSTR szNodeName, bool& hRes , LPCTSTR szP
 		hRes = false;
 		return 0;
 	}
-	int a = GetAttributeInt(szNodeName,TEXT("ColorA"),g_hRes,szParientNode,bFindParent);
+	int a = GetAttributeInt(szNodeName,_T("ColorA"),g_hRes,szParientNode,bFindParent);
 	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
 	}
-	int r = GetAttributeInt(szNodeName,TEXT("ColorR"),g_hRes,szParientNode,bFindParent);
+	int r = GetAttributeInt(szNodeName,_T("ColorR"),g_hRes,szParientNode,bFindParent);
 	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
 	}
-	int g = GetAttributeInt(szNodeName,TEXT("ColorG"),g_hRes,szParientNode,bFindParent);
+	int g = GetAttributeInt(szNodeName,_T("ColorG"),g_hRes,szParientNode,bFindParent);
 	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
 	}
-	int b = GetAttributeInt(szNodeName,TEXT("ColorB"),g_hRes,szParientNode,bFindParent);
+	int b = GetAttributeInt(szNodeName,_T("ColorB"),g_hRes,szParientNode,bFindParent);
 	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
@@ -302,7 +302,7 @@ bool CXMLParser::FindAllChildText(LPCTSTR szParentNodeName, ILinkList pChildList
 //		Get Attribute by Node.
 LPCTSTR CXMLParser::GetAttribute( TiXmlElement* pNode, LPCTSTR strAttributeName, bool& hRes )
 {
-	if ( NULL == pNode || 0 == _tcscmp(TEXT(""),strAttributeName) )
+	if ( NULL == pNode || 0 == _tcscmp(_T(""),strAttributeName) )
 	{
 		hRes = false;
 		return NULL;
@@ -358,13 +358,13 @@ bool CXMLParser::GetParentNode( TiXmlElement* pChildNode, TiXmlElement*& pParent
 //		Initialization the XML parsing.
 bool CXMLParser::Initialize( LPCTSTR strPath )
 {
-	if( 0 == _tcscmp( TEXT("") ,strPath))
+	if( 0 == _tcscmp( _T("") ,strPath))
 		return false;
 
 	m_pDoc = new TiXmlDocument();
 
 // 	FILE* pFile;
-// 	if ( 0 != _tfopen_s( &pFile, strPath, TEXT("a+") ) )
+// 	if ( 0 != _tfopen_s( &pFile, strPath, _T("a+") ) )
 // 	{
 // 		return -2;
 // 	}

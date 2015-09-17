@@ -64,6 +64,10 @@
 #define BOOL int
 #endif // !BOOL
 
+#ifndef ULONG
+#define unsigned long
+#endif // !ULONG
+
 #ifndef MAX_PATH
 #define MAX_PATH 256
 #endif
@@ -218,6 +222,7 @@ typedef struct tagPOINTS
 #define stscanf swscanf
 #define stscanf_s swscanf_s
 #define fgetts fgetws
+#define _tcscmp			wcscmp
 #else
 #define _tofstream		ofstream
 #define _tifstream		ifstream
@@ -251,6 +256,7 @@ typedef struct tagPOINTS
 #define stscanf sscanf
 #define stscanf_s swscanf_s
 #define fgetts fgets
+#define _tcscmp			strcmp
 #endif //_UNICODE
 #pragma endregion
 

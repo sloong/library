@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "log.h"
+#include "exception.h"
 #include <assert.h>
 #include <thread>
 #include <queue>
@@ -206,7 +207,7 @@ bool CLog::OpenFile()
 	if (m_oFile.is_open())
 		return true;
 	if (m_szFileName.empty())
-		throw new exception("Open log file failed.file name is empty.");
+		throw normal_except("Open log file failed.file name is empty.");
 	
 	auto flag = ios::out | ios::app;
 	if (m_bIsCoverPrev == true)
@@ -225,20 +226,20 @@ CString CLog::GetFileName()
 bool CLog::IsOpen()
 {
 	if (!m_bInit)
-		throw exception("No Initialize!");
+		throw normal_except("No Initialize!");
 	if (m_emType != LOGTYPE::ONEFILE)
 	{
-		TCHAR szCurrentDate[10];
+		WCHAR szCurrentDate[10];
 		static const WCHAR format[3][10] = { (L"%Y"), (L"%Y-%m"), (L"%Y%m%d") };
 
 		time_t now;
 		struct tm* tmNow;
 		time(&now);
 		tmNow = localtime(&now);
-		wcsftime(szCurrentDate, 9, format[m_emType], &tmNow);
-
+		wcsftime(szCurrentDate, 9, format[m_emType], tmNow);
+		
 		//		TCHAR szTmpPath[MAX_PATH] = {0};
-		if (m_szLastDate.empty() || m_szLastDate != szCurrentDate)
+		if (m_szLastDate.empty() || !wcscmp(m_szLastDate.w_str(),szCurrentDate))
 		{
 			CString szTemp(L"%s\\%s.log", m_szFilePath.w_str(), szCurrentDate);
 			

@@ -64,7 +64,7 @@ namespace Sloong
 			bool		m_bIsCoverPrev;
 			HRESULT		g_hRes;
 			bool		m_bInit;
-            static      g_bDebug;
+            static bool  g_bDebug;
 		};
 	}
 }

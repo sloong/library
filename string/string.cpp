@@ -117,7 +117,7 @@ void Sloong::Universal::CString::FormatW(LPCWSTR lpStr, ...)
 	va_list args;
 	va_start(args, lpStr);
 	WCHAR szBuffer[MAX_BUFFER] = {0};
-	_vsnwprintf(szBuffer, MAX_BUFFER, lpStr, args);
+	vswprintf(szBuffer, MAX_BUFFER, lpStr, args);
 	va_end(args);
 	(*m_strString) = szBuffer;
 }
@@ -161,7 +161,7 @@ LPCSTR Sloong::Universal::CString::a_str() const
 {
 	if ( m_strTemp == NULL )
 	{
-		const_cast<string*>(m_strTemp) = new string();
+		m_strTemp = new string();
 	}
 
 	(*m_strTemp) = UnicodeToANSI(m_strString->c_str());

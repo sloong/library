@@ -76,7 +76,7 @@ namespace Sloong
 			static string UnicodeToANSI(LPCWSTR strWide);
 			static wstring ANSIToUnicode(LPCSTR strMulti);
 		protected:
-			string*	m_strTemp;	// this object just used to return the ANSI string. no used to compute. 
+			mutable string*	m_strTemp;	// this object just used to return the ANSI string. no used to compute. 
 			wstring* m_strString;
 		};
 	}

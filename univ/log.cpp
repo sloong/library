@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "log.h"
+#include <assert.h>
 
 using namespace Sloong;
 queue<string> g_logList;
@@ -150,8 +151,10 @@ void CLog::WriteLine(CString szLog)
 
 	time_t st;
     time(&st);
-	auto szCurrentTime = CUniversal::Format(L"[%d/%d/%d - %.2d:%.2d:%.2d:%.4d] : ", st.wYear, st.wMonth, st.wDay,
-		st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	struct tm* now;
+	now = localtime(&st);
+	auto szCurrentTime = CUniversal::Format(L"[%d/%d/%d - %.2d:%.2d:%.2d:%.4d] : ", now.wYear, now.wMonth, now.wDay,
+		now.wHour, now.wMinute, now.wSecond, now.wMilliseconds);
 	Write(szCurrentTime);
 	Write(szLog);
 	Write(TEXT("\r\n"));
@@ -231,13 +234,13 @@ bool CLog::IsOpen()
 	if (m_emType != LOGTYPE::ONEFILE)
 	{
 		TCHAR szCurrentDate[10];
-		static const TCHAR format[3][10] = { TEXT("%Y"), TEXT("%Y-%m"), TEXT("%Y%m%d") };
+		static const WCHAR format[3][10] = { (L"%Y"), (L"%Y-%m"), (L"%Y%m%d") };
 
 		time_t now;
-		tm tmNow;
+		tm* tmNow;
 		time(&now);
-		localtime_s(&tmNow, &now);
-		_tcsftime(szCurrentDate, 9, format[m_emType], &tmNow);
+		tmNow = localtime(&now);
+		wcsftime(szCurrentDate, 9, format[m_emType], &tmNow);
 
 		//		TCHAR szTmpPath[MAX_PATH] = {0};
 		if (m_szLastDate.empty() || m_szLastDate != szCurrentDate)
@@ -283,6 +286,7 @@ void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pTy
 		//m_pUniversal->CopyStringToPoint(m_szFileName, szFileName);
 	}
 
+	#ifdef _WINDOWS
 	if (!szFilePath.empty())
 	{
 		assert(szFilePath.w_str());
@@ -302,7 +306,7 @@ void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pTy
 			m_szFilePath = temp;
 		}
 	}
-
+	#endif
 	if (pType)
 	{
 		m_emType = *pType;

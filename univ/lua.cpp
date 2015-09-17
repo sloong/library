@@ -22,7 +22,7 @@ CLua::~CLua()
 
 }
 
-static wstring findScript(CString strFullName)
+static CString findScript(CString strFullName)
 {
 	string strFileName = strFullName.GetStringA();
 	
@@ -60,15 +60,15 @@ static wstring findScript(CString strFullName)
 		fclose(fFind);
 	}
 
-	return CUniversal::ToWString(strTestFile);
+	return strTestFile;
 }
 
 bool CLua::RunScript(CString strFileName)
 {
 	LOCK_GUARD(m_oMutex);
-	wstring strFullName = findScript(strFileName);
+	CString strFullName = findScript(strFileName);
 
-	if ( 0 != luaL_loadfile(m_pScriptContext, CUniversal::ToString(strFullName).c_str()))
+	if ( 0 != luaL_loadfile(m_pScriptContext, strFullName.a_str()))
 	{
 		HandlerError("Load Script", strFullName);
 		return false;
@@ -192,8 +192,10 @@ map<wstring, wstring> CLua::GetTableParam(int index)
 		lua_pushvalue(L, -2);
 		// 现在的栈：-1 => key; -2 => value; -3 => key; index => table
 
-		wstring key = CUniversal::ToWString(lua_tostring(L, -1));
-		wstring value = CUniversal::ToWString(lua_tostring(L, -2));
+		CString k = lua_tostring(L, -1);
+		CString v = lua_tostring(L, -2);
+		wstring key = k.GetStringW();
+		wstring value = v.GetStringW();
 
 		data[key] = value;
 		// 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数

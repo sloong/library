@@ -8,7 +8,9 @@
 #include "univ.h"
 #include "Version.h"
 #include <assert.h>
+#ifndef _WINDOWS
 #include <libgen.h>
+#endif // !_WINDOWS
 
 using namespace std;
 using namespace Sloong::Universal;

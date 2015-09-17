@@ -25,7 +25,10 @@ namespace Sloong
 {
 	namespace Universal
 	{
-	 void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+#ifndef _WINDOWS
+		UNIVERSAL_API void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+#endif // !_WINDOWS
+
 		class UNIVERSAL_API CUniversal
 		{
 		public:

@@ -1,25 +1,29 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "threadpool.h"
+
+
 #ifndef _WINDOWS
 #include <unistd.h>
+#define Sleep sleep
 #endif
 
 using namespace Sloong::Universal;
 
-queue<ThreadParam*>* Sloong::Universal::CThreadPool::m_pJobList;
+queue<ThreadParam*> Sloong::Universal::CThreadPool::m_pJobList;
+vector<thread*> Sloong::Universal::CThreadPool::m_pThreadList;
 
 mutex Sloong::Universal::CThreadPool::g_oMutex;
 Sloong::Universal::CThreadPool::CThreadPool()
 {
-	m_pThreadList = new vector<thread*>;
-	m_pJobList = new queue<ThreadParam*>;
+	//m_pThreadList = new vector<thread*>;
+	//m_pJobList = new queue<ThreadParam*>;
 }
 
 Sloong::Universal::CThreadPool::~CThreadPool()
 {
-	SAFE_DELETE(m_pThreadList);
-	SAFE_DELETE(m_pJobList);
+	//SAFE_DELETE(m_pThreadList);
+	//SAFE_DELETE(m_pJobList);
 }
 
 void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
@@ -27,7 +31,7 @@ void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 	for (int i = 0; i < nThreadNum; i++)
 	{
 		thread* pThread = new thread(ThreadWorkLoop);
-		m_pThreadList->push_back(pThread);
+		m_pThreadList.push_back(pThread);
 	}
 }
 
@@ -46,18 +50,18 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 	{
 		try
 		{
-			if (m_pJobList->empty() || 0 == m_pJobList->size())
+			if (m_pJobList.empty() || 0 == m_pJobList.size())
 			{
-				sleep(1);
+				Sleep(1);
 				continue;
 			}
 			std::lock_guard<mutex> lck(g_oMutex);
-			if (m_pJobList->empty() || 0 == m_pJobList->size())
+			if (m_pJobList.empty() || 0 == m_pJobList.size())
 			{
 				continue;
 			}
-			auto pItem = m_pJobList->front();
-			m_pJobList->pop();//pop_front();
+			auto pItem = m_pJobList.front();
+			m_pJobList.pop();
 			(*pItem->pJob)(pItem->pParam);
 			SAFE_DELETE(pItem);
 		}
@@ -79,8 +83,8 @@ int Sloong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam)
 	pItem->pJob = pJob;
 	pItem->pParam = pParam;
 	std::lock_guard<mutex> lck(g_oMutex);
-	m_pJobList->push(pItem);
-	return (int)m_pJobList->size();
+	m_pJobList.push(pItem);
+	return (int)m_pJobList.size();
 }
 
 void Sloong::Universal::CThreadPool::RemoveTask(int index)
@@ -90,11 +94,13 @@ void Sloong::Universal::CThreadPool::RemoveTask(int index)
 
 int Sloong::Universal::CThreadPool::GetTaskTotal()
 {
-	return (int)m_pJobList->size();
+	return (int)m_pJobList.size();
 }
 
-int Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nThreadNum /*= 1*/)
+thread* Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam)
 {
-	return 0;
+	thread* pThread = new thread(pJob, pParam);
+	m_pThreadList.push_back(pThread);
+	return pThread;
 }
 

@@ -53,6 +53,7 @@ namespace Sloong
 			CString FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
 			CString FormatInformationMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
 			bool OpenFile();
+			static LPVOID LogSystemWorkLoop(LPVOID param);
 
 		protected:
 			LOGLEVEL	m_emLevel;
@@ -62,9 +63,9 @@ namespace Sloong
 			CString		m_szLastDate;
 			int		m_emType;
 			bool		m_bIsCoverPrev;
-			HRESULT		g_hRes;
+			bool		g_hRes;
 			bool		m_bInit;
-            static      g_bDebug;
+            static bool     g_bDebug;
 		};
 	}
 }

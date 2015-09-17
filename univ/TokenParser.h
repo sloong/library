@@ -71,7 +71,7 @@ class CTokenParser
 public:
 	CTokenParser(void);
 	~CTokenParser(void);
-	HRESULT Initialize(LPCTSTR strFilePath);
+	bool Initialize(LPCTSTR strFilePath);
 	void Shutdown();
 	//--- Reset Function annotation ---
 	// Parameters:
@@ -89,7 +89,7 @@ public:
 	//		
 	// Remarks:
 	//		It just used in TokenStream mode
-	HRESULT SetTokenStream(LPTSTR strData);
+	bool SetTokenStream(LPTSTR strData);
 
 	//--- GetNextToken Function annotation ---
 	// Parameters:
@@ -98,8 +98,8 @@ public:
 	//		
 	// Remarks:
 	//		It just used in TokenStream Mode.
-	HRESULT GetNextToken(LPTSTR buffer, UINT BufSize);
-	HRESULT GetNextToken(LPTSTR token, LPTSTR buffer, UINT nBufSize);
+	bool GetNextToken(LPTSTR buffer, UINT BufSize);
+	bool GetNextToken(LPTSTR token, LPTSTR buffer, UINT nBufSize);
 
 	//--- IsValidIdentifier Function annotation ---
 	// Parameters:

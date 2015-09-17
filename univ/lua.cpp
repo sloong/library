@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "lua.h"
-#include "exception.h"
 using namespace Sloong::Universal;
 
 typedef int(*LuaFunc)(lua_State* pLuaState);
@@ -182,7 +181,7 @@ map<wstring, wstring> CLua::GetTableParam(int index)
 	// 现在的栈：-1 => nil; index => table
 	if ( index >= lua_gettop(L))
 	{
-		throw CException("The index is too big.");
+		throw exception("The index is too big.");
 	}
 
 	while (lua_next(L, index))
@@ -191,11 +190,9 @@ map<wstring, wstring> CLua::GetTableParam(int index)
 		// 拷贝一份 key 到栈顶，然后对它做 lua_tostring 就不会改变原始的 key 值了
 		lua_pushvalue(L, -2);
 		// 现在的栈：-1 => key; -2 => value; -3 => key; index => table
-
-		CString k = lua_tostring(L, -1);
-		CString v = lua_tostring(L, -2);
-		wstring key = k.GetStringW();
-		wstring value = v.GetStringW();
+		
+		wstring key = CString(lua_tostring(L, -1)).GetStringW();
+		wstring value = CString(lua_tostring(L, -2)).GetStringW();
 
 		data[key] = value;
 		// 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数

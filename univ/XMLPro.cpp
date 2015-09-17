@@ -86,7 +86,7 @@
 // 
 // 	hr = createFile->createElement(_bstr_t(tag), newNode);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -112,7 +112,7 @@
 // 
 // 	hr = createFile->createElement(_bstr_t(tag), newNode);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -138,7 +138,7 @@
 // 
 // 	hr = readFile->selectSingleNode(_bstr_t(usetag), (IXMLDOMNode**)node);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -162,7 +162,7 @@
 // 
 // 	hr = elem->get_text(&bst);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -194,7 +194,7 @@
 // 
 // 	hr = elem->put_text(_bstr_t(text));
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -218,7 +218,7 @@
 // 
 // 	hr = parentElem->appendChild((IXMLDOMNode*)childElem, NULL);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -240,7 +240,7 @@
 // 
 // 	hr = childElem->get_parentNode((IXMLDOMNode**)parentElem);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -262,7 +262,7 @@
 // 
 // 	hr = parentElem->get_firstChild((IXMLDOMNode**)childElem);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -286,7 +286,7 @@
 // 
 // 	hr = node->setAttribute(_bstr_t(attr), _variant_t(value));
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -308,7 +308,7 @@
 // 
 // 	hr = parentElem->removeChild((IXMLDOMNode*)childElem, NULL);
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 
@@ -330,7 +330,7 @@
 // 
 // 	hr = createFile->save(_variant_t(dfile));
 // 
-// 	if (hr != S_OK){
+// 	if (hr != true){
 // 
 // 		return FALSE;
 // 
@@ -354,7 +354,7 @@
 // 
 // 	hr = readFile->save(_variant_t(dfile));
 // 
-// 	if (hr != S_OK)
+// 	if (hr != true)
 // 
 // 		return FALSE;
 // 

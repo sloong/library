@@ -5,12 +5,17 @@
 #include "univ.h"
 #include "log.h"
 #include <assert.h>
-
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <iostream>
 using namespace Sloong;
+mutex g_oLogListMutex;
 queue<string> g_logList;
 const WCHAR g_szStart[] = { L"---------------------------------Start---------------------------------" };
 const WCHAR g_szEnd[] = { L"----------------------------------End----------------------------------" };
 
+bool CLog::g_bDebug = false;
 
 CLog::CLog()
 {
@@ -29,7 +34,7 @@ CString CLog::FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bForma
 {
 	if (FATAL <= m_emLevel)
 	{
-		if (S_OK == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes && false == bJustFailedWrite)
 		{
 			strErrorText.FormatW(L"[SUCCESS];[FATAL %05d : %s];[RETURN %d]", dwCode, strErrorText.w_str(), g_hRes);
 		}
@@ -49,7 +54,7 @@ CString CLog::FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bForma
 {
 	if (ERR <= m_emLevel)
 	{
-		if (S_OK == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes && false == bJustFailedWrite)
 		{
 			strErrorText.FormatW(L"[SUCCESS];[ERROR %05d : %s];[RETURN %d]", dwCode, strErrorText.w_str(), g_hRes);
 		}
@@ -69,7 +74,7 @@ CString CLog::FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFor
 {
 	if (WARN <= m_emLevel)
 	{
-		if (S_OK == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes && false == bJustFailedWrite)
 		{
 			strErrorText.FormatW(L"[SUCCESS];[WARN %05d : %s];[RETURN %d]", dwCode, strErrorText.w_str(), g_hRes);
 		}
@@ -103,7 +108,7 @@ void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bForma
 {
 	CString strLogText;
 
-	if (S_OK != g_hRes || false == bJustFailedWrite || INF == emLevel)
+	if (true != g_hRes || false == bJustFailedWrite || INF == emLevel)
 	{
 		switch (emLevel)
 		{
@@ -130,7 +135,7 @@ void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bForma
 		WriteLine(strLogText);
 	}
 	#ifdef _WINDOWS
-	if (S_OK != g_hRes && true == bFormatWinMsg)
+	if (true != g_hRes && true == bFormatWinMsg)
 	{
 		DWORD dwWinErrCode = GetLastError();
 		if (S_OK != dwWinErrCode)
@@ -138,7 +143,9 @@ void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bForma
 			auto szWinErrText = CUniversal::FormatWindowsErrorMessage(dwWinErrCode);
 			szWinErrText = szWinErrText.substr(0, szWinErrText.length() - 2);
 			// Add WINDOWS MSG in head.
-			WriteLine(CUniversal::Format(L"[WINDOWS MESSAGE] : [%s]", szWinErrText.c_str()));
+			CString str;
+			str.FormatW(L"[WINDOWS MESSAGE] : [%s]", szWinErrText.c_str());
+			WriteLine(str);
 		}
 	}
 	#endif
@@ -151,41 +158,32 @@ void CLog::WriteLine(CString szLog)
 
 	time_t st;
     time(&st);
-	struct tm* now;
-	now = localtime(&st);
-	auto szCurrentTime = CUniversal::Format(L"[%d/%d/%d - %.2d:%.2d:%.2d:%.4d] : ", now.wYear, now.wMonth, now.wDay,
-		now.wHour, now.wMinute, now.wSecond, now.wMilliseconds);
-	Write(szCurrentTime);
+	struct tm* lt = localtime(&st);
+	CString strTime;
+	strTime.FormatW(L"[%d/%d/%d - %.2d:%.2d:%.2d] : ", lt->tm_year + 1900, lt->tm_mon, lt->tm_mday,
+		lt->tm_hour, lt->tm_min, lt->tm_sec);
+	Write(strTime);
 	Write(szLog);
-	Write(TEXT("\r\n"));
+#ifndef _WINDOWS
+	Write(("\n"));
+#else
+	Write(("\r\n"));
+#endif // !_WINDOWS
+
+	
 }
 
 void CLog::Write(CString szMessage)
 {
-	if (IsOpen())
-	{
-        if( g_LogWorkThreadID == 0)
-	{
-		// first runtime, create the work thread.
-		errno = pthread_create(&g_LogWorkThreadID,0,LogSystemWorkLoop,(void*)0);
-		if (errno != 0)
-			cout<<"create log system work thread fiald. error code is "<<errno<<endl;
-			//exit(errno);
-	}
-g_logList.push(ostring.str());
-		m_oFile<<szMessage.a_str()<<endl;
-	}
+	lock_guard<mutex> lck(g_oLogListMutex);
+	g_logList.push(szMessage.GetStringA());
 }
 
 
-void* LogSystemWorkLoop(void* param)
+void* CLog::LogSystemWorkLoop(void* param)
 {
+	CLog* pThis = (CLog*)param;
 	// 重定向cout到文件
-	cout << "Hello, Let's begin a test of cout to file." << endl;  
-	streambuf* coutBuf = cout.rdbuf();  
-	ofstream of("serv.log");
-	streambuf* fileBuf = of.rdbuf();  
-	if(g_bDebug) cout.rdbuf(fileBuf); 
 	while(true)
 	{
 		if( g_logList.size() > 0 )
@@ -195,14 +193,11 @@ void* LogSystemWorkLoop(void* param)
 			g_logList.pop();
 
 			// write log message to file
-			cout<<str;
+			pThis->m_oFile << str;
+			if ( g_bDebug )
+				cout<<str;
 		}
 	}
-	// 程序即将退出,恢复cout
-	of.flush();
-        of.close();
-        cout.rdbuf(coutBuf);
-        cout << "Write Personal Information over..." << endl;
 	return 0;
 }
 
@@ -211,7 +206,7 @@ bool CLog::OpenFile()
 	if (m_oFile.is_open())
 		return true;
 	if (m_szFileName.empty())
-		throw new CException("Open log file failed.file name is empty.");
+		throw new exception("Open log file failed.file name is empty.");
 	
 	auto flag = ios::out | ios::app;
 	if (m_bIsCoverPrev == true)
@@ -237,7 +232,7 @@ bool CLog::IsOpen()
 		static const WCHAR format[3][10] = { (L"%Y"), (L"%Y-%m"), (L"%Y%m%d") };
 
 		time_t now;
-		tm* tmNow;
+		struct tm* tmNow;
 		time(&now);
 		tmNow = localtime(&now);
 		wcsftime(szCurrentDate, 9, format[m_emType], &tmNow);
@@ -322,7 +317,7 @@ void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pTy
 void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	// All value init
-	g_hRes = S_OK;
+	g_hRes = true;
 	m_bInit = true;
 	m_emLevel = emLevel;
 	m_szFilePath.clear();
@@ -343,6 +338,8 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 	}
 
 	WriteLine(g_szStart);
+
+	//CThreadPool
 }
 
 // namespace YaoUtil {

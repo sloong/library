@@ -38,14 +38,14 @@ namespace Sloong
 			// Add a task to job list, and return the task index.
 			virtual int AddTask(LPCALLBACKFUNC pJob, LPVOID pParam);
 			// Add work thread 
-			virtual int AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nThreadNum = 1);
+			virtual thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
 
 			// remove a task from job list.
 			virtual void RemoveTask(int index);
 			virtual int GetTaskTotal();
 		protected:
-			vector<thread*>* m_pThreadList;
-			static queue<ThreadParam*>*	m_pJobList;
+			static vector<thread*> m_pThreadList;
+			static queue<ThreadParam*>	m_pJobList;
 			static void ThreadWorkLoop(void);
 			static mutex g_oMutex;
 		};

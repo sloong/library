@@ -88,7 +88,7 @@ BOOL CUnitTestDlg::OnInitDialog()
 	if (pSysMenu != NULL)
 	{
 		BOOL bNameValid;
-		CString strAboutMenu;
+		ATL::CStringT<wchar_t, StrTraitMFC_DLL<wchar_t, ATL::ChTraitsCRT<wchar_t>>> strAboutMenu;
 		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
 		ASSERT(bNameValid);
 		if (!strAboutMenu.IsEmpty())

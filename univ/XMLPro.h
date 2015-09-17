@@ -11,7 +11,7 @@ public:
 	IXMLDOMElementPtr createRoot;
 	IXMLDOMElementPtr readRoot;
 	IXMLDOMProcessingInstructionPtr pPI;
-	HRESULT hr;
+	bool hr;
 
 public:
 	XMLProc();

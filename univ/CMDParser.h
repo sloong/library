@@ -12,10 +12,10 @@ public:
 	//		strFilePath:
 	//			the command file path name.
 	// Return value:
-	//		If function succeeds, return S_OK. else return no zero value.
+	//		If function succeeds, return true. else return no zero value.
 	// Remarks:
 	//		Initialize CMD parser, Load the command file, and read the command to m_pStrScript.
-	HRESULT Initialize(LPCTSTR strFilePath);
+	bool Initialize(LPCTSTR strFilePath);
 
 	//--- ParseCommand Function annotation ---
 	// Parameters:

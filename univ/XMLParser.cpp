@@ -4,7 +4,6 @@
 //--- 2013/7/5 --- WCB --- Add
 #include "StdAfx.h"
 #include "univ.h"
-#include "error.h"
 #include "TinyXML/tinyxml.h"
 #include "XMLParser.h"
 
@@ -25,15 +24,15 @@ CXMLParser::~CXMLParser(void)
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Node Text Value.
-LPCTSTR CXMLParser::GetNodeText( LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParentNode /* = NULL */ )
+LPCTSTR CXMLParser::GetNodeText( LPCTSTR szNodeName, bool& hRes, LPCTSTR szParentNode /* = NULL */ )
 {
 	TiXmlElement* pNode = NULL;
 	TiXmlElement* pParentNode = NULL;
 	if ( NULL != szParentNode )
 	{
-		if( S_OK != GetNodeByName( m_pRootNode,szParentNode,pParentNode ))
+		if( true != GetNodeByName( m_pRootNode,szParentNode,pParentNode ))
 		{
-			hRes = S_FALSE;
+			hRes = false;
 			return NULL;
 		}
 	}
@@ -42,14 +41,14 @@ LPCTSTR CXMLParser::GetNodeText( LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szPa
 		pParentNode = m_pRootNode;
 	}
 	g_hRes = GetNodeByName( pParentNode, szNodeName, pNode );
-	if( S_OK != g_hRes )
+	if( true != g_hRes )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return NULL;
 	}
 
 	LPCTSTR pTmp = GetNodeText( pNode, g_hRes );
-	if ( NULL == pTmp && S_FALSE == g_hRes)
+	if ( NULL == pTmp && false == g_hRes)
 	{
 		return NULL;
 	}
@@ -62,41 +61,41 @@ LPCTSTR CXMLParser::GetNodeText( LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szPa
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get node by name.
-HRESULT CXMLParser::GetNodeByName(TiXmlElement* pRootElement, LPCTSTR strNodeName, TiXmlElement*& pNode)
+bool CXMLParser::GetNodeByName(TiXmlElement* pRootElement, LPCTSTR strNodeName, TiXmlElement*& pNode)
 { 
 	if( NULL == pRootElement )
-		return S_FALSE;
+		return false;
 
 	if ( 0 == _tcscmp( strNodeName, pRootElement->Value() ) )  
 	{  
 		pNode = pRootElement;  
-		return S_OK;  
+		return true;  
 	}  
 	TiXmlElement* pTmpEle = pRootElement;    
 	for (pTmpEle = pRootElement->FirstChildElement(); pTmpEle; pTmpEle = pTmpEle->NextSiblingElement())    
 	{    
 		//call self to find the node
-		if( S_OK == GetNodeByName(pTmpEle,strNodeName,pNode))  
-			return S_OK;  
+		if( true == GetNodeByName(pTmpEle,strNodeName,pNode))  
+			return true;  
 	}    
-	return S_FALSE;  
+	return false;  
 }
 
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get node Attribute
-LPCTSTR CXMLParser::GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName ,HRESULT& hRes)
+LPCTSTR CXMLParser::GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName ,bool& hRes)
 {
 	
 	for( ; pNodeAttribute; pNodeAttribute = pNodeAttribute->Next() )
 	{
 		if ( 0 == _tcscmp( strAttributeName, pNodeAttribute->Name()) )
 		{
-			hRes = S_OK;
+			hRes = true;
 			return pNodeAttribute->Value();
 		}
 	}
-	hRes = S_FALSE;
+	hRes = false;
 	return TEXT("");
 }
 
@@ -104,7 +103,7 @@ LPCTSTR CXMLParser::GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttr
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Node Attribute value, param two is attribute name,
-LPCTSTR CXMLParser::GetAttribute( LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParentNode /* = NULL */, bool bFindParent /* = false */ )
+LPCTSTR CXMLParser::GetAttribute( LPCTSTR szNodeName, LPCTSTR szAttributeName, bool& hRes, LPCTSTR szParentNode /* = NULL */, bool bFindParent /* = false */ )
 {
 	TiXmlAttribute* pNodeAttribute = NULL;
 	TiXmlElement* pNode = NULL;
@@ -115,27 +114,27 @@ LPCTSTR CXMLParser::GetAttribute( LPCTSTR szNodeName, LPCTSTR szAttributeName, H
 	}
 	else
 	{
-		if ( S_OK != GetNodeByName(m_pRootNode,szParentNode,pParentNode))
+		if ( true != GetNodeByName(m_pRootNode,szParentNode,pParentNode))
 		{
-			hRes = S_FALSE;
+			hRes = false;
 			return NULL;
 		}
 		if ( NULL == pParentNode)
 		{
-			hRes = S_FALSE;
+			hRes = false;
 			return NULL;
 		}
 	}
 	g_hRes = GetNodeByName(pParentNode,szNodeName,pNode);
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return NULL;
 	}
 
 	// if no find the attribute, get the result, and return the value
 	LPCTSTR szValue = GetAttribute( pNode, szAttributeName, hRes );
-	if ( S_OK == hRes)
+	if ( true == hRes)
 	{
 		// find, return result.
 		return szValue;
@@ -145,23 +144,23 @@ LPCTSTR CXMLParser::GetAttribute( LPCTSTR szNodeName, LPCTSTR szAttributeName, H
 		// not find, check mark 
 		if ( true == bFindParent )
 		{
-			HRESULT lFindRes = S_OK;
+			bool lFindRes = true;
 			// Get Parent , find again.
-			for ( lFindRes = GetParentNode( pNode, pNode ); lFindRes == S_OK; lFindRes = GetParentNode( pNode, pNode ) )
+			for ( lFindRes = GetParentNode( pNode, pNode ); lFindRes == true; lFindRes = GetParentNode( pNode, pNode ) )
 			{
 				szValue = GetAttribute( pNode, szAttributeName, hRes );
-				if ( S_OK == hRes )
+				if ( true == hRes )
 				{
 					return szValue;
 				}
 			}
 			// Not find, return
-			hRes = S_FALSE;
+			hRes = false;
 			return NULL;
 		}
 		else
 		{
-			hRes = S_FALSE;
+			hRes = false;
 			return NULL;
 		}
 	}
@@ -172,17 +171,17 @@ LPCTSTR CXMLParser::GetAttribute( LPCTSTR szNodeName, LPCTSTR szAttributeName, H
 // Remarks:
 //		Get Node Attribute value, it return value type is int , make sure the attribute value is int.
 //--- WCB --- 2013/7/18 --- Modify ---
-int CXMLParser::GetAttributeInt( LPCTSTR szNodeName, LPCTSTR szAttributeName , HRESULT& hRes , LPCTSTR szParientNode /* = NULL */, bool bFindParent /* = false */ )
+int CXMLParser::GetAttributeInt( LPCTSTR szNodeName, LPCTSTR szAttributeName , bool& hRes , LPCTSTR szParientNode /* = NULL */, bool bFindParent /* = false */ )
 {
 	if ( NULL == szNodeName || NULL == szAttributeName )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return 0;
 	}
 	LPCTSTR szValue = GetAttribute(szNodeName,szAttributeName,g_hRes,szParientNode,bFindParent);
 	if ( NULL == szValue )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return 0;
 	}
 	return _ttoi(szValue);
@@ -194,7 +193,7 @@ int CXMLParser::GetAttributeInt( LPCTSTR szNodeName, LPCTSTR szAttributeName , H
 //		Find in a node all child node name, result save in a link list.
 //	The List is a new object and the List head is null. so it is a empty list.
 //	The Root node name is the find Starting point, if is NULL, find from the root.
-HRESULT CXMLParser::FindAllChildName( LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName /* = NULL */ )
+bool CXMLParser::FindAllChildName( LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName /* = NULL */ )
 {
 	TiXmlElement* pNode = NULL;
 	TiXmlElement* pRootNode = NULL;
@@ -207,21 +206,21 @@ HRESULT CXMLParser::FindAllChildName( LPCTSTR szParentNodeName, ILinkList pChild
 		pRootNode = m_pRootNode;
 	}
 
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		return g_hRes;
 	}
 	g_hRes = GetNodeByName( pRootNode, szParentNodeName, pNode );
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		return g_hRes;
 	}
 	g_hRes = FindAllChildName( pNode, pChildList );
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		return g_hRes;
 	}
-	return S_OK;
+	return true;
 }
 
 
@@ -229,33 +228,33 @@ HRESULT CXMLParser::FindAllChildName( LPCTSTR szParentNodeName, ILinkList pChild
 // Remarks:
 //		Get Node Attribute value, it return the ARGB value, it's a unsigned long value, so make sure the attribute value is ARGB .
 //--- WCB --- 2013/7/18 --- Modify ---
-ULONG CXMLParser::GetAttributeARGB( LPCTSTR szNodeName, HRESULT& hRes , LPCTSTR szParientNode /* = NULL */, bool bFindParent /* = false */ )
+ULONG CXMLParser::GetAttributeARGB( LPCTSTR szNodeName, bool& hRes , LPCTSTR szParientNode /* = NULL */, bool bFindParent /* = false */ )
 {
 	if ( NULL == szNodeName )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return 0;
 	}
 	int a = GetAttributeInt(szNodeName,TEXT("ColorA"),g_hRes,szParientNode,bFindParent);
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
 	}
 	int r = GetAttributeInt(szNodeName,TEXT("ColorR"),g_hRes,szParientNode,bFindParent);
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
 	}
 	int g = GetAttributeInt(szNodeName,TEXT("ColorG"),g_hRes,szParientNode,bFindParent);
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
 	}
 	int b = GetAttributeInt(szNodeName,TEXT("ColorB"),g_hRes,szParientNode,bFindParent);
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		hRes = g_hRes;
 		return 0;
@@ -268,7 +267,7 @@ ULONG CXMLParser::GetAttributeARGB( LPCTSTR szNodeName, HRESULT& hRes , LPCTSTR 
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get the node all child node text value,
-HRESULT CXMLParser::FindAllChildText(LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName /* = NULL */)
+bool CXMLParser::FindAllChildText(LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName /* = NULL */)
 {
 	TiXmlElement* pNode = NULL;
 	TiXmlElement* pRootNode = NULL;
@@ -281,31 +280,31 @@ HRESULT CXMLParser::FindAllChildText(LPCTSTR szParentNodeName, ILinkList pChildL
 		pRootNode = m_pRootNode;
 	}
 
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		return g_hRes;
 	}
 	g_hRes = GetNodeByName( pRootNode, szParentNodeName, pNode );
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		return g_hRes;
 	}
 	g_hRes = FindAllChildText( pNode, pChildList );
-	if ( S_OK != g_hRes )
+	if ( true != g_hRes )
 	{
 		return g_hRes;
 	}
-	return S_OK;
+	return true;
 }
 
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Attribute by Node.
-LPCTSTR CXMLParser::GetAttribute( TiXmlElement* pNode, LPCTSTR strAttributeName, HRESULT& hRes )
+LPCTSTR CXMLParser::GetAttribute( TiXmlElement* pNode, LPCTSTR strAttributeName, bool& hRes )
 {
 	if ( NULL == pNode || 0 == _tcscmp(TEXT(""),strAttributeName) )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return NULL;
 	}
 
@@ -313,7 +312,7 @@ LPCTSTR CXMLParser::GetAttribute( TiXmlElement* pNode, LPCTSTR strAttributeName,
 	pNodeAttribute = pNode->FirstAttribute();
 	if ( NULL == pNodeAttribute )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return NULL;
 	}
 	TiXmlNode* pTest = pNode->Parent();
@@ -324,43 +323,43 @@ LPCTSTR CXMLParser::GetAttribute( TiXmlElement* pNode, LPCTSTR strAttributeName,
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get node Parent
-HRESULT CXMLParser::GetParentNode( TiXmlElement* pChildNode, TiXmlElement*& pParentNode )
+bool CXMLParser::GetParentNode( TiXmlElement* pChildNode, TiXmlElement*& pParentNode )
 {
 	if ( NULL == pChildNode )
 	{
-		return S_FALSE;
+		return false;
 	}
 
 	// Child node is root node. return false
 	if ( pChildNode == m_pRootNode )
 	{
 		pParentNode = m_pRootNode;
-		return S_OK;
+		return true;
 	}
 
 	TiXmlNode* pParent = pChildNode->Parent();
 	if ( NULL == pParent )
 	{
-		return S_ERROR_FIND_OBJECT;
+		return false;
 	}
 	pParentNode = pParent->ToElement();
 	if ( NULL == pParentNode )
 	{
-		return S_ERROR_FIND_OBJECT;
+		return false;
 	}
 	else
 	{
-		return S_OK;
+		return true;
 	}
 }
 
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Initialization the XML parsing.
-HRESULT CXMLParser::Initialize( LPCTSTR strPath )
+bool CXMLParser::Initialize( LPCTSTR strPath )
 {
 	if( 0 == _tcscmp( TEXT("") ,strPath))
-		return S_ERROR_PARAM_VALUE;
+		return false;
 
 	m_pDoc = new TiXmlDocument();
 
@@ -372,39 +371,39 @@ HRESULT CXMLParser::Initialize( LPCTSTR strPath )
 	 
 	if ( false == m_pDoc->LoadFile( (strPath) ))
 	{
-		return S_ERROR_LOAD_SCRIPT_FILE;
+		return false;
 	}
 
 	m_pRootNode = m_pDoc->RootElement();
 	if ( NULL == m_pRootNode )
 	{
-		return S_FALSE;
+		return false;
 	}
-	return S_OK;
+	return true;
 }
 
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Node Name, search result is save in MarkName.
-HRESULT CXMLParser::FindAllChildName(TiXmlElement* pNode, ILinkList pList)
+bool CXMLParser::FindAllChildName(TiXmlElement* pNode, ILinkList pList)
 {
 	// check the into value
 	if ( NULL == pNode || pList.empty() )
 	{
-		return S_ERROR_PARAM_VALUE;
+		return false;
 	}
 
 	// Get the First Child
 	TiXmlElement* pFirst = pNode->FirstChildElement();
 	if ( NULL == pFirst )
 	{
-		return S_ERROR_FIND_OBJECT;
+		return false;
 	}
 
 	LPCTSTR str = pFirst->Value();
 	if ( NULL == str )
 	{
-		return S_ERROR_FIND_OBJECT;
+		return false;
 	}
 
 	pList[str] = NULL;
@@ -426,7 +425,7 @@ HRESULT CXMLParser::FindAllChildName(TiXmlElement* pNode, ILinkList pList)
 		else
 		{
 			// is last node,return 
-			return S_OK;
+			return true;
 		}
 	}
 }
@@ -434,25 +433,25 @@ HRESULT CXMLParser::FindAllChildName(TiXmlElement* pNode, ILinkList pList)
 //--- 2013/7/5 --- WCB --- Add
 // Remarks:
 //		Get Node text value
-HRESULT CXMLParser::FindAllChildText(TiXmlElement* pNode, ILinkList pList)
+bool CXMLParser::FindAllChildText(TiXmlElement* pNode, ILinkList pList)
 {
 	// check the into value
 	if ( NULL == pNode || pList.empty() )
 	{
-		return S_ERROR_PARAM_VALUE;
+		return false;
 	}
 
 	// Get the First Child
 	TiXmlElement* pFirst = pNode->FirstChildElement();
 	if ( NULL == pFirst )
 	{
-		return S_ERROR_FIND_OBJECT;
+		return false;
 	}
 
 	LPCTSTR str = pFirst->GetText();
 	if ( NULL == str )
 	{
-		return S_ERROR_FIND_OBJECT;
+		return false;
 	}
 
 	pList[str] = NULL;
@@ -473,7 +472,7 @@ HRESULT CXMLParser::FindAllChildText(TiXmlElement* pNode, ILinkList pList)
 		else
 		{
 			// is last node,return 
-			return S_OK;
+			return true;
 		}
 	}
 }
@@ -495,12 +494,12 @@ void CXMLParser::Shutdown()
 
 //--- 2013/7/5 --- WCB --- Add ---
 // Remarks:
-//		Get Node Text, if function failed, it return NULL, and the hRes is S_FALSE.
-LPCTSTR CXMLParser::GetNodeText( TiXmlElement* pNode, HRESULT& hRes )
+//		Get Node Text, if function failed, it return NULL, and the hRes is false.
+LPCTSTR CXMLParser::GetNodeText( TiXmlElement* pNode, bool& hRes )
 {
 	if ( NULL == pNode )
 	{
-		hRes = S_FALSE;
+		hRes = false;
 		return NULL;
 	}
 

@@ -27,21 +27,21 @@ public:
 	CXMLParser(void);
 	~CXMLParser(void);
 
-	LPCTSTR GetAttribute(LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParentNode = NULL, bool bFindParent = false);
-	LPCTSTR GetNodeText(LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParentNode = NULL);
-	int GetAttributeInt(LPCTSTR szNodeName, LPCTSTR szAttributeName, HRESULT& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
-	ULONG GetAttributeARGB(LPCTSTR szNodeName, HRESULT& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
-	HRESULT FindAllChildName(LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName = NULL);
-	HRESULT FindAllChildText(LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName = NULL);
-	HRESULT Initialize(LPCTSTR strPathe);
-	HRESULT GetNodeByName(TiXmlElement* pRoot, LPCTSTR strNodeName, TiXmlElement*& pNode);
-	HRESULT FindAllChildName(TiXmlElement* pNode, ILinkList pList);
-	HRESULT FindAllChildText(TiXmlElement* pNode, ILinkList pList);
+	LPCTSTR GetAttribute(LPCTSTR szNodeName, LPCTSTR szAttributeName, bool& hRes, LPCTSTR szParentNode = NULL, bool bFindParent = false);
+	LPCTSTR GetNodeText(LPCTSTR szNodeName, bool& hRes, LPCTSTR szParentNode = NULL);
+	int GetAttributeInt(LPCTSTR szNodeName, LPCTSTR szAttributeName, bool& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
+	ULONG GetAttributeARGB(LPCTSTR szNodeName, bool& hRes, LPCTSTR szParientNode = NULL, bool bFindParent = false);
+	bool FindAllChildName(LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName = NULL);
+	bool FindAllChildText(LPCTSTR szParentNodeName, ILinkList pChildList, LPCTSTR szRootNodeName = NULL);
+	bool Initialize(LPCTSTR strPathe);
+	bool GetNodeByName(TiXmlElement* pRoot, LPCTSTR strNodeName, TiXmlElement*& pNode);
+	bool FindAllChildName(TiXmlElement* pNode, ILinkList pList);
+	bool FindAllChildText(TiXmlElement* pNode, ILinkList pList);
 	void Shutdown();
-	LPCTSTR GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName, HRESULT& hRes);
-	LPCTSTR GetAttribute(TiXmlElement* pNode, LPCTSTR strAttributeName, HRESULT& hRes);
-	LPCTSTR GetNodeText(TiXmlElement* pNode, HRESULT& hRes);
-	HRESULT GetParentNode(TiXmlElement* pChildNode, TiXmlElement*& pParentNode);
-	HRESULT g_hRes;
+	LPCTSTR GetAttribute(TiXmlAttribute* pNodeAttribute, LPCTSTR strAttributeName, bool& hRes);
+	LPCTSTR GetAttribute(TiXmlElement* pNode, LPCTSTR strAttributeName, bool& hRes);
+	LPCTSTR GetNodeText(TiXmlElement* pNode, bool& hRes);
+	bool GetParentNode(TiXmlElement* pChildNode, TiXmlElement*& pParentNode);
+	bool g_hRes;
 };
 #endif // !XMLPARSER_H

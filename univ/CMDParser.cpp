@@ -28,7 +28,7 @@
 // //--- 0000011 --- 2013/10/12 --- WCB --- Add
 // // Remarks:
 // //		Initialize CMD parser
-// HRESULT CCMDParser::Initialize( LPCTSTR strFilePath )
+// bool CCMDParser::Initialize( LPCTSTR strFilePath )
 // {
 // 	_tifstream input, input2;
 // 	TCHAR tempLine[MAX_LINE_SIZE] = {0};
@@ -42,7 +42,7 @@
 // 
 // 	if ( !input.is_open() )
 // 	{
-// 		return S_FALSE;
+// 		return false;
 // 	}
 // 
 // 
@@ -60,7 +60,7 @@
 // 
 // 	if ( !input2.is_open() )
 // 	{
-// 		return S_FALSE;
+// 		return false;
 // 	}
 // 
 // 	m_pStrScript = new TCHAR*[m_nTotalScriptLines];
@@ -73,7 +73,7 @@
 // 	}
 // 
 // 	input2.close();
-// 	return S_OK;
+// 	return true;
 // }
 // 
 // //--- 0000011 --- 2013/10/12 --- WCB --- Add

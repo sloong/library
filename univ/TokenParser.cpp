@@ -27,7 +27,7 @@
 // //--- 0000014 --- 2013/10/25 --- WCB --- Add
 // // Remarks:
 // //		Initialize function. Load file and set the member variable value.
-// HRESULT CTokenParser::Initialize( LPCTSTR strFilePath )
+// bool CTokenParser::Initialize( LPCTSTR strFilePath )
 // {
 // 	FILE* pFile;
 // 	errno_t nErr;
@@ -36,7 +36,7 @@
 // 	// Display errors if any.
 // 	if( NULL == pFile || 0 != nErr )
 // 	{
-// 		return S_FALSE;
+// 		return false;
 // 	}
 // 
 // 	// Set stream point position to file end.
@@ -77,7 +77,7 @@
 // 	TCHAR strTmpBuff[TOKEN_SIZE] = { 0 };
 // 
 // 	// Get all token amount
-// 	while( S_OK == GetNextToken(strTmpBuff,TOKEN_SIZE) )
+// 	while( true == GetNextToken(strTmpBuff,TOKEN_SIZE) )
 // 	{
 // 		// is not a valid value
 // 		if('\0' != strTmpBuff[0])
@@ -89,7 +89,7 @@
 // 	// Reset
 // 	Reset();
 // 
-// 	return S_OK;
+// 	return true;
 // }
 // 
 // void CTokenParser::Shutdown()
@@ -115,11 +115,11 @@
 // //--- 0000014 --- 2013/10/24 --- WCB --- Add
 // // Remarks:
 // //		Just used in TokenStream Mode
-// HRESULT CTokenParser::SetTokenStream( LPTSTR strData )
+// bool CTokenParser::SetTokenStream( LPTSTR strData )
 // {
 // 	if ( NULL == strData )
 // 	{
-// 		return S_FALSE;
+// 		return false;
 // 	}
 // 
 // 	Shutdown();
@@ -136,13 +136,13 @@
 // 	_tcscpy_s( m_strData, m_unLength+1, strData );
 // 	m_strData[m_unLength] = '\0';
 // 
-// 	return S_OK;
+// 	return true;
 // }
 // 
 // //--- 0000014 --- 2013/10/24 --- WCB --- Add
 // // Remarks:
 // //		Just used in TokenStream Mode
-// HRESULT CTokenParser::GetNextToken( LPTSTR strBuffer, UINT unBufSize )
+// bool CTokenParser::GetNextToken( LPTSTR strBuffer, UINT unBufSize )
 // {
 // 	// value init. inString is the "" mark, is can be three value, -1 is no in string , 0 is default value, 1 is in string.
 // 	int inString = 0;
@@ -235,16 +235,16 @@
 // 		{
 // 			strBuffer[m_unEndIndex-m_unStartIndex-1] = '\0';
 // 		}
-// 		return S_OK;
+// 		return true;
 // 	}
-// 	return S_FALSE;
+// 	return false;
 // }
 // 
 // //--- 0000014 --- 2013/10/25 --- WCB --- Add
 // // Remarks:
 // //		Find a token with strTokenName, and set the Next Token to strNextTokenBuffer.
 // //		if no find, return false.
-// HRESULT CTokenParser::GetNextToken( LPTSTR strTokenName, LPTSTR strNextTokenBuffer, UINT nBufSize)
+// bool CTokenParser::GetNextToken( LPTSTR strTokenName, LPTSTR strNextTokenBuffer, UINT nBufSize)
 // {
 // 	TCHAR tmpTokenName[TOKEN_SIZE];
 // 
@@ -258,7 +258,7 @@
 // 			return GetNextToken( strNextTokenBuffer, nBufSize );
 // 		}
 // 	}
-// 	return S_FALSE;
+// 	return false;
 // }
 // 
 // bool CTokenParser::IsValidIdentifier( TCHAR c )

@@ -26,5 +26,4 @@
 	#include <wchar.h>
 #endif
 #include "univ.h"
-
 #endif //STDAFX_H

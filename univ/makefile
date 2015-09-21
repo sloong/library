@@ -59,7 +59,7 @@
 MY_CFLAGS = 
   
 # The linker options.  
-MY_LIBS   = 
+MY_LIBS   = -llua
   
 # The pre-processor options used by the cpp (man cpp for more).  
 CPPFLAGS  = -Wall  
@@ -88,7 +88,7 @@ HDREXTS = .h .H .hh .hpp .HPP .h++ .hxx .hp
 # The pre-processor and compiler options.  
 # Users can override those variables from the command line.  
 CFLAGS  =  
-CXXFLAGS= -std=c++11 -shared -fPIC -I../ 
+CXXFLAGS= -g -std=c++11 -shared -L../lua/src -fPIC -I../ 
   
 # The C program compiler.  
 #CC	 = gcc  

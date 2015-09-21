@@ -11,8 +11,6 @@
 #define BITMAP_ATTR_LOADED   128
 
 #include <ddraw.h>    // directX includes
-#include "string/string.h"
-#pragma comment(lib,"string.lib")
 namespace Sloong
 {
 	using namespace Universal;
@@ -31,7 +29,7 @@ namespace Sloong
 			~CBitmap();
 
 			HRESULT Initialize();
-			HRESULT LoadBitmapFromFile(CString strFileName);
+			HRESULT LoadBitmapFromFile(string strFileName);
 
 			LONG GetBitmapHeight();
 			LONG GetBitmapWidth();

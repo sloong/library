@@ -14,6 +14,9 @@ queue<ThreadParam*> Sloong::Universal::CThreadPool::m_pJobList;
 vector<thread*> Sloong::Universal::CThreadPool::m_pThreadList;
 
 mutex Sloong::Universal::CThreadPool::g_oMutex;
+
+CThreadPool g_oThreadPool;
+
 Sloong::Universal::CThreadPool::CThreadPool()
 {
 	//m_pThreadList = new vector<thread*>;
@@ -100,7 +103,7 @@ int Sloong::Universal::CThreadPool::GetTaskTotal()
 thread* Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam)
 {
 	thread* pThread = new thread(pJob, pParam);
-	m_pThreadList.push_back(pThread);
+	g_oThreadPool.m_pThreadList.push_back(pThread);
 	return pThread;
 }
 

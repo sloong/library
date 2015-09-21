@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "SloongGraphics.h"
 #include "math\\SloongMath.h"
-
+#include "univ/defines.h"
 #pragma comment(lib,"univ.lib")
 #pragma comment(lib,"math.lib")
 #pragma comment(lib,"ddraw.lib")

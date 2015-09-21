@@ -9,7 +9,7 @@ Sloong::Universal::normal_except::normal_except()
 
 }
 
-Sloong::Universal::normal_except::normal_except(CString lpstr)
+Sloong::Universal::normal_except::normal_except(std::string lpstr)
 {
 	m_strMessage = lpstr;
 }
@@ -19,7 +19,7 @@ Sloong::Universal::normal_except::normal_except(const normal_except&)
 
 }
 
-Sloong::Universal::normal_except::normal_except(CString lpStr, long hRes)
+Sloong::Universal::normal_except::normal_except(std::string lpStr, long hRes)
 {
 	m_strMessage = lpStr;
 	m_hResult = hRes;
@@ -27,7 +27,7 @@ Sloong::Universal::normal_except::normal_except(CString lpStr, long hRes)
 
 normal_except& Sloong::Universal::normal_except::operator=(const normal_except&)
 {
-
+	return (*this);
 }
 
 Sloong::Universal::normal_except::~normal_except()
@@ -35,7 +35,7 @@ Sloong::Universal::normal_except::~normal_except()
 
 }
 
-const char* Sloong::Universal::normal_except::what() const noexcept
+const char* Sloong::Universal::normal_except::what() const
 {
-	return m_strMessage.a_str();
+	return m_strMessage.c_str();
 }

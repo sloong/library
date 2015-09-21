@@ -37,8 +37,6 @@ namespace Sloong
 			virtual void End();
 			// Add a task to job list, and return the task index.
 			virtual int AddTask(LPCALLBACKFUNC pJob, LPVOID pParam);
-			// Add work thread 
-			virtual thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
 
 			// remove a task from job list.
 			virtual void RemoveTask(int index);
@@ -48,6 +46,9 @@ namespace Sloong
 			static queue<ThreadParam*>	m_pJobList;
 			static void ThreadWorkLoop(void);
 			static mutex g_oMutex;
+		public:
+			// Add work thread 
+			static thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
 		};
 	}
 }

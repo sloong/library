@@ -18,17 +18,15 @@
 #include <string>
 #include <fstream>
 using namespace std;
-#include "string/string.h"
-
+#include "defines.h"
 
 namespace Sloong
 {
 	namespace Universal
 	{
 #ifndef _WINDOWS
-		UNIVERSAL_API void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
-#endif // !_WINDOWS
-
+		extern "C" void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+#endif
 		class UNIVERSAL_API CUniversal
 		{
 		public:
@@ -36,10 +34,15 @@ namespace Sloong
 			static void CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom);
 			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
+			static int splitString(const string& str, vector<string>& res, string sep = ",");
+			static string trim(const string& str);
+			static string replace(const string& str, const string& src, const string& dest);
+			static string toansi(const wstring& str);
+			static wstring toutf(const string& str);	
 		};
 
-#pragma region Windows Define
 #ifdef _WINDOWS
+#pragma region Windows Define
 		class CSize;
 		class CPoint;
 		class CRect;
@@ -308,9 +311,10 @@ namespace Sloong
 				int nMultiplier,
 				int nDivisor) const throw();
 		};
+#pragma endregion
 #endif // !_WINDOWS
 
-#pragma endregion
+
 
 	}
 }

@@ -15,7 +15,7 @@
 using namespace std;
 using namespace Sloong::Universal;
 
-typedef map<int, _tstring> MSGMAP;
+typedef map<int, string> MSGMAP;
 MSGMAP g_MessageMap;
 
 wstring CUniversal::Version()
@@ -43,132 +43,229 @@ void CUniversal::CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom)
 	wcsncpy(lpTarget, lpFrom, nLength);
 }
 
-#ifndef _WINDOWS
 
- void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext)
+
+string CUniversal::trim(const string& str)
 {
-
- char *tmp_path;
- int conut;
- char tmp[MAX_PATH];
- char tmp_name[MAX_PATH];
- char tmp_ext[MAX_PATH];
- int  check=0;
- int check_1=0;
- int i,j=0,k=0;
- int conut_1,conut_2, conut_3;
-
- tmp_path = NULL;
- if( ( realpath(path, tmp_path) == NULL) )
- {
-  tmp_path = (char*)path;
- }
-
- conut=0;
- do
- {
-  if( tmp_path[conut] == ':')
-  {
-   check=1;
-   conut_1 = conut;
-  }
-  if (tmp_path[conut] == '/')
-  {
-   conut_2 = conut;
-  }
-  if (tmp_path[conut] == '.')
-  {
-   check_1 = 1;
-   conut_3 = conut;
-  }
-  conut++;
- }while(tmp_path[conut] != '\0');
-
- if ( check == 1)
- {
-  fname = basename(tmp_path);
-  dir = dirname(tmp_path);
-  for( i = 0 ; i< conut; i++)
-  {
-   if ( dir[i] != ':')
-   {
-    if( i>=2 )
+    string::size_type pos = str.find_first_not_of(' ');
+    if (pos == string::npos)
     {
-     tmp[i-2]=dir[i];
+        return str;
     }
-   }
-   else
-   {
-	strncpy(drive,&dir[i-1],1);
-    //drive=dir[i-1];
-    
-   }
-  }
-
-  memset(dir,0,sizeof(dir));
-  strcpy(dir,tmp); 
-  
- }
- else
- {
-  fname = basename(tmp_path);
-  dir = dirname(tmp_path);
-  
- }
-
- if (check_1 == 1)
- {
-  while( fname[j] != '\0')
-  {
-
-   if ( fname[j] == '.')
-   {
-    k=j+1;
-   }
-   else
-   {
-    tmp_name[j]=fname[j];
-    if (j >=k && k != 0)
+    string::size_type pos2 = str.find_last_not_of(' ');
+    if (pos2 != string::npos)
     {
+        return str.substr(pos, pos2 - pos + 1);
+    }
+    return str.substr(pos);
+}
 
-     tmp_ext[j-k]=fname[j];
-    } 
-   }
 
-if ( fname[j] == '.')
-   {
-    k=j;
-   }
+int CUniversal::splitString(const string& str, vector<string>& ret_, string sep /* = "," */)
+{
+    if (str.empty())
+    {
+        return 0;
+    }
 
-   if ( j >= k && k !=0 )
-   {
-     tmp_ext[j-k]=fname[j ];
-   }
-   else
-   {
-    tmp_name[j]= fname[j];
+    string tmp;
+    string::size_type pos_begin = str.find_first_not_of(sep);
+    string::size_type comma_pos = 0;
 
-   }
-   j++;
-  }
-  memset(ext,0,sizeof(ext));
-  memset(fname, 0, sizeof(fname));
-  strcpy(fname, tmp_name);
-  strcpy(ext,tmp_ext);
+    while (pos_begin != string::npos)
+    {
+        comma_pos = str.find(sep, pos_begin);
+        if (comma_pos != string::npos)
+        {
+            tmp = str.substr(pos_begin, comma_pos - pos_begin);
+            pos_begin = comma_pos + sep.length();
+        }
+        else
+        {
+            tmp = str.substr(pos_begin);
+            pos_begin = comma_pos;
+        }
 
- }
- printf("drive=====%c\n",drive);
- printf("dir=======%s\n",dir);
- printf("fname========%s\n",fname);
- printf("ext======%s\n",ext);
+        if (!tmp.empty())
+        {
+            ret_.push_back(tmp);
+            tmp.clear();
+        }
+    }
+    return 0;
+}
+
+string CUniversal::replace(const string& str, const string& src, const string& dest)
+{
+    string ret;
+
+    string::size_type pos_begin = 0;
+    string::size_type pos       = str.find(src);
+    while (pos != string::npos)
+    {
+        cout <<"replacexxx:" << pos_begin <<" " << pos <<"\n";
+        ret.append(str.data() + pos_begin, pos - pos_begin);
+        ret += dest;
+        pos_begin = pos + 1;
+        pos       = str.find(src, pos_begin);
+    }
+    if (pos_begin < str.length())
+    {
+        ret.append(str.begin() + pos_begin, str.end());
+    }
+    return ret;
+}
+
+string Sloong::Universal::CUniversal::toansi(const wstring& str)
+{
+	string strResult;
+	int nLen = (int)str.size();
+	LPSTR szMulti = new char[nLen + 1];
+	memset(szMulti, 0, nLen + 1);
+	// use the c standard library function to convert
+	wcstombs(szMulti, str.c_str(), nLen);
+	strResult = szMulti;
+	delete[] szMulti;
+	return strResult;
+
 
 }
 
-#endif
+wstring Sloong::Universal::CUniversal::toutf(const string& str)
+{
+	wstring strResult;
+	int nLen = (int)str.size();
+	LPWSTR strWide = new WCHAR[nLen + 1];
+	memset(strWide, 0, sizeof(TCHAR)*(nLen + 1));
+	mbstowcs(strWide,str.c_str(),nLen);
+	strResult = strWide;
+	delete[] strWide;
+	return strResult;
+}
+
+#ifndef _WINDOWS
 
 
-#ifdef _WINDOWS
+void Sloong::Universal::_splitpath(const char *path, char *drive, char *dir, char *fname, char *ext)
+{
 
+	char *tmp_path;
+	int conut;
+	char tmp[MAX_PATH];
+	char tmp_name[MAX_PATH];
+	char tmp_ext[MAX_PATH];
+	int  check = 0;
+	int check_1 = 0;
+	int i, j = 0, k = 0;
+	int conut_1, conut_2, conut_3;
+
+	tmp_path = NULL;
+	if ((realpath(path, tmp_path) == NULL))
+	{
+		tmp_path = (char*)path;
+	}
+
+	conut = 0;
+	do
+	{
+		if (tmp_path[conut] == ':')
+		{
+			check = 1;
+			conut_1 = conut;
+		}
+		if (tmp_path[conut] == '/')
+		{
+			conut_2 = conut;
+		}
+		if (tmp_path[conut] == '.')
+		{
+			check_1 = 1;
+			conut_3 = conut;
+		}
+		conut++;
+	} while (tmp_path[conut] != '\0');
+
+	if (check == 1)
+	{
+		fname = basename(tmp_path);
+		dir = dirname(tmp_path);
+		for (i = 0; i < conut; i++)
+		{
+			if (dir[i] != ':')
+			{
+				if (i >= 2)
+				{
+					tmp[i - 2] = dir[i];
+				}
+			}
+			else
+			{
+				strncpy(drive, &dir[i - 1], 1);
+				//drive=dir[i-1];
+
+			}
+		}
+
+		memset(dir, 0, sizeof(dir));
+		strcpy(dir, tmp);
+
+	}
+	else
+	{
+		fname = basename(tmp_path);
+		dir = dirname(tmp_path);
+
+	}
+
+	if (check_1 == 1)
+	{
+		while (fname[j] != '\0')
+		{
+
+			if (fname[j] == '.')
+			{
+				k = j + 1;
+			}
+			else
+			{
+				tmp_name[j] = fname[j];
+				if (j >= k && k != 0)
+				{
+
+					tmp_ext[j - k] = fname[j];
+				}
+			}
+
+			if (fname[j] == '.')
+			{
+				k = j;
+			}
+
+			if (j >= k && k != 0)
+			{
+				tmp_ext[j - k] = fname[j];
+			}
+			else
+			{
+				tmp_name[j] = fname[j];
+
+			}
+			j++;
+		}
+		memset(ext, 0, sizeof(ext));
+		memset(fname, 0, sizeof(fname));
+		strcpy(fname, tmp_name);
+		strcpy(ext, tmp_ext);
+
+	}
+	printf("drive=====%c\n", drive);
+	printf("dir=======%s\n", dir);
+	printf("fname========%s\n", fname);
+	printf("ext======%s\n", ext);
+
+}
+
+#else
 
 // Remarks:
 //		Format the windows error message
@@ -182,6 +279,8 @@ wstring CUniversal::FormatWindowsErrorMessage( DWORD dwErrCode)
 	strError = szErr;
 	return strError;
 }
+
+
 
 
 // CSize

@@ -1,29 +1,28 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
-#include <exception>
 #include "univ.h"
-#include "string/string.h"
-#pragma comment(lib,"string.lib")
+#ifdef _WINDOWS
+#endif
 namespace Sloong
 {
 	namespace Universal
 	{
-		class UNIVERSAL_API normal_except : exception
+		class UNIVERSAL_API normal_except
 		{
 		public:
 			normal_except();
-			normal_except(CString lpstr);
+			normal_except(std::string lpstr);
 			normal_except(const normal_except&);
 			// in windows os ,the hRes is GetLastError function, in linux os the hRes is errno
-			normal_except(CString lpStr, long hRes);
+			normal_except(std::string lpStr, long hRes);
 			normal_except& operator= (const normal_except&);
 			virtual ~normal_except();
-			virtual const char* what() const noexcept;
+			virtual const char* what() const;
 			
 		protected:
 			long m_hResult;
-			CString m_strMessage;
+			std::string m_strMessage;
 		};
 	}
 }

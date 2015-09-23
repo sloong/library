@@ -35,30 +35,29 @@ static std::string findScript(std::string strFullName)
 	
 	FILE* fFind;
 
-	char szDrive[MAX_PATH];
-	char szDir[MAX_PATH];
-	char szFileName[MAX_PATH];
-	char szExtension[MAX_PATH];
+	char szDir[MAX_PATH] = {0};
 
-	_splitpath(strFileName.c_str(), szDrive, szDir, szFileName, szExtension);
+	getcwd(szDir,MAX_PATH);
+	string strDir(szDir);
+	strDir += "/";
 
-	string strTestFile = (string)szDrive + szDir + ("Scripts\\") + szFileName + (".LUB");
+	string strTestFile = strDir + ("Scripts\\") + strFileName + (".lub");
 	fFind = fopen(strTestFile.c_str(), "r");
 	if (!fFind)
 	{
-		strTestFile = (string)szDrive + szDir + ("Scripts\\") + szFileName + (".LUA");
+		strTestFile = strDir + ("Scripts\\") + strFileName + (".lua");
 		fFind = fopen(strTestFile.c_str(), "r");
 	}
 
 	if (!fFind)
 	{
-		strTestFile = (string)szDrive + szDir + szFileName + (".LUB");
+		strTestFile = strDir + strFileName + (".lub");
 		fFind = fopen(strTestFile.c_str(), "r");
 	}
 
 	if (!fFind)
 	{
-		strTestFile = (string)szDrive + szDir + szFileName + (".LUA");
+		strTestFile = strDir + strFileName + (".lua");
 		fFind = fopen(strTestFile.c_str(), "r");
 	}
 

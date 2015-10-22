@@ -56,7 +56,7 @@ namespace Sloong
 
 		protected:
 			LOGLEVEL	m_emLevel;
-			HANDLE		m_hFileHandle;
+			ofstream	m_oFile;
 			CString		m_szFilePath;
 			CString		m_szFileName;
 			CString		m_szLastDate;

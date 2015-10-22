@@ -158,10 +158,7 @@ DWORD CLog::Write(CString szMessage)
 
 	if (IsOpen())
 	{
-		WriteFile(m_hFileHandle, szMessage.w_str(), (DWORD)szMessage.size()*sizeof(wchar_t), &dwWriteLength, NULL);
-#ifdef _DEBUG
-		FlushFileBuffers(m_hFileHandle);
-#endif // _DEBUG
+		m_oFile << szMessage.a_str() <<endl;
 	}
 
 
@@ -170,29 +167,17 @@ DWORD CLog::Write(CString szMessage)
 
 HRESULT CLog::OpenFile()
 {
-	if (m_hFileHandle != INVALID_HANDLE_VALUE)
+	if( true == m_oFile.is_open())
 		return S_OK;
 	if (m_szFileName.empty())
 		return S_FALSE;
 
-	m_hFileHandle = CreateFile(m_szFileName.w_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
 	if (m_bIsCoverPrev == true)
 	{
-		m_hFileHandle = CreateFile(m_szFileName.w_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	}
-
-	if (m_hFileHandle != INVALID_HANDLE_VALUE)
-	{
-		SetFilePointer(m_hFileHandle, 0, NULL, FILE_END);
-		return S_OK;
+		m_oFile.open(m_szFileName.a_str(), ios::app | ios::out);
 	}
 	else
-	{
-		return S_FALSE;
-	}
+		m_oFile.open(m_szFileName.a_str());
 }
 
 CString CLog::GetFileName()
@@ -231,24 +216,16 @@ bool CLog::IsOpen()
 		}
 	}
 
-	if (m_hFileHandle == INVALID_HANDLE_VALUE)
+	if (!m_oFile.is_open())
 	{
 		OpenFile();
-		if (m_hFileHandle == INVALID_HANDLE_VALUE)
-		{
-			return false;
-		}
 	}
 	return true;
 }
 
 void CLog::Close()
 {
-	if (m_hFileHandle != INVALID_HANDLE_VALUE)
-	{
-		CloseHandle(m_hFileHandle);
-		m_hFileHandle = INVALID_HANDLE_VALUE;
-	}
+	m_oFile.close();
 }
 
 
@@ -306,7 +283,6 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 	g_hRes = S_OK;
 	m_bInit = true;
 	m_emLevel = emLevel;
-	m_hFileHandle = INVALID_HANDLE_VALUE;
 	m_szFilePath.clear();
 	m_szFileName.clear();
 	m_szLastDate.clear();

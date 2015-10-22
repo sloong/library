@@ -9,7 +9,11 @@
 #define DEFINES_H
 
 // close warning
+#ifdef _WINDOWS
+#pragma warning( disable:4251 )
 #pragma warning(disable:4996)
+#endif
+
 
 
 #ifndef _WINDOWS
@@ -49,17 +53,32 @@
 #endif // !LPVOID
 
 #ifndef HRESULT
-typedef long HRESULT
+#define HRESULT long
 #endif // !HRESULT
 
 #ifndef LONG
-typedef long                LONG;
+#define LONG long
 #endif // !LONG
 
 #ifndef SHORT
-typedef short               SHORT;
+#define SHORT short
 #endif // !SHORT
 
+#ifndef BOOL
+#define BOOL int
+#endif // !BOOL
+
+#ifndef ULONG
+#define ULONG unsigned long
+#endif // !ULONG
+
+#ifndef MAX_PATH
+#define MAX_PATH 256
+#endif
+
+#ifndef _T
+#define _T(x) L ## X
+#endif // !_T
 
 #ifndef tagRECT
 typedef struct tagRECT
@@ -139,9 +158,6 @@ typedef struct tagPOINTS
 #endif // !UNICODE
 
 
-
-#pragma region Sloong Universal Defines
-
 #ifndef _ARGB
 #define _ARGB(a,r,g,b) ((ULONG)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 #endif	// _ARGB
@@ -196,7 +212,6 @@ typedef struct tagPOINTS
 #define _ttoi			_wtoi
 #define _tstring		wstring
 #define _tcslen			wcslen
-#define UNSIGNED
 #define __STR2WSTR(str) L##str
 #define _STR2WSTR(str) __STR2WSTR(str)
 #ifndef __FUNCTIONW__
@@ -207,6 +222,7 @@ typedef struct tagPOINTS
 #define stscanf swscanf
 #define stscanf_s swscanf_s
 #define fgetts fgetws
+#define _tcscmp			wcscmp
 #else
 #define _tofstream		ofstream
 #define _tifstream		ifstream
@@ -231,18 +247,13 @@ typedef struct tagPOINTS
 #define _tvsprintf_s	vsprintf_s
 #define _tcscat_s		strcat_s 
 #define _ttoi			atoi
-#ifndef	UNSIGNED
-#define UNSIGNED		unsigned
-#endif // !UNSIGNED
 #define _tstring		string
 #define __TFILE__		__FILE__
 #define __TFUNCTION__	__FUNCTION__
 #define stscanf sscanf
 #define stscanf_s swscanf_s
 #define fgetts fgets
+#define _tcscmp			strcmp
 #endif //_UNICODE
-#pragma endregion
-
-
 
 #endif //DEFINES_H

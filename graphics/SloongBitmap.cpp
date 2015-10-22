@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "univ\\univ.h"
-
+#include "univ/defines.h"
 #include "SLoongBitmap.h"
 
 using namespace Sloong::Graphics;
@@ -24,14 +24,14 @@ HRESULT CBitmap::Shutdown()
 	return S_OK;
 }
 
-HRESULT CBitmap::LoadBitmapFromFile(CString strFileName)
+HRESULT CBitmap::LoadBitmapFromFile(string strFileName)
 {
 	HANDLE nFileHandle;
 	DWORD nSize = 0;
 
 	LPVOID lpTempBuffer = NULL;
 
-	nFileHandle = CreateFile(strFileName.t_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING,
+	nFileHandle = CreateFile(CUniversal::toutf(strFileName).c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if (INVALID_HANDLE_VALUE == nFileHandle)
 	{

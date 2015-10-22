@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(OutDir);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)..\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(OutDir);D:\WCB\Boost\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\;D:\WCB\Boost\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -83,29 +83,17 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CMDParser.h" />
-    <ClInclude Include="PropertyScript.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="ScriptParsing.h" />
-    <ClInclude Include="error.h" />
     <ClInclude Include="exception.h" />
-    <ClInclude Include="file.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="lua.h" />
-    <ClInclude Include="luawin.h" />
     <ClInclude Include="threadpool.h" />
     <ClInclude Include="univ.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TinyXML\tinystr.h" />
-    <ClInclude Include="TinyXML\tinyxml.h" />
-    <ClInclude Include="TokenParser.h" />
     <ClInclude Include="Version.h" />
-    <ClInclude Include="XMLParser.h" />
-    <ClInclude Include="XMLPro.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CMDParser.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,25 +102,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PropertyScript.cpp" />
     <ClCompile Include="exception.cpp" />
-    <ClCompile Include="file.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="lua.cpp" />
-    <ClCompile Include="luawin.cpp" />
     <ClCompile Include="threadpool.cpp" />
     <ClCompile Include="univ.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TinyXML\tinystr.cpp" />
-    <ClCompile Include="TinyXML\tinyxml.cpp" />
-    <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
-    <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
-    <ClCompile Include="TokenParser.cpp" />
-    <ClCompile Include="XMLParser.cpp" />
-    <ClCompile Include="XMLPro.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

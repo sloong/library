@@ -8,18 +8,17 @@
 using std::mutex;
 
 #include "univ.h"
-#include "string/string.h"
+
+#ifdef _WINDOWS
+#pragma comment(lib,"lua.lib")
+#endif
+
+class lua_State;
 namespace Sloong
 {
 	namespace Universal
 	{
-		extern "C" {
-#include "lua/src/lua.h"
-#include "lua/src/lualib.h"
-#include "lua/src/lauxlib.h"
 
-		}
-#pragma comment(lib,"lua.lib")
 
 		typedef int(*LuaFunctionType)(lua_State* pLuaState);
 
@@ -52,26 +51,26 @@ namespace Sloong
 			CLua();
 			virtual ~CLua();
 
-			bool	RunScript(CString strFileName);
+			bool	RunScript(std::string strFileName);
 			bool	RunBuffer(LPCSTR pBuffer, size_t sz);
-			bool	RunString(CString strCommand);
-			bool	RunFunction(CString strFunctionName, CString args);
-			CString	GetErrorString();
-			void	HandlerError(CString strErrorType, CString strCmd);
-			bool	AddFunction(CString strFunctionName, LuaFunctionType pFunction);
-			CString	GetStringArgument(int nNum, CString pDefault = L"");
+			bool	RunString(std::string strCommand);
+			bool	RunFunction(std::string strFunctionName, std::string args);
+			std::string	GetErrorString();
+			void	HandlerError(std::string strErrorType, std::string strCmd);
+			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);
+			std::string	GetStringArgument(int nNum, std::string pDefault = "");
 			double	GetNumberArgument(int nNum, double pDefault = -1.0f);
-			void	PushString(CString strString);
+			void	PushString(std::string strString);
 			void	PushNumber(double dValue);
-			void	SetErrorHandle(void(*pErrHandler)(CString strError));
+			void	SetErrorHandle(void(*pErrHandler)(std::string strError));
 			lua_State*	GetScriptContext();
-			map<wstring, wstring> GetTableParam(int index);
+			map<string, string> GetTableParam(int index);
 			LuaType	CheckType(int index);
-			double  StringToNumber(CString string);
+			double  StringToNumber(std::string string);
 
 		private:
 			lua_State *m_pScriptContext;
-			void(*m_pErrorHandler)(CString strError);
+			void(*m_pErrorHandler)(std::string strError);
 			mutex	m_oMutex;
 		};
 

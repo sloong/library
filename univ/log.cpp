@@ -4,11 +4,40 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "log.h"
-
+#include "exception.h"
+#include "threadpool.h"
+#include <assert.h>
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <iostream>
+#include <stdarg.h> // for va_list,va_start and va_end
+#include <boost/format.hpp>
+//#include <boost/algorithm/string.hpp>
 using namespace Sloong;
+mutex g_oLogListMutex;
+queue<string> g_logList;
+const string g_szStart = "---------------------------------Start---------------------------------";
+const string g_szEnd = "----------------------------------End----------------------------------";
 
-const TCHAR g_szStart[] = { TEXT("---------------------------------Start---------------------------------") };
-const TCHAR g_szEnd[] = { TEXT("----------------------------------End----------------------------------\r\n") };
+bool CLog::g_bDebug = true;
+WCHAR g_szFormatBuffer[2048];
+
+CLog g_pLog;
+
+void CLog::showLog(LOGLEVEL level, std::string str)
+{
+	if (!g_pLog.IsInitialize())
+	{
+		g_pLog.Initialize();
+	}
+	g_pLog.WriteLine(str);
+}
+
+void CLog::showLog(LOGLEVEL level, boost::format& ft)
+{
+	showLog(level,string(ft.str()));
+}
 
 
 CLog::CLog()
@@ -24,18 +53,19 @@ CLog::~CLog()
 	m_bInit = false;
 }
 
-CString CLog::FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatFatalMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (FATAL <= m_emLevel)
 	{
-		if (ERROR_SUCCESS == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes && false == bJustFailedWrite)
 		{
-			return CUniversal::Format(L"[SUCCESS];[FATAL %05d : %s];[RETURN %d]", dwCode, strErrorText, g_hRes);
+			strErrorText = (boost::format("[SUCCESS];[FATAL %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
 		else
 		{
-			return CUniversal::Format(L"[FAILED];[FATAL %05d : %s];[RETURN %d]", dwCode, strErrorText, g_hRes);
+			strErrorText = (boost::format("[FAILED];[FATAL %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
+		return strErrorText;
 	}
 	else
 	{
@@ -43,18 +73,19 @@ CString CLog::FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bForma
 	}
 }
 
-CString CLog::FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatErrorMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (ERR <= m_emLevel)
 	{
-		if (ERROR_SUCCESS == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes && false == bJustFailedWrite)
 		{
-			return CUniversal::Format(L"[SUCCESS];[ERROR %05d : %s];[RETURN %d]", dwCode, strErrorText, g_hRes);
+			strErrorText = (boost::format("[SUCCESS];[ERROR %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
 		else
 		{
-			return CUniversal::Format(L"[FAILED];[ERROR %05d : %s];[RETURN %d]", dwCode, strErrorText, g_hRes);
+			strErrorText = (boost::format("[FAILED];[ERROR %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
+		return strErrorText;
 	}
 	else
 	{
@@ -62,18 +93,19 @@ CString CLog::FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bForma
 	}
 }
 
-CString CLog::FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatWarningMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (WARN <= m_emLevel)
 	{
-		if (ERROR_SUCCESS == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes && false == bJustFailedWrite)
 		{
-			return CUniversal::Format(L"[SUCCESS];[WARN %05d : %s];[RETURN %d]", dwCode, strErrorText, g_hRes);
+			strErrorText = (boost::format("[SUCCESS];[WARN %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
 		else
 		{
-			return CUniversal::Format(L"[FAILED];[WARN %05d : %s];[RETURN %d]", dwCode, strErrorText, g_hRes);
+			strErrorText = (boost::format("[FAILED];[WARN %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
+		return strErrorText;
 	}
 	else
 	{
@@ -81,11 +113,12 @@ CString CLog::FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFor
 	}
 }
 
-CString CLog::FormatInformationMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
 {
 	if (INF <= m_emLevel)
 	{
-		return CUniversal::Format(L"[INF %05d] : [%s]", dwCode, strErrorText);
+		strErrorText = (boost::format("[INF %05d] : [%s]") % dwCode % strErrorText).str();
+		return strErrorText;
 	}
 	else
 	{
@@ -94,17 +127,17 @@ CString CLog::FormatInformationMessage(DWORD dwCode, CString strErrorText, bool 
 }
 
 
-void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
+void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, std::string strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
-	CString strLogText;
+	std::string strLogText;
 
-	if (ERROR_SUCCESS != g_hRes || false == bJustFailedWrite || INF == emLevel)
+	if (true != g_hRes || false == bJustFailedWrite || INF == emLevel)
 	{
 		switch (emLevel)
 		{
 		case LOGLEVEL::FATAL:
 			strLogText = this->FormatFatalMessage(dwCode, strErrorText, bFormatWinMsg, bJustFailedWrite);
-			PostQuitMessage(dwCode);
+			//PostQuitMessage(dwCode);
 			break;
 		case LOGLEVEL::ERR:
 			strLogText = this->FormatErrorMessage(dwCode, strErrorText, bFormatWinMsg, bJustFailedWrite);
@@ -124,63 +157,91 @@ void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bForma
 	{
 		WriteLine(strLogText);
 	}
-
-	if (ERROR_SUCCESS != g_hRes && true == bFormatWinMsg)
+	#ifdef _WINDOWS
+	if (true != g_hRes && true == bFormatWinMsg)
 	{
 		DWORD dwWinErrCode = GetLastError();
-		if (ERROR_SUCCESS != dwWinErrCode)
+		if (S_OK != dwWinErrCode)
 		{
-			auto szWinErrText = CUniversal::FormatWindowsErrorMessage(dwWinErrCode);
+			wstring szWinErrText = CUniversal::FormatWindowsErrorMessage(dwWinErrCode);
 			szWinErrText = szWinErrText.substr(0, szWinErrText.length() - 2);
 			// Add WINDOWS MSG in head.
-			WriteLine(CUniversal::Format(L"[WINDOWS MESSAGE] : [%s]", szWinErrText.c_str()));
+			std::string str = (boost::format("[WINDOWS MESSAGE] : [%s]") % (CUniversal::toansi(szWinErrText))).str();
+			WriteLine(str);
 		}
 	}
+	#endif
 }
 
-void CLog::WriteLine(CString szLog)
+void CLog::WriteLine(std::string szLog)
 {
 	if (szLog.empty())
 		return;
 
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	auto szCurrentTime = CUniversal::Format(L"[%d/%d/%d - %.2d:%.2d:%.2d:%.4d] : ", st.wYear, st.wMonth, st.wDay,
-		st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
-	Write(szCurrentTime);
+	time_t st;
+    time(&st);
+	struct tm* lt = localtime(&st);
+	std::string strTime = (boost::format("[%d/%d/%d - %.2d:%.2d:%.2d] : ") %(lt->tm_year + 1900) % lt->tm_mon % lt->tm_mday %
+		lt->tm_hour% lt->tm_min% lt->tm_sec).str();
+	Write(strTime);
 	Write(szLog);
-	Write(TEXT("\r\n"));
+#ifndef _WINDOWS
+	Write(("\n"));
+#else
+	Write(("\r\n"));
+#endif // !_WINDOWS
+
+	
 }
 
-DWORD CLog::Write(CString szMessage)
+void CLog::Write(std::string szMessage)
 {
-	DWORD dwWriteLength = 0;
+	lock_guard<mutex> lck(g_oLogListMutex);
+	g_logList.push(szMessage);
+}
 
-	if (IsOpen())
+
+void* CLog::LogSystemWorkLoop(void* param)
+{
+	CLog* pThis = (CLog*)param;
+	// 重定向cout到文件
+	while(true)
 	{
-		m_oFile << szMessage.a_str() <<endl;
+		if( g_logList.size() > 0 )
+		{
+			pThis->IsOpen();
+			// get log message from queue.
+			string str = g_logList.front();
+			g_logList.pop();
+
+			// write log message to file
+			pThis->m_oFile << str;
+			if ( g_bDebug )
+				cout<<str;
+		}
 	}
-
-
-	return dwWriteLength;
+	return 0;
 }
 
-HRESULT CLog::OpenFile()
+bool CLog::OpenFile()
 {
-	if( true == m_oFile.is_open())
-		return S_OK;
+	if (m_oFile.is_open())
+		return true;
 	if (m_szFileName.empty())
-		return S_FALSE;
-
+		throw normal_except("Open log file failed.file name is empty.");
+	
+	cout<<"File no open , try open file. file path is :"<<m_szFileName<<endl;
+	
+	auto flag = ios::out | ios::app;
 	if (m_bIsCoverPrev == true)
-	{
-		m_oFile.open(m_szFileName.a_str(), ios::app | ios::out);
-	}
-	else
-		m_oFile.open(m_szFileName.a_str());
+		flag = ios::out;
+
+	m_oFile.open(m_szFileName.c_str(),flag);
+
+	return m_oFile.is_open();
 }
 
-CString CLog::GetFileName()
+std::string CLog::GetFileName()
 {
 	return m_szFileName;
 }
@@ -188,22 +249,22 @@ CString CLog::GetFileName()
 bool CLog::IsOpen()
 {
 	if (!m_bInit)
-		throw exception("No Initialize!");
+		throw normal_except("No Initialize!");
 	if (m_emType != LOGTYPE::ONEFILE)
 	{
-		TCHAR szCurrentDate[10];
-		static const TCHAR format[3][10] = { TEXT("%Y"), TEXT("%Y-%m"), TEXT("%Y%m%d") };
+		char szCurrentDate[10];
+		static const char format[3][10] = { ("%Y"), ("%Y-%m"), ("%Y%m%d") };
 
 		time_t now;
-		tm tmNow;
+		struct tm* tmNow;
 		time(&now);
-		localtime_s(&tmNow, &now);
-		_tcsftime(szCurrentDate, 9, format[m_emType], &tmNow);
-
+		tmNow = localtime(&now);
+		strftime(szCurrentDate, 9, format[m_emType], tmNow);
+		
 		//		TCHAR szTmpPath[MAX_PATH] = {0};
-		if (m_szLastDate.empty() || m_szLastDate != szCurrentDate)
+		if (m_szLastDate.empty() || (m_szLastDate!=szCurrentDate))
 		{
-			CString szTemp(L"%s\\%s.log", m_szFilePath.w_str(), szCurrentDate);
+			std::string szTemp = (boost::format("%s\\%s.log")%m_szFilePath% szCurrentDate).str();
 			
 			// 			_tcscpy_s(szTmpPath, MAX_PATH, m_szFilePath );
 			// 			_tcscat_s(szTmpPath,MAX_PATH, TEXT("\\"));
@@ -216,55 +277,55 @@ bool CLog::IsOpen()
 		}
 	}
 
-	if (!m_oFile.is_open())
-	{
-		OpenFile();
-	}
-	return true;
+	return OpenFile();
 }
 
 void CLog::Close()
 {
-	m_oFile.close();
+	if (m_oFile.is_open())
+	{
+		m_oFile.close();
+	}
 }
 
 
-CString CLog::GetPath()
+std::string CLog::GetPath()
 {
 	return m_szFilePath;
 }
 
-void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel)
+void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel)
 {
 	if (!szFileName.empty())
 	{
-		assert(szFileName.w_str());
+		assert(szFileName.c_str());
 		//SAFE_DELETE_ARR( m_szFileName );
 		Close();
 		m_szFileName = szFileName;
 		//m_pUniversal->CopyStringToPoint(m_szFileName, szFileName);
 	}
 
+	#ifdef _WINDOWS
 	if (!szFilePath.empty())
 	{
-		assert(szFilePath.w_str());
+		assert(szFilePath.c_str());
 		WIN32_FIND_DATA wfd;
 		TCHAR temp[MAX_PATH + 1] = { 0 };
 
-		if (FindFirstFile(szFilePath.t_str(), &wfd) == INVALID_HANDLE_VALUE && CreateDirectory(szFilePath.t_str(), NULL) == 0)
+		if (FindFirstFile(CUniversal::toutf(szFilePath).c_str(), &wfd) == INVALID_HANDLE_VALUE && CreateDirectory(CUniversal::toutf(szFilePath).c_str(), NULL) == 0)
 		{
 			assert(false);
 			exit(1);
 		}
 		else
 		{
-			GetFullPathName(szFilePath.t_str(), MAX_PATH, temp, NULL);
+			GetFullPathName(CUniversal::toutf(szFilePath).c_str(), MAX_PATH, temp, NULL);
 			//SAFE_DELETE_ARR(m_szFilePath);
 			//m_pUniversal->CopyStringToPoint(m_szFilePath, temp);
-			m_szFilePath = temp;
+			m_szFilePath = CUniversal::toansi(temp);
 		}
 	}
-
+	#endif
 	if (pType)
 	{
 		m_emType = *pType;
@@ -277,10 +338,10 @@ void CLog::SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pTy
 }
 
 
-void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	// All value init
-	g_hRes = S_OK;
+	g_hRes = true;
 	m_bInit = true;
 	m_emLevel = emLevel;
 	m_szFilePath.clear();
@@ -297,10 +358,19 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 	}
 	else
 	{
-		SetConfiguration(szPathName, L"", NULL, NULL);
+		SetConfiguration(szPathName, "", NULL, NULL);
 	}
 
+	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this);
+	
 	WriteLine(g_szStart);
+
+	//CThreadPool
+}
+
+bool CLog::IsInitialize()
+{
+	return m_bInit;
 }
 
 // namespace YaoUtil {
@@ -319,9 +389,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	char *g_pData = NULL;
 // 	char *g_pRealData = NULL;
 // 	bool g_bUseNewBuffer = false;
-// 	std::queue<std::pair<std::string, std::string> > g_textData;
-// 	std::queue<std::pair<std::string, std::string> > g_binData;
-// 	std::map<std::string, P_FILE> g_files;
+// 	std::queue<std::pair<std::std::string, std::std::string> > g_textData;
+// 	std::queue<std::pair<std::std::string, std::std::string> > g_binData;
+// 	std::map<std::std::string, P_FILE> g_files;
 // 
 // 	void ResetBuffer()
 // 	{
@@ -334,7 +404,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		g_pRealData = NULL;
 // 	}
 // 
-// 	LOGOUT_FLAG ToFlag(const std::string& outFlag)
+// 	LOGOUT_FLAG ToFlag(const std::std::string& outFlag)
 // 	{
 // 		LOGOUT_FLAG flag_;
 // 		if (StrUtil::CompareNoCase(outFlag, "file")) flag_ = LOGOUT_FLAG_FILE;
@@ -344,16 +414,16 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return flag_;
 // 	}
 // 
-// 	void Queue2Vector(std::queue<std::pair<std::string, std::string> >& data_,
-// 		std::vector<std::pair<std::string, std::vector<std::string> > >& new_data)
+// 	void Queue2Vector(std::queue<std::pair<std::std::string, std::std::string> >& data_,
+// 		std::vector<std::pair<std::std::string, std::vector<std::std::string> > >& new_data)
 // 	{
-// 		std::string last_key;
-// 		std::vector<std::string> new_value;
+// 		std::std::string last_key;
+// 		std::vector<std::std::string> new_value;
 // 		bool firstElement = true;
 // 		while (!data_.empty())
 // 		{
-// 			std::string& key_ = data_.front().first;
-// 			std::string& value_ = data_.front().second;
+// 			std::std::string& key_ = data_.front().first;
+// 			std::std::string& value_ = data_.front().second;
 // 			if (firstElement)
 // 			{
 // 				last_key = key_;
@@ -424,7 +494,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 	}
 // 
-// 	void StrUtil::vFormatA(std::string& s, const char *fmt, va_list ap)
+// 	void StrUtil::vFormatA(std::std::string& s, const char *fmt, va_list ap)
 // 	{
 // 		// Allocate a buffer on the stack that's big enough for us almost
 // 		// all the time.  Be prepared to allocate dynamically if it doesn't fit.
@@ -445,7 +515,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 			if (needed <= (int)size && needed >= 0) {
 // 				// It fit fine so we're done.
-// 				s = std::string(buf, (size_t)needed);
+// 				s = std::std::string(buf, (size_t)needed);
 // 				return;
 // 			}
 // 
@@ -495,7 +565,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 
 // #ifdef _YAO_LOG_WIN32_
-// 	std::string StrUtil::WStrToStr(const std::wstring& strIn)
+// 	std::std::string StrUtil::WStrToStr(const std::wstring& strIn)
 // 	{
 // 		int nBufSize = ::WideCharToMultiByte(GetACP(), 0, strIn.c_str(), -1, NULL, 0, 0, FALSE);
 // 
@@ -504,7 +574,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 		::WideCharToMultiByte(GetACP(), 0, strIn.c_str(), -1, szBuf, nBufSize, 0, FALSE);
 // 
-// 		std::string strRet(szBuf);
+// 		std::std::string strRet(szBuf);
 // 
 // 		delete [] szBuf;
 // 		szBuf = NULL;
@@ -514,7 +584,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 
 // #ifdef _YAO_LOG_WIN32_
-// 	std::wstring StrUtil::StrToWStr(const std::string& strIn)
+// 	std::wstring StrUtil::StrToWStr(const std::std::string& strIn)
 // 	{
 // 		int nBufSize = ::MultiByteToWideChar(GetACP(), 0, strIn.c_str(), -1, NULL, 0);
 // 
@@ -532,17 +602,17 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	}
 // #endif
 // 
-// 	bool StrUtil::CompareNoCase(const std::string& strIn1, const std::string& strIn2)
+// 	bool StrUtil::CompareNoCase(const std::std::string& strIn1, const std::std::string& strIn2)
 // 	{
-// 		std::string s1(strIn1);
-// 		std::string s2(strIn2);
+// 		std::std::string s1(strIn1);
+// 		std::std::string s2(strIn2);
 // 		transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
 // 		transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
 // 
 // 		return s1 == s2;
 // 	}
 // 
-// 	std::string StrUtil::GetSysTimeStr(bool withMillisecond)
+// 	std::std::string StrUtil::GetSysTimeStr(bool withMillisecond)
 // 	{
 // 		timeb timebuffer;
 // 		ftime(&timebuffer);
@@ -564,10 +634,10 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 				local->tm_hour, local->tm_min, local->tm_sec);
 // 		}
 // 
-// 		return std::string(buf);
+// 		return std::std::string(buf);
 // 	}
 // 
-// 	std::string StrUtil::GetSysTimeStrForFileName(bool isBinary)
+// 	std::std::string StrUtil::GetSysTimeStrForFileName(bool isBinary)
 // 	{
 // 		timeb timebuffer;
 // 		ftime(&timebuffer);
@@ -580,20 +650,20 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			local->tm_year+1900, local->tm_mon+1, local->tm_mday,
 // 			local->tm_hour, local->tm_min, local->tm_sec);
 // 
-// 		std::string str(buf);
+// 		std::std::string str(buf);
 // 		if (isBinary) return str + ".bl";
 // 		else return str + ".log";
 // 	}
 // 
-// 	int StrUtil::SplitString(const std::string& strIn,
-// 		const std::string& strDelimiter,
-// 		std::vector<std::string>& ret,
+// 	int StrUtil::SplitString(const std::std::string& strIn,
+// 		const std::std::string& strDelimiter,
+// 		std::vector<std::std::string>& ret,
 // 		bool retWithEmpty)
 // 	{
 // 		ret.clear();
 // 
 // 		size_t iPos = 0;
-// 		size_t newPos = std::string::npos;
+// 		size_t newPos = std::std::string::npos;
 // 		size_t delimiterLength = strDelimiter.size();
 // 		size_t strInLength = strIn.size();
 // 
@@ -604,7 +674,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 		newPos = strIn.find(strDelimiter, 0);
 // 
-// 		if (newPos == std::string::npos)
+// 		if (newPos == std::std::string::npos)
 // 		{
 // 			ret.push_back(strIn);
 // 			return 1;
@@ -612,7 +682,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 		int numFound = 0;
 // 
-// 		while (newPos != std::string::npos && newPos >= iPos)
+// 		while (newPos != std::std::string::npos && newPos >= iPos)
 // 		{
 // 			numFound++;
 // 			positions.push_back(newPos);
@@ -622,7 +692,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 		for (size_t i = 0; i <= positions.size(); ++i)
 // 		{
-// 			std::string s;
+// 			std::std::string s;
 // 			if (i == 0) 
 // 			{ 
 // 				s = strIn.substr(i, positions[i]);
@@ -656,18 +726,18 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return numFound;
 // 	}
 // 
-// 	size_t StrUtil::IndexOfFirst(const std::string& strIn, const std::string& strMatch)
+// 	size_t StrUtil::IndexOfFirst(const std::std::string& strIn, const std::std::string& strMatch)
 // 	{
 // 		return strIn.find(strMatch, 0);
 // 	}
-// 	size_t StrUtil::IndexOfLast(const std::string& strIn, const std::string& strMatch)
+// 	size_t StrUtil::IndexOfLast(const std::std::string& strIn, const std::std::string& strMatch)
 // 	{
 // 		return strIn.rfind(strMatch, strIn.size() - 1);
 // 	}
 // 
-// 	bool StrUtil::ParseUrl(const std::string& strUrl,
-// 		std::string& strServer,
-// 		std::string& strPath,
+// 	bool StrUtil::ParseUrl(const std::std::string& strUrl,
+// 		std::std::string& strServer,
+// 		std::std::string& strPath,
 // 		int& nPort)
 // 	{
 // 		nPort = 80;
@@ -677,11 +747,11 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			return false;
 // 		}
 // 
-// 		std::string url = strUrl;
+// 		std::std::string url = strUrl;
 // 
 // 		// remove protocol
 // 		size_t n = IndexOfFirst(url, "://");
-// 		if (n != std::string::npos)
+// 		if (n != std::std::string::npos)
 // 		{
 // 			if ((int)url.size() > n + 3)
 // 			{
@@ -695,7 +765,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 		// parse server and path
 // 		size_t n2 = IndexOfFirst(url, "/");
-// 		if (n2 == std::string::npos)
+// 		if (n2 == std::std::string::npos)
 // 		{
 // 			strServer = url;
 // 			strPath = "";
@@ -721,7 +791,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 		// parse port
 // 		size_t nColon = IndexOfLast(strServer, ":");
-// 		if (nColon != std::string::npos)
+// 		if (nColon != std::std::string::npos)
 // 		{
 // 			if ((int)strServer.size() > nColon + 1)
 // 			{
@@ -738,13 +808,13 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return true;
 // 	}
 // 
-// 	std::string PathUtil::ModuleFileDirectory_()
+// 	std::std::string PathUtil::ModuleFileDirectory_()
 // 	{
 // #ifdef _YAO_LOG_WIN32_
 // 		char buf[MAX_PATH] = { 0 };
 // 		::GetModuleFileNameA(NULL, buf, MAX_PATH);
 // 		::PathRemoveFileSpecA(buf);
-// 		return std::string(buf);
+// 		return std::std::string(buf);
 // #else
 // 		char buf[260] = { 0 };
 // 		readlink("/proc/self/exe", buf, 260);
@@ -752,44 +822,44 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 	}
 // 
-// 	std::string PathUtil::GetDirectory_(const std::string& fileFullPath)
+// 	std::std::string PathUtil::GetDirectory_(const std::std::string& fileFullPath)
 // 	{
 // #ifdef _YAO_LOG_WIN32_
-// 		return std::string(fileFullPath, 0, fileFullPath.rfind("\\"));
+// 		return std::std::string(fileFullPath, 0, fileFullPath.rfind("\\"));
 // #else
 // 		assert(fileFullPath.size() > 1);
-// 		if (fileFullPath.find('/', 1) == std::string::npos)
-// 			return std::string("/");
+// 		if (fileFullPath.find('/', 1) == std::std::string::npos)
+// 			return std::std::string("/");
 // 		else
-// 			return std::string(fileFullPath, 0, fileFullPath.rfind("/"));
+// 			return std::std::string(fileFullPath, 0, fileFullPath.rfind("/"));
 // #endif
 // 	}
 // 
-// 	std::string PathUtil::GetFile_(const std::string& fileFullPath)
+// 	std::std::string PathUtil::GetFile_(const std::std::string& fileFullPath)
 // 	{
 // #ifdef _YAO_LOG_WIN32_
-// 		return std::string(fileFullPath, fileFullPath.rfind("\\")+1);
+// 		return std::std::string(fileFullPath, fileFullPath.rfind("\\")+1);
 // #else
-// 		return std::string(fileFullPath, fileFullPath.rfind("/")+1);
+// 		return std::std::string(fileFullPath, fileFullPath.rfind("/")+1);
 // #endif
 // 	}
 // 
-// 	std::string PathUtil::PathCombine_(const std::string& path1, const std::string& path2)
+// 	std::std::string PathUtil::PathCombine_(const std::std::string& path1, const std::std::string& path2)
 // 	{
 // #ifdef _YAO_LOG_WIN32_
 // 		char buf[MAX_PATH] = { 0 };
 // 		::PathCombineA(buf, path1.c_str(), path2.c_str());
-// 		return std::string(buf);
+// 		return std::std::string(buf);
 // #else
 // 		assert(path2[0] != '/');
-// 		std::string path_(path1);
+// 		std::std::string path_(path1);
 // 		if (path_[path_.size() - 1] != '/')
-// 			path_ += std::string("/");
+// 			path_ += std::std::string("/");
 // 		return path_ + path2;
 // #endif
 // 	}
 // 
-// 	bool PathUtil::PathFileExists_(const std::string& path_)
+// 	bool PathUtil::PathFileExists_(const std::std::string& path_)
 // 	{
 // #ifdef _YAO_LOG_WIN32_
 // 		return ::PathFileExistsA(path_.c_str()) ? true : false;
@@ -801,22 +871,22 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 	}
 // 
-// 	bool PathUtil::IsStrJustFileName_(const std::string& str)
+// 	bool PathUtil::IsStrJustFileName_(const std::std::string& str)
 // 	{
 // 		return !(
-// 			(str.find(':', 0) != std::string::npos)  ||
-// 			(str.find('\\', 0) != std::string::npos) ||
-// 			(str.find('/', 0) != std::string::npos));
+// 			(str.find(':', 0) != std::std::string::npos)  ||
+// 			(str.find('\\', 0) != std::std::string::npos) ||
+// 			(str.find('/', 0) != std::std::string::npos));
 // 	}
 // 
-// 	void PathUtil::CreateFolder_(const std::string& directory_)
+// 	void PathUtil::CreateFolder_(const std::std::string& directory_)
 // 	{
 // 		if (!PathUtil::PathFileExists_(directory_))
 // 		{
 // #ifdef _YAO_LOG_WIN32_
 // 			::SHCreateDirectoryExA(NULL, directory_.c_str(), NULL);
 // #else
-// 			std::string s("mkdir -p " + directory_);
+// 			std::std::string s("mkdir -p " + directory_);
 // 			system(s.c_str());
 // #endif
 // 		}
@@ -963,11 +1033,11 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	}
 // 
 // 	/**
-// 	*@brief read string in initialization file
-// 	* retrieves a string from the specified section in an initialization file
+// 	*@brief read std::string in initialization file
+// 	* retrieves a std::string from the specified section in an initialization file
 // 	*@param section [in] name of the section containing the key name
 // 	*@param key_ [in] name of the key pairs to value
-// 	*@param value_ [in&out] pointer to the buffer that receives the retrieved string
+// 	*@param value_ [in&out] pointer to the buffer that receives the retrieved std::string
 // 	*@param size_ [in] size of result's buffer
 // 	*@param defaultValue [in] default value of result
 // 	*@param file [in] path of the initialization file
@@ -1028,25 +1098,25 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		}
 // 	}
 // 
-// 	bool IniReader::ReadStrA(const std::string& section, const std::string& key_,
-// 		std::string& value_, const std::string& defaultValue,
-// 		const std::string& filePath)
+// 	bool IniReader::ReadStrA(const std::std::string& section, const std::std::string& key_,
+// 		std::std::string& value_, const std::std::string& defaultValue,
+// 		const std::std::string& filePath)
 // 	{
 // 		char buf[4096] = { 0 };
 // 		int success = ReadStr_(section.c_str(), key_.c_str(), buf, sizeof(buf),
 // 			defaultValue.c_str(), filePath.c_str());
 // 
-// 		if (success) value_ = std::string(buf);
+// 		if (success) value_ = std::std::string(buf);
 // 		else value_ = defaultValue;
 // 
 // 		return success == 1 ? true : false;
 // 	}
 // 
-// 	int IniReader::ReadIntA(const std::string& section, const std::string& key_,
-// 		int defaultValue, std::string& filePath)
+// 	int IniReader::ReadIntA(const std::std::string& section, const std::std::string& key_,
+// 		int defaultValue, std::std::string& filePath)
 // 	{
-// 		std::string value_;
-// 		std::string strDefaultValue;
+// 		std::std::string value_;
+// 		std::std::string strDefaultValue;
 // 		if (ReadStrA(section, key_, value_, strDefaultValue, filePath))
 // 		{
 // 			return atoi(value_.c_str());
@@ -1057,9 +1127,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		}
 // 	}
 // 
-// 	std::string MachineID::GetMachineID()
+// 	std::std::string MachineID::GetMachineID()
 // 	{
-// 		std::string s;
+// 		std::std::string s;
 // 		unsigned char result[6] = { 0 };
 // #ifdef _YAO_LOG_WIN32_
 // 		if (GetMACAddressMSW(result) == 0)
@@ -1071,7 +1141,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X",
 // 				(unsigned int)result[0], (unsigned int)result[1], (unsigned int)result[2],
 // 				(unsigned int)result[3], (unsigned int)result[4], (unsigned int)result[5]);
-// 			s = std::string(buf);
+// 			s = std::std::string(buf);
 // 		}
 // 		return s;
 // 	}
@@ -1134,7 +1204,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	}
 // #endif
 // 
-// 	P_FILE FileUtil::Open(const std::string& path_, bool overwrite_)
+// 	P_FILE FileUtil::Open(const std::std::string& path_, bool overwrite_)
 // 	{
 // 		P_FILE pFile = NULL;
 // 
@@ -1185,7 +1255,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 	}
 // 
-// 	const std::string Encoding::base64_chars = 
+// 	const std::std::string Encoding::base64_chars = 
 // 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 // 		"abcdefghijklmnopqrstuvwxyz"
 // 		"0123456789+/";
@@ -1195,9 +1265,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return (isalnum(c) || (c == '+') || (c == '/'));
 // 	}
 // 
-// 	std::string Encoding::Base64Encode(const unsigned char *bytes_to_encode, unsigned int in_len)
+// 	std::std::string Encoding::Base64Encode(const unsigned char *bytes_to_encode, unsigned int in_len)
 // 	{
-// 		std::string ret;
+// 		std::std::string ret;
 // 		int i = 0;
 // 		int j = 0;
 // 		unsigned char char_array_3[3];
@@ -1241,14 +1311,14 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 	}
 // 
-// 	std::string Encoding::Base64Decode(std::string const& encoded_string)
+// 	std::std::string Encoding::Base64Decode(std::std::string const& encoded_string)
 // 	{
 // 		int in_len = encoded_string.size();
 // 		int i = 0;
 // 		int j = 0;
 // 		int in_ = 0;
 // 		unsigned char char_array_4[4], char_array_3[3];
-// 		std::string ret;
+// 		std::std::string ret;
 // 
 // 		while (in_len-- && ( encoded_string[in_] != '=') && IsBase64(encoded_string[in_]))
 // 		{
@@ -1301,9 +1371,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return y;
 // 	}
 // 
-// 	std::string Encoding::UrlEncode(const std::string& str)
+// 	std::std::string Encoding::UrlEncode(const std::std::string& str)
 // 	{
-// 		std::string strTemp = "";
+// 		std::std::string strTemp = "";
 // 		size_t length = str.length();
 // 		for (size_t i = 0; i < length; i++)
 // 		{
@@ -1325,9 +1395,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return strTemp;
 // 	}
 // 
-// 	std::string Encoding::UrlDecode(const std::string& str)
+// 	std::std::string Encoding::UrlDecode(const std::std::string& str)
 // 	{
-// 		std::string strTemp = "";
+// 		std::std::string strTemp = "";
 // 		size_t length = str.length();
 // 		for (size_t i = 0; i < length; i++)
 // 		{
@@ -1344,7 +1414,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return strTemp;
 // 	}
 // 
-// 	HttpConn::HttpConn(const std::string& host_, int port_) :
+// 	HttpConn::HttpConn(const std::std::string& host_, int port_) :
 // 		m_host(host_),
 // 		m_port(port_),
 // 		m_sock(-1)
@@ -1398,12 +1468,12 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		putheader("Accept-Encoding", "identity");
 // 	}
 // 
-// 	void HttpConn::putheader(const std::string& header_, const std::string& value_)
+// 	void HttpConn::putheader(const std::std::string& header_, const std::std::string& value_)
 // 	{
 // 		m_buffer.push_back(header_ + ": " + value_);
 // 	}
 // 
-// 	void HttpConn::putheader(const std::string& header_, int numericvalue)
+// 	void HttpConn::putheader(const std::std::string& header_, int numericvalue)
 // 	{
 // 		char buf[32] = { 0 };
 // 		sprintf(buf, "%d", numericvalue);
@@ -1414,8 +1484,8 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	{
 // 		m_buffer.push_back("");
 // 
-// 		std::string msg;
-// 		std::vector<std::string>::const_iterator it;
+// 		std::std::string msg;
+// 		std::vector<std::std::string>::const_iterator it;
 // 		for (it = m_buffer.begin(); it != m_buffer.end(); ++it)
 // 			msg += (*it) + "\r\n";
 // 
@@ -1630,7 +1700,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	// LogFactory
 // 	///////////////////////////////////////////////////////////////
 // 	TinyMutex LogFactory::m_tm;
-// 	std::map<std::string, BaseLog*> LogFactory::m_allLoggers;
+// 	std::map<std::std::string, BaseLog*> LogFactory::m_allLoggers;
 // 	bool LogFactory::m_threadEnd;
 // 	TinyThread *LogFactory::m_pTT;
 // 	bool LogFactory::m_inited;
@@ -1641,7 +1711,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		m_tm.Lock();
 // 
 // 		// update config from ini...
-// 		std::map<std::string, BaseLog*>::iterator it;
+// 		std::map<std::std::string, BaseLog*>::iterator it;
 // 		for (it = m_allLoggers.begin(); it != m_allLoggers.end(); it++)
 // 		{
 // 			BaseLog* pLog = it->second;
@@ -1662,8 +1732,8 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		}
 // 
 // 		// coyp log data
-// 		std::vector<std::pair<std::string, std::vector<std::string> > > textData;
-// 		std::vector<std::pair<std::string, std::vector<std::string> > > binData;
+// 		std::vector<std::pair<std::std::string, std::vector<std::std::string> > > textData;
+// 		std::vector<std::pair<std::std::string, std::vector<std::std::string> > > binData;
 // 		Queue2Vector(g_textData, textData);
 // 		Queue2Vector(g_binData, binData);
 // 
@@ -1682,20 +1752,20 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		}
 // 	}
 // 
-// 	void LogFactory::PostData(const std::string& logID,
-// 		const std::vector<std::string>& logData)
+// 	void LogFactory::PostData(const std::std::string& logID,
+// 		const std::vector<std::std::string>& logData)
 // 	{
 // 		BaseLog *p = Get(logID);
 // 		if (!p) return;
 // 
-// 		std::string isText = p->m_bBinary ? "0" : "1";
+// 		std::std::string isText = p->m_bBinary ? "0" : "1";
 // 
-// 		std::string server_, path_;
+// 		std::std::string server_, path_;
 // 		int port_;
 // 		if (!StrUtil::ParseUrl(p->m_params.destUrl, server_, path_, port_))
 // 			return;
 // 
-// 		static std::string machineID;
+// 		static std::std::string machineID;
 // 		if (machineID.empty())
 // 			machineID = MachineID::GetMachineID();
 // 
@@ -1703,7 +1773,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		for (size_t i = 0; i < logData.size(); i++)
 // 		{
 // 			//printf("%s\n", logData[i].data());
-// 			std::string sData = Encoding::Base64Encode(
+// 			std::std::string sData = Encoding::Base64Encode(
 // 				(const unsigned char*)logData[i].data(),
 // 				logData[i].size());
 // 			sData = Encoding::UrlEncode(sData);
@@ -1770,7 +1840,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		}
 // 
 // 		// delete all loggers
-// 		std::map<std::string, BaseLog*>::iterator it;
+// 		std::map<std::std::string, BaseLog*>::iterator it;
 // 		for (it = m_allLoggers.begin(); it != m_allLoggers.end(); it++)
 // 		{
 // 			delete it->second;
@@ -1778,7 +1848,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		m_allLoggers.clear();
 // 
 // 		// close all log files
-// 		std::map<std::string, P_FILE>::iterator it1;
+// 		std::map<std::std::string, P_FILE>::iterator it1;
 // 		for (it1 = g_files.begin(); it1 != g_files.end(); it1++)
 // 		{
 // 			if (FileUtil::Valid(it1->second))
@@ -1803,7 +1873,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // #endif
 // 	}
 // 
-// 	bool LogFactory::Create(const std::string& logID, bool bEnable, bool bTextLog)
+// 	bool LogFactory::Create(const std::std::string& logID, bool bEnable, bool bTextLog)
 // 	{
 // 		m_tm.Lock();
 // 
@@ -1835,20 +1905,20 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return false;
 // 	}
 // 
-// 	bool LogFactory::Exists(const std::string& logID)
+// 	bool LogFactory::Exists(const std::std::string& logID)
 // 	{
 // 		return m_allLoggers.find(logID) != m_allLoggers.end();
 // 	}
 // 
-// 	BaseLog *LogFactory::Get(const std::string& logID)
+// 	BaseLog *LogFactory::Get(const std::std::string& logID)
 // 	{
-// 		std::map<std::string, BaseLog*>::const_iterator it = m_allLoggers.find(logID);
+// 		std::map<std::std::string, BaseLog*>::const_iterator it = m_allLoggers.find(logID);
 // 		if (it != m_allLoggers.end()) return it->second;
 // 		return NULL;
 // 	}
 // 
 // 	void LogFactory::SetAttr(
-// 		const std::string& logID,
+// 		const std::std::string& logID,
 // 		bool bEnable,
 // 		int nOutFlag,
 // 		bool bWithTime,
@@ -1856,9 +1926,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		bool bWithSrcFile,
 // 		bool bWithFunction,
 // 		bool bOverwrite,
-// 		const std::string& logFileDir,
-// 		const std::string& logFileName,
-// 		const std::string& destUrl)
+// 		const std::std::string& logFileDir,
+// 		const std::std::string& logFileName,
+// 		const std::std::string& destUrl)
 // 	{
 // 		m_tm.Lock();
 // 
@@ -1876,8 +1946,8 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		m_tm.Unlock();
 // 	}
 // 
-// 	void LogFactory::SetAttrFromConfigFile(const std::string& logID,
-// 		const std::string& ini_)
+// 	void LogFactory::SetAttrFromConfigFile(const std::std::string& logID,
+// 		const std::std::string& ini_)
 // 	{
 // 		m_tm.Lock();
 // 
@@ -1895,7 +1965,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 
 // 
 // 
-// 	BaseLog::BaseLog(const std::string& logID, bool bEnable)
+// 	BaseLog::BaseLog(const std::std::string& logID, bool bEnable)
 // 	{
 // 		assert(logID.size() != 0);
 // 
@@ -1916,9 +1986,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		bool bWithSrcFile,
 // 		bool bWithFunction,
 // 		bool bOverwrite,
-// 		const std::string& logFileDir,
-// 		const std::string& logFileName,
-// 		const std::string& destUrl)
+// 		const std::std::string& logFileDir,
+// 		const std::std::string& logFileName,
+// 		const std::std::string& destUrl)
 // 	{
 // 		// doesn't use ini...
 // 		m_iniFullPath.clear();
@@ -1937,7 +2007,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		SetLogFilePath();
 // 	}
 // 
-// 	void BaseLog::SetAttrFromConfigFile(const std::string& ini_)
+// 	void BaseLog::SetAttrFromConfigFile(const std::std::string& ini_)
 // 	{
 // 		assert(ini_.size() != 0);
 // 
@@ -1946,7 +2016,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		// get ini file full path
 // 		if (PathUtil::IsStrJustFileName_(m_iniFullPath))
 // 		{
-// 			std::string moduleFileDirectory = PathUtil::ModuleFileDirectory_();
+// 			std::std::string moduleFileDirectory = PathUtil::ModuleFileDirectory_();
 // 			m_iniFullPath = PathUtil::PathCombine_(moduleFileDirectory, m_iniFullPath);
 // 		}
 // 
@@ -1972,10 +2042,10 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 				!= 0);
 // 
 // 			// out flag
-// 			std::string outFlag;
+// 			std::std::string outFlag;
 // 			IniReader::ReadStrA(
 // 				m_logID, "OutFlag", outFlag, "stdout", m_iniFullPath);
-// 			std::vector<std::string> flags;
+// 			std::vector<std::std::string> flags;
 // 			StrUtil::SplitString(outFlag, "|", flags, false);
 // 			if (flags.empty())
 // 			{
@@ -2054,7 +2124,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		// set log file name
 // 		if (m_params.logFileName.size() == 0)
 // 		{
-// 			std::string fileName =
+// 			std::std::string fileName =
 // 				m_logID + StrUtil::GetSysTimeStrForFileName(m_bBinary);
 // 
 // 			m_logFullPath =
@@ -2076,11 +2146,11 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			g_files.insert(make_pair(m_logFullPath, pFile));
 // 		}
 // 
-// 		std::map<std::string, P_FILE>::iterator it = g_files.find(m_logFullPath);
+// 		std::map<std::std::string, P_FILE>::iterator it = g_files.find(m_logFullPath);
 // 		pFile = it->second;
 // 		if (!FileUtil::Valid(pFile))
 // 		{
-// 			std::string sPath = PathUtil::GetDirectory_(m_logFullPath);
+// 			std::std::string sPath = PathUtil::GetDirectory_(m_logFullPath);
 // 			PathUtil::CreateFolder_(sPath);
 // 
 // 			//open the log file...
@@ -2095,7 +2165,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	///////////////////////////////////////////////////////////////////////
 // 	// YaoLog
 // 	///////////////////////////////////////////////////////////////////////
-// 	YaoLog::YaoLog(const std::string& logID, bool bEnable) : BaseLog(logID, bEnable)
+// 	YaoLog::YaoLog(const std::std::string& logID, bool bEnable) : BaseLog(logID, bEnable)
 // 	{
 // 		m_bBinary = false;
 // 	}
@@ -2104,9 +2174,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	{
 // 	}
 // 
-// 	int YaoLog::MakeLogText(const std::string& str,
-// 		const std::string& srcFile,
-// 		const std::string& function_,
+// 	int YaoLog::MakeLogText(const std::std::string& str,
+// 		const std::std::string& srcFile,
+// 		const std::std::string& function_,
 // 		int nLine)
 // 	{
 // 		size_t size_ = 100 + m_logID.size() + srcFile.size() +
@@ -2125,7 +2195,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			g_pRealData = g_pData;
 // 		}
 // 
-// 		std::string lineEnd("\n");
+// 		std::std::string lineEnd("\n");
 // #ifdef _YAO_LOG_WIN32_
 // 		lineEnd = "\r\n";
 // #endif
@@ -2140,7 +2210,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		int written = 0;
 // 		if (m_params.bWithTime)
 // 		{
-// 			std::string now = StrUtil::GetSysTimeStr(m_params.bWithMillisecond);
+// 			std::std::string now = StrUtil::GetSysTimeStr(m_params.bWithMillisecond);
 // 
 // 			if (withSrcFile)
 // 			{
@@ -2192,9 +2262,9 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		return written;
 // 	}
 // 
-// 	void YaoLog::DoLog(const std::string& str,
-// 		const std::string& srcFile,
-// 		const std::string& function_,
+// 	void YaoLog::DoLog(const std::std::string& str,
+// 		const std::std::string& srcFile,
+// 		const std::std::string& function_,
 // 		int nLine)
 // 	{
 // 		int size_ = MakeLogText(str, srcFile, function_, nLine);
@@ -2225,7 +2295,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			if (g_textData.size() >= MAX_QUEUE_SIZE)
 // 				g_textData.pop();
 // 
-// 			g_textData.push(make_pair(m_logID, std::string(g_pRealData)));
+// 			g_textData.push(make_pair(m_logID, std::std::string(g_pRealData)));
 // 		}
 // 		if (m_params.nOutFlag & LOGOUT_FLAG_OUTPUTDEBUGSTRING)
 // 		{
@@ -2249,7 +2319,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		va_end(args);
 // 
 // #ifdef _YAO_LOG_UNICODE_
-// 		std::string s1 = StrUtil::WStrToStr(str);
+// 		std::std::string s1 = StrUtil::WStrToStr(str);
 // 		DoLog(s1, szSrcFile, szFunction, nLine);
 // #else
 // 		DoLog(str, szSrcFile, szFunction, nLine);
@@ -2262,7 +2332,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 	{
 // 		if (!m_params.bEnable) return;
 // 
-// 		std::string str;
+// 		std::std::string str;
 // 		va_list args;
 // 		va_start(args, szFormat);
 // 		StrUtil::vFormatA(str, szFormat, args);
@@ -2284,14 +2354,14 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 		StrUtil::vFormatW(str, szFormat, args);
 // 		va_end(args);
 // 
-// 		std::string s1 = StrUtil::WStrToStr(str);
+// 		std::std::string s1 = StrUtil::WStrToStr(str);
 // 		DoLog(s1, szSrcFile, szFunction, nLine);
 // 	}
 // #endif
 // 
 // 
 // 
-// 	YaoBinLog::YaoBinLog(const std::string& logID, bool bEnable) : BaseLog(logID, bEnable)
+// 	YaoBinLog::YaoBinLog(const std::std::string& logID, bool bEnable) : BaseLog(logID, bEnable)
 // 	{
 // 		m_bBinary = true;
 // 	}
@@ -2318,7 +2388,7 @@ void CLog::Initialize(CString szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel
 // 			if (g_binData.size() >= MAX_QUEUE_SIZE)
 // 				g_binData.pop();
 // 
-// 			g_binData.push(make_pair(m_logID, std::string((char*)pData, nSize)));
+// 			g_binData.push(make_pair(m_logID, std::std::string((char*)pData, nSize)));
 // 		}
 // 		if (m_params.nOutFlag & LOGOUT_FLAG_OUTPUTDEBUGSTRING)
 // 		{

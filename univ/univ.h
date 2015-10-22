@@ -18,8 +18,7 @@
 #include <string>
 #include <fstream>
 using namespace std;
-#include "string/string.h"
-
+#include "defines.h"
 
 namespace Sloong
 {
@@ -29,16 +28,18 @@ namespace Sloong
 		{
 		public:
 			static wstring Version();
-			static wstring FormatW(wstring lpstr, ...);
-			static string FormatA(string lpstr, ...);
-			static wstring ToWString(string str);
-			static string ToString(wstring str);
-			static void CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom);
+			static void CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom);
+			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
+			static int splitString(const string& str, vector<string>& res, string sep = ",");
+			static string trim(const string& str);
+			static string replace(const string& str, const string& src, const string& dest);
+			static string toansi(const wstring& str);
+			static wstring toutf(const string& str);	
 		};
 
+#ifdef _WINDOWS
 #pragma region Windows Define
-
 		class CSize;
 		class CPoint;
 		class CRect;
@@ -137,7 +138,7 @@ namespace Sloong
 			CRect operator-( const RECT* lpRect) const throw();
 		};
 
-#ifdef _WINDOWS
+
 		/////////////////////////////////////////////////////////////////////////////
 		// CRect - A 2-D rectangle, similar to Windows RECT structure.
 		class UNIVERSAL_API CRect : public tagRECT
@@ -307,9 +308,10 @@ namespace Sloong
 				int nMultiplier,
 				int nDivisor) const throw();
 		};
+#pragma endregion
 #endif // !_WINDOWS
 
-#pragma endregion
+
 
 	}
 }

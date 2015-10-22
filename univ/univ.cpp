@@ -4,15 +4,18 @@
 #include "stdafx.h"
 #include <iostream>
 #include <map>
-#include "error.h"
 #include "log.h"
 #include "univ.h"
 #include "Version.h"
+#include <assert.h>
+#ifndef _WINDOWS
+#include <libgen.h>
+#endif // !_WINDOWS
 
 using namespace std;
 using namespace Sloong::Universal;
 
-typedef map<int, _tstring> MSGMAP;
+typedef map<int, string> MSGMAP;
 MSGMAP g_MessageMap;
 
 wstring CUniversal::Version()
@@ -20,77 +23,128 @@ wstring CUniversal::Version()
 	return VERSION_LEGALCOPYRIGHT;
 }
 
-typedef struct stMessageMap
-{
-	int nErrorCode;
-	LPCTSTR strErrorText;
-} MESSAGEMAP;
-
-
-MESSAGEMAP g_Map[] =
-{
-	S_FALSE, TXT_ERR_FALSE,
-	S_ERROR_REGISTRY_CANNOT_READ, TXT_ERR_REGISTRY_CANNOT_WRITE,
-	S_ERROR_REGISTRY_CANNOT_WRITE, TXT_ERR_REGISTRY_CANNOT_READ,
-	S_ERROR_REGISTRY_READ_FAILED, TXT_ERR_REGISTRY_READ_FAILED,
-	S_ERROR_CREATE_WINDOW_FAILED, TXT_ERR_CREATE_WINDOW_FAILED,
-	S_ERROR_CREATE_ENGINE_FAILED, TXT_ERR_CREATE_ENGINE_FAILED,
-	S_ERROR_ENGINE_INIT_FAILED, TXT_ERR_ENGINE_INIT_FAILED,
-	S_ERROR_GAME_INIT_FAILED, TXT_ERR_GAME_INIT_FAILED,
-	S_ERROR_MUTEX_EXIST, TXT_ERR_MUTEX_EXIST,
-	S_ERROR_LOAD_SCRIPT_FILE, TXT_ERR_LOAD_SCRIPT_FILE,
-	S_ERROR_PARAM_VALUE, TXT_ERR_PARAM_VALUE,
-	S_ERROR_CREATE_DEVICE, TXT_ERR_CREATE_DEVICE,
-	S_ERROR_GET_SWAP_CHAIN_BUFFER, TXT_ERR_GET_SWAP_CHAIN_BUFFER,
-	S_ERROR_CREATE_RENDER_TARGET_VIEW, TXT_ERR_CREATE_RENDER_TARGET_VIEW,
-	S_ERROR_OPEN_LOG_FILE, TXT_ERR_OPEN_LOG_FILE,
-	S_ERROR_NO_OPEN_FILE, TXT_ERR_NO_OPEN_FILE,
-	S_ERROR_CREATE_OBJECT, TXT_ERR_CREATE_OBJECT,
-	S_ERROR_FIND_OBJECT, TXT_ERR_FIND_OBJECT,
-	S_ERROR_CREATE_TEXUTE, TXT_ERR_CREATE_TEXUTE,
-	S_WARNING_FUNCTION_DISABLE, TEXT_WARN_FUNCTION_DISABLE,
-};
-
 bool g_bIsInst = false;
 
-//--- 0000010 --- 2013/9/30 --- WCB --- Add
-// Remarks:
-//		Format the error message with the error code
-HRESULT FormatErrorMessage(LPTSTR szErrText, DWORD dwSize, HRESULT nErrorCode)
-{
-	// if error code map is not initialize, do it.
-	if (false == g_bIsInst)
-	{
-		for (int i = 0; i < ARRAYSIZE(g_Map); i++)
-		{
-			g_MessageMap.insert(map<int, _tstring>::value_type(g_Map[i].nErrorCode, g_Map[i].strErrorText));
-		}
-		g_bIsInst = true;
-	}
-
-	// find the message with error code.
-	MSGMAP::iterator Key = g_MessageMap.find((int)nErrorCode);
-	if (Key == g_MessageMap.end())
-	{
-		_ASSERT(NULL);
-		_stprintf_s(szErrText, dwSize, TEXT("Unknow error, code = %d"), nErrorCode);
-		return S_OK;
-	}
-	else
-	{
-		_tcscpy_s(szErrText, dwSize / 2, Key->second.c_str());
-		return S_OK;
-	}
-}
-
-void CUniversal::CopyStringToPoint(LPTSTR& lpTarget, LPCTSTR lpFrom)
+void CUniversal::CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom)
 {
 	SAFE_DELETE_ARR(lpTarget);
-	UINT nLength = (UINT)_tcslen(lpFrom);
-	lpTarget = new TCHAR[nLength + 1];
+	int nLength = (int)strlen(lpFrom);
+	lpTarget = new char[nLength + 1];
 	assert(lpTarget);
-	_tcscpy_s(lpTarget, nLength + 1, lpFrom);
+	strncpy(lpTarget, lpFrom, nLength);
 }
+
+void CUniversal::CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom)
+{
+	SAFE_DELETE_ARR(lpTarget);
+	int nLength = (int)wcslen(lpFrom);
+	lpTarget = new wchar_t[nLength + 1];
+	assert(lpTarget);
+	wcsncpy(lpTarget, lpFrom, nLength);
+}
+
+
+
+string CUniversal::trim(const string& str)
+{
+    string::size_type pos = str.find_first_not_of(' ');
+    if (pos == string::npos)
+    {
+        return str;
+    }
+    string::size_type pos2 = str.find_last_not_of(' ');
+    if (pos2 != string::npos)
+    {
+        return str.substr(pos, pos2 - pos + 1);
+    }
+    return str.substr(pos);
+}
+
+
+int CUniversal::splitString(const string& str, vector<string>& ret_, string sep /* = "," */)
+{
+    if (str.empty())
+    {
+        return 0;
+    }
+
+    string tmp;
+    string::size_type pos_begin = str.find_first_not_of(sep);
+    string::size_type comma_pos = 0;
+
+    while (pos_begin != string::npos)
+    {
+        comma_pos = str.find(sep, pos_begin);
+        if (comma_pos != string::npos)
+        {
+            tmp = str.substr(pos_begin, comma_pos - pos_begin);
+            pos_begin = comma_pos + sep.length();
+        }
+        else
+        {
+            tmp = str.substr(pos_begin);
+            pos_begin = comma_pos;
+        }
+
+        if (!tmp.empty())
+        {
+            ret_.push_back(tmp);
+            tmp.clear();
+        }
+    }
+    return 0;
+}
+
+string CUniversal::replace(const string& str, const string& src, const string& dest)
+{
+    string ret;
+
+    string::size_type pos_begin = 0;
+    string::size_type pos       = str.find(src);
+    while (pos != string::npos)
+    {
+        cout <<"replacexxx:" << pos_begin <<" " << pos <<"\n";
+        ret.append(str.data() + pos_begin, pos - pos_begin);
+        ret += dest;
+        pos_begin = pos + 1;
+        pos       = str.find(src, pos_begin);
+    }
+    if (pos_begin < str.length())
+    {
+        ret.append(str.begin() + pos_begin, str.end());
+    }
+    return ret;
+}
+
+string Sloong::Universal::CUniversal::toansi(const wstring& str)
+{
+	string strResult;
+	int nLen = (int)str.size();
+	LPSTR szMulti = new char[nLen + 1];
+	memset(szMulti, 0, nLen + 1);
+	// use the c standard library function to convert
+	wcstombs(szMulti, str.c_str(), nLen);
+	strResult = szMulti;
+	delete[] szMulti;
+	return strResult;
+
+
+}
+
+wstring Sloong::Universal::CUniversal::toutf(const string& str)
+{
+	wstring strResult;
+	int nLen = (int)str.size();
+	LPWSTR strWide = new WCHAR[nLen + 1];
+	memset(strWide, 0, sizeof(TCHAR)*(nLen + 1));
+	mbstowcs(strWide,str.c_str(),nLen);
+	strResult = strWide;
+	delete[] strWide;
+	return strResult;
+}
+
+#ifdef _WINDOWS
+
 
 // Remarks:
 //		Format the windows error message
@@ -104,6 +158,8 @@ wstring CUniversal::FormatWindowsErrorMessage( DWORD dwErrCode)
 	strError = szErr;
 	return strError;
 }
+
+
 
 
 // CSize
@@ -312,8 +368,6 @@ inline CSize CPoint::operator-(_In_ POINT point) const throw()
 }
 
 
-
-#ifdef _WINDOWS
 
 
 inline CRect CSize::operator+(_In_ const RECT* lpRect) const throw()
@@ -764,53 +818,3 @@ inline CRect CRect::MulDiv(
 }
 
 #endif // _WINDOWS
-
-
-
-const int MAX_BUFFER = 2048;
-
-string CUniversal::ToString(wstring strWide)
-{
-	string strResult;
-	int nLen = (int)strWide.size();
-	LPSTR szMulti = new CHAR[nLen + 1];
-	memset(szMulti, 0, nLen + 1);
-	WideCharToMultiByte(CP_ACP, 0, strWide.c_str(), nLen, szMulti, nLen, NULL, FALSE);
-	strResult = szMulti;
-	SAFE_DELETE_ARR(szMulti);
-	return strResult;
-}
-
-wstring CUniversal::ToWString(string strMulti)
-{
-	wstring strResult;
-	int nLen = (int)strMulti.size();
-	LPWSTR strWide = new WCHAR[nLen + 1];
-	memset(strWide, 0, sizeof(WCHAR)*(nLen + 1));
-	MultiByteToWideChar(CP_ACP, 0, strMulti.c_str(), nLen, strWide, nLen);
-	strResult = strWide;
-	SAFE_DELETE_ARR(strWide);
-	return strResult;
-}
-
-string Sloong::Universal::CUniversal::FormatA(string lpStr, ...)
-{
-	//string strRes;
-	va_list args;
-	va_start(args, lpStr);
-	char szBuffer[MAX_BUFFER];
-	vsprintf_s(szBuffer, MAX_BUFFER, lpStr.c_str(), args);
-	//strRes = szBuffer;
-	va_end(args);
-	return szBuffer;
-}
-
-wstring Sloong::Universal::CUniversal::FormatW(wstring lpStr, ...)
-{
-	va_list args;
-	va_start(args, lpStr);
-	WCHAR szBuffer[MAX_BUFFER];
-	vswprintf_s(szBuffer, MAX_BUFFER, lpStr.c_str(), args);
-	va_end(args);
-	return szBuffer;
-}

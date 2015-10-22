@@ -4,30 +4,38 @@
 using namespace Sloong::Universal;
 
 
-
-CException::CException(CString strMessage)
+Sloong::Universal::normal_except::normal_except()
 {
-	m_strMessage = strMessage;
+
 }
 
-CException::CException(CString lpStr, HRESULT hRes)
+Sloong::Universal::normal_except::normal_except(std::string lpstr)
+{
+	m_strMessage = lpstr;
+}
+
+Sloong::Universal::normal_except::normal_except(const normal_except&)
+{
+
+}
+
+Sloong::Universal::normal_except::normal_except(std::string lpStr, long hRes)
 {
 	m_strMessage = lpStr;
 	m_hResult = hRes;
 }
 
-
-CException::~CException()
+normal_except& Sloong::Universal::normal_except::operator=(const normal_except&)
 {
+	return (*this);
 }
 
-
-CString CException::GetException() const
+Sloong::Universal::normal_except::~normal_except()
 {
-	return m_strMessage;
+
 }
 
-HRESULT CException::GetResult() const
+const char* Sloong::Universal::normal_except::what() const
 {
-	return m_hResult;
+	return m_strMessage.c_str();
 }

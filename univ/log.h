@@ -3,10 +3,11 @@
 
 
 #include "univ.h"
-#include "string/string.h"
-#pragma comment(lib,"string.lib")
+#ifdef _WINDOWS
+#endif
 using namespace Sloong::Universal;
 
+#include <boost/format.hpp>
 
 namespace Sloong
 {
@@ -29,41 +30,47 @@ namespace Sloong
 			INF,
 			All,
 		}LOGLEVEL;
-
+		
 		class UNIVERSAL_API CLog
 		{
 		public:
 			CLog();
 			~CLog();
 
-			virtual void Initialize(CString szPathName = L"Log.log", LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize(std::string szPathName = "./Log.log", LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 
-			virtual DWORD Write(CString szMessage);
-			virtual void WriteLine(CString szLog);
-			virtual void Log(LOGLEVEL emLevel, DWORD dwCode, CString strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
-			virtual void SetConfiguration(CString szFileName, CString szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
+			virtual void Write(std::string szMessage);
+			virtual void WriteLine(std::string szLog);
+			virtual void Log(LOGLEVEL emLevel, DWORD dwCode, std::string strErrorText, bool bFormatWinMsg = true, bool bJustFailedWrite = true);
+			virtual void SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
 			virtual bool IsOpen();
 			virtual void Close();
-			virtual CString GetFileName();
-			virtual CString GetPath();
+			virtual std::string GetFileName();
+			virtual std::string GetPath();
+			virtual bool IsInitialize();
 
 		protected:
-			CString FormatFatalMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			CString FormatErrorMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			CString FormatWarningMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			CString FormatInformationMessage(DWORD dwCode, CString strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			HRESULT OpenFile();
+			std::string FormatFatalMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			std::string FormatErrorMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			std::string FormatWarningMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			std::string FormatInformationMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			bool OpenFile();
+			static LPVOID LogSystemWorkLoop(LPVOID param);
 
 		protected:
 			LOGLEVEL	m_emLevel;
 			ofstream	m_oFile;
-			CString		m_szFilePath;
-			CString		m_szFileName;
-			CString		m_szLastDate;
-			int			m_emType;
+			std::string		m_szFilePath;
+			std::string		m_szFileName;
+			std::string		m_szLastDate;
+			int		m_emType;
 			bool		m_bIsCoverPrev;
-			HRESULT		g_hRes;
+			bool		g_hRes;
 			bool		m_bInit;
+		public:
+			static void showLog( LOGLEVEL level, std::string str );
+			static void showLog( LOGLEVEL level, boost::format& ft );
+            static bool     g_bDebug;
 		};
 	}
 }

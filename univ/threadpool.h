@@ -12,7 +12,9 @@ namespace Sloong
 	namespace Universal
 	{
 
-		typedef LPTHREAD_START_ROUTINE LPCALLBACKFUNC;
+//		typedef LPTHREAD_START_ROUTINE LPCALLBACKFUNC;
+		typedef LPVOID(*pCallBack)(LPVOID);
+		typedef pCallBack LPCALLBACKFUNC;
 		struct ThreadParam
 		{
 			LPCALLBACKFUNC	pJob;
@@ -35,17 +37,18 @@ namespace Sloong
 			virtual void End();
 			// Add a task to job list, and return the task index.
 			virtual int AddTask(LPCALLBACKFUNC pJob, LPVOID pParam);
-			// Add work thread 
-			virtual int AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nThreadNum = 1);
 
 			// remove a task from job list.
 			virtual void RemoveTask(int index);
 			virtual int GetTaskTotal();
 		protected:
-			vector<thread*>* m_pThreadList;
-			static queue<ThreadParam*>*	m_pJobList;
-			static void WINAPI ThreadWorkLoop(void);
+			static vector<thread*> m_pThreadList;
+			static queue<ThreadParam*>	m_pJobList;
+			static void ThreadWorkLoop(void);
 			static mutex g_oMutex;
+		public:
+			// Add work thread 
+			static thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
 		};
 	}
 }

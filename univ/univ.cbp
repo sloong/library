@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="univ" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="univ" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-w" />
+					<Add option="-g" />
+					<Add option="-fPIC" />
+					<Add directory="../" />
+				</Compiler>
+				<Linker>
+					<Add library="lua" />
+					<Add directory="../lua/src" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="univ" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="Makefile" />
+		<Unit filename="ReadMe.txt" />
+		<Unit filename="Version.h" />
+		<Unit filename="copy.bat" />
+		<Unit filename="defines.h" />
+		<Unit filename="dllmain.cpp" />
+		<Unit filename="exception.cpp" />
+		<Unit filename="exception.h" />
+		<Unit filename="log.cpp" />
+		<Unit filename="log.h" />
+		<Unit filename="lua.cpp" />
+		<Unit filename="lua.h" />
+		<Unit filename="resource.h" />
+		<Unit filename="stdafx.cpp" />
+		<Unit filename="stdafx.h" />
+		<Unit filename="targetver.h" />
+		<Unit filename="threadpool.cpp" />
+		<Unit filename="threadpool.h" />
+		<Unit filename="univ.cbp" />
+		<Unit filename="univ.cpp" />
+		<Unit filename="univ.h" />
+		<Unit filename="univ.vcxproj" />
+		<Unit filename="univ.vcxproj.filters" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

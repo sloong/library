@@ -32,3 +32,4 @@ Debug
 Release
 tlog
 *.user
+*.o

@@ -204,7 +204,6 @@ void CLog::Write(std::string szMessage)
 void* CLog::LogSystemWorkLoop(void* param)
 {
 	CLog* pThis = (CLog*)param;
-	// 重定向cout到文件
 	while(true)
 	{
 		if( g_logList.size() > 0 )
@@ -216,7 +215,7 @@ void* CLog::LogSystemWorkLoop(void* param)
 
 			// write log message to file
 			pThis->m_oFile << str;
-			if ( g_bDebug )
+            //if ( !g_bDebug )
 				cout<<str;
 		}
 	}

@@ -237,7 +237,21 @@ clean:
   
 distclean: clean  
 	$(RM) $(DEPS) TAGS  
-  
+	
+	
+install: $(PROGRAM)
+	mkdir -p /usr/local/include/univ
+	mkdir -p /usr/local/lib/univ
+	cp -f *.h /usr/local/include/univ/
+	cp -f $(PROGRAM) /usr/local/lib/sloong/
+	cp -f sloong.conf /etc/ld.so.conf.d/
+	/sbin/ldconfig -v
+
+update: $(PROGRAM)
+	cp -f *.h /usr/local/include/univ/
+	cp -f $(PROGRAM) /usr/local/lib/sloong/
+
+	
 # Show help.  
 help:  
 	@echo 'Generic Makefile for C/C++ Programs (gcmakefile) version 0.5'  

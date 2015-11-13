@@ -9,9 +9,9 @@ typedef int(*LuaFunc)(lua_State* pLuaState);
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
 extern "C" {
-#include "lua/src/lua.h"
-#include "lua/src/lualib.h"
-#include "lua/src/lauxlib.h"
+#include "../lua/src/lua.h"
+#include "../lua/src/lualib.h"
+#include "../lua/src/lauxlib.h"
 
                 }
 CLua::CLua()
@@ -26,7 +26,6 @@ CLua::~CLua()
 {
 	if (m_pScriptContext)
 		lua_close(m_pScriptContext);
-
 }
 
 static std::string findScript(std::string strFullName)
@@ -41,13 +40,19 @@ static std::string findScript(std::string strFullName)
 	string strDir(szDir);
 	strDir += "/";
 
-	string strTestFile = strDir + ("Scripts\\") + strFileName + (".lub");
+    string strTestFile = strDir + ("script/") + strFileName;
 	fFind = fopen(strTestFile.c_str(), "r");
 	if (!fFind)
 	{
-		strTestFile = strDir + ("Scripts\\") + strFileName + (".lua");
+        strTestFile = strDir + ("script\\") + strFileName + (".lua");
 		fFind = fopen(strTestFile.c_str(), "r");
 	}
+
+    if (!fFind)
+    {
+        strTestFile = strDir + ("script\\") + strFileName + (".lub");
+        fFind = fopen(strTestFile.c_str(), "r");
+    }
 
 	if (!fFind)
 	{

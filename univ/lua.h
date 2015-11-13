@@ -51,6 +51,7 @@ namespace Sloong
 			CLua();
 			virtual ~CLua();
 
+            bool    LoadScript(std::string strFileName);
 			bool	RunScript(std::string strFileName);
 			bool	RunBuffer(LPCSTR pBuffer, size_t sz);
 			bool	RunString(std::string strCommand);

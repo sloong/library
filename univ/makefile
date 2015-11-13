@@ -241,11 +241,9 @@ distclean: clean
 	
 install: $(PROGRAM)
 	mkdir -p /usr/local/include/univ
-	mkdir -p /usr/local/lib/univ
+	mkdir -p /usr/local/lib/sloong
 	cp -f *.h /usr/local/include/univ/
 	cp -f $(PROGRAM) /usr/local/lib/sloong/
-	cp -f sloong.conf /etc/ld.so.conf.d/
-	/sbin/ldconfig -v
 
 update: $(PROGRAM)
 	cp -f *.h /usr/local/include/univ/

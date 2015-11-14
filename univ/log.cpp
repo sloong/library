@@ -228,7 +228,7 @@ bool CLog::OpenFile()
 		return true;
 	if (m_szFileName.empty())
 		throw normal_except("Open log file failed.file name is empty.");
-	
+
 	cout<<"File no open , try open file. file path is :"<<m_szFileName<<endl;
 	
 	auto flag = ios::out | ios::app;

@@ -18,8 +18,6 @@ namespace Sloong
 {
 	namespace Universal
 	{
-
-
 		typedef int(*LuaFunctionType)(lua_State* pLuaState);
 
 		struct LuaFunctionRegistr

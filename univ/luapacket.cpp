@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include"Lunar.h"
 #include "luapacket.h"
 #include <sstream>
 #include "exception.h"
@@ -30,7 +31,20 @@ string ntos(T n)
     return ss.str();
 }
 
+const char CLuaPacket::className[] =  "LuaPacket";
+Lunar<CLuaPacket>::RegType CLuaPacket::methods[] =
+{
+    METHOD(CLuaPacket,empty),
+    METHOD(CLuaPacket,setdata),
+    METHOD(CLuaPacket,getdata),
+    {0,0}
+};
+
 CLuaPacket::CLuaPacket()
+{
+}
+
+CLuaPacket::CLuaPacket(lua_State* L)
 {
 }
 
@@ -38,35 +52,36 @@ CLuaPacket::~CLuaPacket()
 {
 }
 
-void CLuaPacket::empty(lua_State *L)
+int CLuaPacket::empty(lua_State *L)
 {
     m_oDataMap.clear();
+    return 1;
 }
 
-void CLuaPacket::setdata(lua_State *L)
+int CLuaPacket::setdata(lua_State *L)
 {
     int nType = lua_type(L,2);
     if( nType == LUA_TUSERDATA || nType == LUA_TTABLE )
     {
         lua_pushboolean(L,0);
-        return;
+        return 0;
     }
     if(lua_isnumber(L,1))
     {
         lua_pushboolean(L,SetFieldValue(PAI(L,1),PAS(L,2),PASL(L,2)) );
-        return;
+        return 1;
     }
 
     lua_pushboolean(L,SetFieldValue(PAS(L,1),PAS(L,2),PASL(L,2)));
-    return;
+    return 1;
 }
 
-void CLuaPacket::getdata(lua_State *L)
+int CLuaPacket::getdata(lua_State *L)
 {
     if(lua_isnumber(L,1))
     {
         getdata_n(L);
-        return;
+        return 1;
     }
 
     string key(PAS(L,1));
@@ -79,6 +94,7 @@ void CLuaPacket::getdata(lua_State *L)
     {
         lua_pushnil(L);
     }
+    return 1;
 }
 
 

@@ -5,6 +5,7 @@
 #include <boost/format.hpp>
 using namespace Sloong::Universal;
 
+
 typedef int(*LuaFunc)(lua_State* pLuaState);
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
@@ -14,12 +15,15 @@ extern "C" {
 #include "../lua/src/lauxlib.h"
 
                 }
+
+#include "Lunar.h"
 CLua::CLua()
 {
 	m_pErrorHandler = NULL;
 
 	m_pScriptContext = luaL_newstate();
 	luaL_openlibs(m_pScriptContext);
+    Lunar<CLuaPacket>::Register(m_pScriptContext);
 }
 
 CLua::~CLua()
@@ -237,3 +241,34 @@ inline void CLua::SetErrorHandle(void(*pErrHandler)(std::string strError))
 	m_pErrorHandler = pErrHandler;
 }
 
+bool CLua::AddFuncParam( CLuaPacket* pData )
+{
+    if( pData )
+    {
+        Lunar<CLuaPacket>::push(m_pScriptContext,pData,false);
+    }
+    else
+    {
+        lua_pushnil(m_pScriptContext);
+    }
+}
+
+bool CLua::RunFunctionWithParam(string strFunctionName, void* pParam )
+{
+    int nFunc = -1;
+    lua_getglobal(m_pScriptContext,strFunctionName.c_str());
+    if(lua_isfunction(m_pScriptContext,-1))
+        nFunc = luaL_ref(m_pScriptContext,LUA_REGISTRYINDEX);
+
+    lua_rawgeti(m_pScriptContext,LUA_REGISTRYINDEX,nFunc);
+
+
+    //for( int i = 0; i<pParam.capacity(); i++)
+    AddFuncParam((CLuaPacket*)pParam);
+    //lua_pushstring(m_pScriptContext,"test");
+
+    if( 0 != lua_pcall(m_pScriptContext,1,LUA_MULTRET,0))
+    {
+        GetErrorString();
+    }
+}

@@ -22,3 +22,6 @@ univ.cpp
 univ.h
 Version.h
 makefile
+luapacket.h
+luapacket.cpp
+Lunar.h

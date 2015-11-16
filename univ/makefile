@@ -59,7 +59,7 @@
 MY_CFLAGS =
 
 # The linker options.
-MY_LIBS   = -llua
+MY_LIBS   = -llua.5.3.1
 
 # The pre-processor options used by the cpp (man cpp for more).
 CPPFLAGS  = -Wall

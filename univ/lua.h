@@ -8,6 +8,7 @@
 using std::mutex;
 
 #include "univ.h"
+#include "luapacket.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"lua.lib")
@@ -54,6 +55,8 @@ namespace Sloong
 			bool	RunBuffer(LPCSTR pBuffer, size_t sz);
 			bool	RunString(std::string strCommand);
 			bool	RunFunction(std::string strFunctionName, std::string args);
+            bool    AddFuncParam( CLuaPacket* pData );
+            bool    RunFunctionWithParam(string strFunctionName,void* pParam );
 			std::string	GetErrorString();
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);

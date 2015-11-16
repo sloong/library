@@ -7,7 +7,7 @@
 #include<map>
 using std::mutex;
 using std::map;
-
+#include"Lunar.h"
 class lua_State;
 namespace Sloong
 {
@@ -16,12 +16,16 @@ namespace Sloong
         class UNIVERSAL_API CLuaPacket
         {
         public:
+            static const char className[];
+            static Lunar<CLuaPacket>::RegType methods[];
+        public:
             CLuaPacket();
+            CLuaPacket(lua_State* L);
             virtual ~CLuaPacket();
 
-            void empty(lua_State* L);
-            void setdata(lua_State* L);
-            void getdata(lua_State* L);
+            int empty(lua_State* L);
+            int setdata(lua_State* L);
+            int getdata(lua_State* L);
             void getdata_n(lua_State* L);
 
         protected:

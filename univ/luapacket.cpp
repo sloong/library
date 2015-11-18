@@ -3,6 +3,7 @@
 #include "luapacket.h"
 #include <sstream>
 #include "exception.h"
+#include "log.h"
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
 
@@ -66,51 +67,75 @@ int CLuaPacket::setdata(lua_State *L)
         lua_pushboolean(L,0);
         return 0;
     }
+    string key, value;
     if(lua_isnumber(L,1))
     {
-        lua_pushboolean(L,SetFieldValue(PAI(L,1),PAS(L,2),PASL(L,2)) );
-        return 1;
+        key = ntos(PAI(L,1));
+    }
+    else
+    {
+        key = PAS(L,1);
     }
 
-    lua_pushboolean(L,SetFieldValue(PAS(L,1),PAS(L,2),PASL(L,2)));
+    value = PAS(L,2);
+    if(value.length() != PASL(L,2))
+        throw normal_except("The lua string length is diff.");
+
+    SetData(key,value);
+    lua_pushboolean(L,true);
     return 1;
+}
+
+void CLuaPacket::SetData(string key, string value)
+{
+    if( key.empty() )
+    {
+        return;
+    }
+
+    LOCK_GUARD(m_oMutex);
+    m_oDataMap[key] = value;
 }
 
 int CLuaPacket::getdata(lua_State *L)
 {
+    string key;
     if(lua_isnumber(L,1))
     {
-        getdata_n(L);
-        return 1;
-    }
-
-    string key(PAS(L,1));
-    if( true == Exist(key) )
-    {
-        string value = m_oDataMap[key];
-        lua_pushlstring(L,value.c_str(),value.length());
+        key = ntos(PAI(L,1));
     }
     else
+        key = (PAS(L,1));
+
+    try
     {
+        string value = GetData(key);
+        lua_pushlstring(L,value.c_str(),value.length());
+    }
+    catch(CExceptKeyNoFound ex)
+    {
+        CLog::showLog(INF,boost::format("get data fiald.%s")%ex.what());
         lua_pushnil(L);
     }
+
     return 1;
 }
 
 
-void CLuaPacket::getdata_n(lua_State *L)
+string CLuaPacket::GetData(string key)
 {
-    string key(ntos(PAI(L,1)));
     if( true == Exist(key) )
     {
-        string value = m_oDataMap[key];
-        lua_pushlstring(L,value.c_str(),value.length());
+        return m_oDataMap[key];
     }
     else
     {
-        lua_pushnil(L);
+        // TODO: message should be have the key name.
+        //throw CExceptKeyNoFound((boost::format("key is not find in maps, key name is :%s")%key.c_str()).str());
+        throw CExceptKeyNoFound(CUniversal::Format("key is not find in maps, key name is :%s",key.c_str()));
     }
 }
+
 
 bool CLuaPacket::Exist(string key)
 {
@@ -124,29 +149,3 @@ bool CLuaPacket::Exist(string key)
     }
 }
 
-bool CLuaPacket::SetFieldValue(ULONG ulID, string strFieldValue, int nLen )
-{
-    if( ulID == 0)
-    {
-        return false;
-    }
-
-    return SetFieldValue(ntos(ulID),strFieldValue, nLen);
-}
-
-
-bool CLuaPacket::SetFieldValue(string key, string value, int nLen )
-{
-    if( key.empty() )
-    {
-        return false;
-    }
-
-    if( value.length() != (size_t)nLen )
-    {
-        throw normal_except("The lua string length is diff.");
-    }
-    LOCK_GUARD(m_oMutex);
-    m_oDataMap[key] = value;
-    return true;
-}

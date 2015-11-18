@@ -321,7 +321,7 @@ inline void CLua::SetErrorHandle(void(*pErrHandler)(std::string strError))
 	m_pErrorHandler = pErrHandler;
 }
 
-bool CLua::AddFuncParam( CLuaPacket* pData )
+void CLua::PushPacket( CLuaPacket* pData )
 {
     if( pData )
     {
@@ -333,7 +333,7 @@ bool CLua::AddFuncParam( CLuaPacket* pData )
     }
 }
 
-bool CLua::RunFunctionWithParam(string strFunctionName, void* pParam )
+bool CLua::RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket* pRequest, CLuaPacket* pResponse )
 {
     int nFunc = -1;
     lua_getglobal(m_pScriptContext,strFunctionName.c_str());
@@ -342,10 +342,9 @@ bool CLua::RunFunctionWithParam(string strFunctionName, void* pParam )
 
     lua_rawgeti(m_pScriptContext,LUA_REGISTRYINDEX,nFunc);
 
-
-    //for( int i = 0; i<pParam.capacity(); i++)
-    AddFuncParam((CLuaPacket*)pParam);
-    //lua_pushstring(m_pScriptContext,"test");
+    PushPacket(pUserInfo);
+    PushPacket(pRequest);
+    PushPacket(pResponse);
 
     if( 0 != lua_pcall(m_pScriptContext,1,LUA_MULTRET,0))
     {

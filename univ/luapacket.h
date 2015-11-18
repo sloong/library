@@ -26,11 +26,11 @@ namespace Sloong
             int empty(lua_State* L);
             int setdata(lua_State* L);
             int getdata(lua_State* L);
-            void getdata_n(lua_State* L);
+
+            void SetData(string key, string value);
+            string GetData(string key);
 
         protected:
-            bool SetFieldValue(ULONG ulID, string strFieldValue, int nLen );
-            bool SetFieldValue(string key, string value, int nLen );
             bool Exist(string key);
 
         private:

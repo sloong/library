@@ -19,6 +19,7 @@
 #include <fstream>
 using namespace std;
 #include "defines.h"
+#include <boost/format.hpp>
 
 namespace Sloong
 {
@@ -36,6 +37,24 @@ namespace Sloong
 			static string replace(const string& str, const string& src, const string& dest);
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
+            // packaging the boost::format;
+            template<class TFirst>
+            void Format(boost::format& fmt, TFirst&& first) {  fmt % first; }
+
+            template<class TFirst, class... TOther>
+            void Format(boost::format& fmt, TFirst&& first, TOther&&... other)
+            {
+                fmt % first;
+                Format(fmt, other...);
+            }
+
+            template<class TFirst, class... TOther>
+            string Format(const char* format, TFirst&& first, TOther&&... other)
+            {
+                boost::format fmt(format);
+                string_format(fmt, first, other...);
+                return fmt.str();
+            }
 		};
 
 #ifdef _WINDOWS

@@ -55,8 +55,7 @@ namespace Sloong
 			bool	RunBuffer(LPCSTR pBuffer, size_t sz);
 			bool	RunString(std::string strCommand);
 			bool	RunFunction(std::string strFunctionName, std::string args);
-            bool    AddFuncParam( CLuaPacket* pData );
-            bool    RunFunctionWithParam(string strFunctionName,void* pParam );
+            bool    RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket* pRequest, CLuaPacket* pResponse );
 			std::string	GetErrorString();
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);
@@ -64,6 +63,7 @@ namespace Sloong
 			double	GetNumberArgument(int nNum, double pDefault = -1.0f);
 			void	PushString(std::string strString);
 			void	PushNumber(double dValue);
+            void    PushPacket( CLuaPacket* pData );
 			void	SetErrorHandle(void(*pErrHandler)(std::string strError));
 			lua_State*	GetScriptContext();
 			map<string, string> GetTableParam(int index);

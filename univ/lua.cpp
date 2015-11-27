@@ -133,8 +133,9 @@ bool CLua::RunString(std::string strCommand)
 
 	return true;
 }
-
+#ifndef lua_pushliteral
 #define lua_pushliteral(L,s) lua_pushlstring(L,"" s,(sizeof(s)/sizeof(char))-1)
+#endif
 #define LEVELS1 12  // size of the first part of the stack
 #define LEVELS2 10 // size of the second part
 
@@ -149,7 +150,7 @@ std::string CLua::GetErrorString()
     /*if(!lua_isstring(m_pScriptContext,1))
         return lua_gettop(m_pScriptContext);*/
 
-    lua_settop(m_pScriptContext,1);
+    /*lua_settop(m_pScriptContext,1);
     lua_pushliteral(m_pScriptContext,"\r\n");
     lua_pushliteral(m_pScriptContext,"Call Stack:\r\n");
     while (lua_getstack(m_pScriptContext,level++,&ar))
@@ -202,7 +203,7 @@ std::string CLua::GetErrorString()
         lua_concat(m_pScriptContext,lua_gettop(m_pScriptContext));
     }
 
-    lua_concat(m_pScriptContext,lua_gettop((m_pScriptContext)));
+    lua_concat(m_pScriptContext,lua_gettop((m_pScriptContext)));*/
 
     time_t st;
     time(&st);
@@ -333,21 +334,60 @@ void CLua::PushPacket( CLuaPacket* pData )
     }
 }
 
+bool CLua::GetLuaFuncRef( int& nFunc, const string& strFuncName )
+{
+    if( strFuncName.length() == 0)
+        return false;
+
+    lua_getglobal(m_pScriptContext, strFuncName.c_str());
+    if(!lua_isfunction(m_pScriptContext,-1))
+        return false;
+
+    nFunc = luaL_ref(m_pScriptContext,LUA_REGISTRYINDEX);
+    return true;
+}
+
+bool CLua::PushFunction(const string &strFuncName)
+{
+    int nFunc = 0;
+    if( !GetLuaFuncRef(nFunc,strFuncName))
+        return false;
+
+    return PushFunction(nFunc);
+}
+
+bool CLua::PushFunction(int nFuncRef)
+{
+    lua_rawgeti(m_pScriptContext,LUA_REGISTRYINDEX,nFuncRef);
+    if(!lua_isfunction(m_pScriptContext,-1))
+    {
+        return false;
+    }
+    return true;
+}
+
 bool CLua::RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket* pRequest, CLuaPacket* pResponse )
 {
-    int nFunc = -1;
-    lua_getglobal(m_pScriptContext,strFunctionName.c_str());
-    if(lua_isfunction(m_pScriptContext,-1))
-        nFunc = luaL_ref(m_pScriptContext,LUA_REGISTRYINDEX);
+    int nTop = lua_gettop(m_pScriptContext);
+    int nErr = 0;
 
-    lua_rawgeti(m_pScriptContext,LUA_REGISTRYINDEX,nFunc);
+    //GetLuaFuncRef(,);
+    PushFunction("OnError");
+    nErr = lua_gettop(m_pScriptContext);
+
+    PushFunction(strFunctionName);
 
     PushPacket(pUserInfo);
     PushPacket(pRequest);
     PushPacket(pResponse);
 
-    if( 0 != lua_pcall(m_pScriptContext,1,LUA_MULTRET,0))
+
+
+    if( 0 != lua_pcall(m_pScriptContext,3,LUA_MULTRET,nErr))
     {
         GetErrorString();
+        return false;
     }
+    lua_settop(m_pScriptContext,nTop);
+    return true;
 }

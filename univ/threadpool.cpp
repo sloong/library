@@ -66,6 +66,7 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 			auto pItem = m_pJobList.front();
 			m_pJobList.pop();
 			(*pItem->pJob)(pItem->pParam);
+            // TODO: release the memory no should in here.because don't know the param type.
 			SAFE_DELETE(pItem);
 		}
 		catch (...)

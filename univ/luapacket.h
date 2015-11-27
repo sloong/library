@@ -28,7 +28,7 @@ namespace Sloong
             int getdata(lua_State* L);
 
             void SetData(string key, string value);
-            string GetData(string key);
+            string GetData(string key, bool except = false);
 
         protected:
             bool Exist(string key);

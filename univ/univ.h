@@ -39,20 +39,28 @@ namespace Sloong
 			static wstring toutf(const string& str);	
             // packaging the boost::format;
             template<class TFirst>
-            void Format(boost::format& fmt, TFirst&& first) {  fmt % first; }
+            static void Format(boost::format& fmt, TFirst&& first) {  fmt % first; }
+
+            template<class TFirst>
+            static string Format(const char* format, TFirst&& first)
+            {
+                boost::format fmt(format);
+                Format(fmt, first);
+                return fmt.str();
+            }
 
             template<class TFirst, class... TOther>
-            void Format(boost::format& fmt, TFirst&& first, TOther&&... other)
+            static void Format(boost::format& fmt, TFirst&& first, TOther&&... other)
             {
                 fmt % first;
                 Format(fmt, other...);
             }
 
             template<class TFirst, class... TOther>
-            string Format(const char* format, TFirst&& first, TOther&&... other)
+            static string Format(const char* format, TFirst&& first, TOther&&... other)
             {
                 boost::format fmt(format);
-                string_format(fmt, first, other...);
+                Format(fmt, first, other...);
                 return fmt.str();
             }
 		};

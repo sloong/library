@@ -64,6 +64,9 @@ namespace Sloong
 			void	PushString(std::string strString);
 			void	PushNumber(double dValue);
             void    PushPacket( CLuaPacket* pData );
+            bool    PushFunction( int nFuncRef );
+            bool    PushFunction( const string& strFuncName );
+            bool    GetLuaFuncRef( int& nFunc, const string& strFuncName );
 			void	SetErrorHandle(void(*pErrHandler)(std::string strError));
 			lua_State*	GetScriptContext();
 			map<string, string> GetTableParam(int index);

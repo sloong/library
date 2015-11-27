@@ -78,7 +78,7 @@ int CLuaPacket::setdata(lua_State *L)
     }
 
     value = PAS(L,2);
-    if(value.length() != PASL(L,2))
+    if(value.length() != (size_t)PASL(L,2))
         throw normal_except("The lua string length is diff.");
 
     SetData(key,value);
@@ -105,10 +105,20 @@ int CLuaPacket::getdata(lua_State *L)
         key = ntos(PAI(L,1));
     }
     else
-        key = (PAS(L,1));
+        key = string(PAS(L,1));
 
     try
     {
+        /*string key(PAS(L,1));
+            if( true == Exist(key) )
+            {
+                string value = m_oDataMap[key];
+                lua_pushlstring(L,value.c_str(),value.length());
+            }
+            else
+            {
+                lua_pushnil(L);
+            }*/
         string value = GetData(key);
         lua_pushlstring(L,value.c_str(),value.length());
     }
@@ -122,7 +132,7 @@ int CLuaPacket::getdata(lua_State *L)
 }
 
 
-string CLuaPacket::GetData(string key)
+string CLuaPacket::GetData(string key, bool except /* = false */ )
 {
     if( true == Exist(key) )
     {
@@ -130,9 +140,16 @@ string CLuaPacket::GetData(string key)
     }
     else
     {
-        // TODO: message should be have the key name.
-        //throw CExceptKeyNoFound((boost::format("key is not find in maps, key name is :%s")%key.c_str()).str());
-        throw CExceptKeyNoFound(CUniversal::Format("key is not find in maps, key name is :%s",key.c_str()));
+        if( except )
+        {
+            // TODO: message should be have the key name.
+            //throw CExceptKeyNoFound((boost::format("key is not find in maps, key name is :%s")%key.c_str()).str());
+            throw CExceptKeyNoFound(CUniversal::Format("key is not find in maps, key name is :%s",key));
+        }
+        else
+        {
+            return "";
+        }
     }
 }
 

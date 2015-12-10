@@ -111,7 +111,7 @@ std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorTex
 {
 	if (INF <= m_emLevel)
 	{
-		strErrorText = (boost::format("[INF %05d] : [%s]") % dwCode % strErrorText).str();
+        strErrorText = (boost::format("[INF] : [%s]") % strErrorText).str();
 		return strErrorText;
 	}
 	else
@@ -147,10 +147,8 @@ void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwC
 		}
 	}
 
-	if (strLogText.empty())
-	{
-		WriteLine(strLogText);
-	}
+    WriteLine(strLogText);
+
 	#ifdef _WINDOWS
 	if (true != g_hRes && true == bFormatWinMsg)
 	{

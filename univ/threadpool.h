@@ -19,10 +19,6 @@ namespace Sloong
 		{
 			LPCALLBACKFUNC	pJob;
 			LPVOID			pParam;
-			~ThreadParam()
-			{
-				SAFE_DELETE(pParam);
-			}
 		};
 
 		class UNIVERSAL_API CThreadPool

@@ -58,12 +58,12 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 			}
 			if (m_bStart == false)
 			{
-				Sleep(100);
+                Sleep(0.1);
 				continue;
 			}
 			if ((m_pJobList.empty() || 0 == m_pJobList.size()) && m_pStaticJob.size() == 0)
 			{
-				Sleep(10);
+                Sleep(0.1);
 				continue;
 			}
 			std::lock_guard<mutex> lck(g_oMutex);

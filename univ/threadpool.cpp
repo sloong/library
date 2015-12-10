@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "threadpool.h"
-
+#include <boost/foreach.hpp>
 
 #ifndef _WINDOWS
 #include <unistd.h>
@@ -77,7 +77,7 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 			// Then foreach the static job 
 			if ( m_pStaticJob.size() > 0)
 			{
-				for each (auto pItem in m_pStaticJob)
+				BOOST_FOREACH (auto pItem , m_pStaticJob)
 				{
 					if (pItem)
 					{

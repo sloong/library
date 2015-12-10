@@ -124,7 +124,7 @@ int CLuaPacket::getdata(lua_State *L)
     }
     catch(CExceptKeyNoFound ex)
     {
-        CLog::showLog(INF,boost::format("get data fiald.%s")%ex.what());
+        CLog::showLog(CUniversal::Format("get data fiald.%s",ex.what()));
         lua_pushnil(L);
     }
 

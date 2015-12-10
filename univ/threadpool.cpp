@@ -12,6 +12,9 @@ using namespace Sloong::Universal;
 
 queue<ThreadParam*> Sloong::Universal::CThreadPool::m_pJobList;
 vector<thread*> Sloong::Universal::CThreadPool::m_pThreadList;
+vector<ThreadParam*> Sloong::Universal::CThreadPool::m_pStaticJob;
+bool Sloong::Universal::CThreadPool::m_bExit;
+bool Sloong::Universal::CThreadPool::m_bStart;
 
 mutex Sloong::Universal::CThreadPool::g_oMutex;
 

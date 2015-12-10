@@ -25,7 +25,7 @@ WCHAR g_szFormatBuffer[2048];
 
 CLog g_pLog;
 
-void CLog::showLog(LOGLEVEL level, std::string str)
+void CLog::showLog(std::string str)
 {
 	if (!g_pLog.IsInitialize())
 	{
@@ -33,12 +33,6 @@ void CLog::showLog(LOGLEVEL level, std::string str)
 	}
 	g_pLog.WriteLine(str);
 }
-
-void CLog::showLog(LOGLEVEL level, boost::format& ft)
-{
-	showLog(level,string(ft.str()));
-}
-
 
 CLog::CLog()
 {
@@ -127,7 +121,7 @@ std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorTex
 }
 
 
-void CLog::Log(LOGLEVEL emLevel, DWORD dwCode, std::string strErrorText, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
+void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwCode /* = 0 */, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
 	std::string strLogText;
 
@@ -363,8 +357,6 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, LOGLEVEL emL
 	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this);
 	
 	WriteLine(g_szStart);
-
-	//CThreadPool
 }
 
 bool CLog::IsInitialize()

@@ -312,12 +312,12 @@ double CLua::StringToNumber(std::string string)
 	return lua_tonumber(m_pScriptContext, -1);
 }
 
-inline lua_State* CLua::GetScriptContext()
+lua_State* CLua::GetScriptContext()
 {
 	return m_pScriptContext;
 }
 
-inline void CLua::SetErrorHandle(void(*pErrHandler)(std::string strError))
+void CLua::SetErrorHandle(void(*pErrHandler)(std::string strError))
 {
 	m_pErrorHandler = pErrHandler;
 }

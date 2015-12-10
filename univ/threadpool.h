@@ -35,20 +35,30 @@ namespace Sloong
 
 			virtual void Start();
 			virtual void End();
-			// Add a task to job list, and return the task index.
-			virtual int AddTask(LPCALLBACKFUNC pJob, LPVOID pParam);
+			// Add a task to job list.
+			// the pJob is the job function pointer.
+			// the pParam is the job function param when call the function.
+			// the bStatic is the job is not doing once. if ture, the job will always run it in the threadpool. 
+			// and the function return the job index in job list. for once job, it can not do anything, for static job
+			// it can used in RemoveTask function.
+			virtual int AddTask(LPCALLBACKFUNC pJob, LPVOID pParam, bool bStatic = false);
 
 			// remove a task from job list.
 			virtual void RemoveTask(int index);
-			virtual int GetTaskTotal();
+			virtual int GetTaskTotal( bool bStatic = false );
+
+		public:
+			static thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
+
 		protected:
 			static vector<thread*> m_pThreadList;
 			static queue<ThreadParam*>	m_pJobList;
+			static vector<ThreadParam*>	m_pStaticJob;
 			static void ThreadWorkLoop(void);
 			static mutex g_oMutex;
-		public:
-			// Add work thread 
-			static thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
+			static bool m_bExit;
+			static bool m_bStart;
+			
 		};
 	}
 }

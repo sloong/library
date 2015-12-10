@@ -19,14 +19,14 @@ CThreadPool g_oThreadPool;
 
 Sloong::Universal::CThreadPool::CThreadPool()
 {
-	//m_pThreadList = new vector<thread*>;
-	//m_pJobList = new queue<ThreadParam*>;
+	m_bExit = false;
+	m_bStart = false;
 }
 
 Sloong::Universal::CThreadPool::~CThreadPool()
 {
-	//SAFE_DELETE(m_pThreadList);
-	//SAFE_DELETE(m_pJobList);
+	m_bExit = true;
+	m_bStart = false;
 }
 
 void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
@@ -40,11 +40,7 @@ void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 
 void Sloong::Universal::CThreadPool::Start()
 {
-	//g_oMutex = //CreateMutex(NULL, FALSE, _T("SloongThreadPoolMutex"));
-// 	for each (auto& item in *m_pThreadList)
-// 	{
-// 		item->join();
-// 	}
+	m_bStart = true;
 }
 
 void Sloong::Universal::CThreadPool::ThreadWorkLoop()
@@ -53,21 +49,42 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 	{
 		try
 		{
-			if (m_pJobList.empty() || 0 == m_pJobList.size())
+			if ( m_bExit )
 			{
-				Sleep(1);
+				break;
+			}
+			if (m_bStart == false)
+			{
+				Sleep(100);
+				continue;
+			}
+			if ((m_pJobList.empty() || 0 == m_pJobList.size()) && m_pStaticJob.size() == 0)
+			{
+				Sleep(10);
 				continue;
 			}
 			std::lock_guard<mutex> lck(g_oMutex);
-			if (m_pJobList.empty() || 0 == m_pJobList.size())
+			// Run the job list first. 
+			if (!m_pJobList.empty() && 0 < m_pJobList.size())
 			{
-				continue;
+				auto pJob = m_pJobList.front();
+				m_pJobList.pop();
+				(*pJob->pJob)(pJob->pParam);
+				// Just delete the ThreadParam, the pParmam function should be delete in the job.
+				SAFE_DELETE(pJob);
 			}
-			auto pItem = m_pJobList.front();
-			m_pJobList.pop();
-			(*pItem->pJob)(pItem->pParam);
-            // TODO: release the memory no should in here.because don't know the param type.
-			SAFE_DELETE(pItem);
+			
+			// Then foreach the static job 
+			if ( m_pStaticJob.size() > 0)
+			{
+				for each (auto pItem in m_pStaticJob)
+				{
+					if (pItem)
+					{
+						(*pItem->pJob)(pItem->pParam);
+					}
+				}
+			}
 		}
 		catch (...)
 		{
@@ -78,27 +95,56 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 
 void Sloong::Universal::CThreadPool::End()
 {
-
+	// clear the job list.
+	while (!m_pJobList.empty())
+	{
+		auto pJob = m_pJobList.front();
+		m_pJobList.pop();
+		SAFE_DELETE(pJob);
+	}
+	while (!m_pStaticJob.empty())
+	{
+		auto pJob = m_pStaticJob.back();
+		m_pStaticJob.pop_back();
+		SAFE_DELETE(pJob);
+	}
+	m_pStaticJob.clear();
+	m_bExit = true;
+	m_bStart = false;
 }
 
-int Sloong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam)
+int Sloong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam, bool bStatic /* = false */ )
 {
 	ThreadParam* pItem = new ThreadParam();
 	pItem->pJob = pJob;
 	pItem->pParam = pParam;
 	std::lock_guard<mutex> lck(g_oMutex);
-	m_pJobList.push(pItem);
-	return (int)m_pJobList.size();
+	if (bStatic)
+	{
+		m_pStaticJob.push_back(pItem);
+	}
+	else
+	{
+		m_pJobList.push(pItem);
+	}
+	return GetTaskTotal(bStatic)-1;
 }
 
 void Sloong::Universal::CThreadPool::RemoveTask(int index)
 {
-
+	// Just delete the param. no remove it from vector object. 
+	// if remove it, the all is returned index will be error.
+	auto pItem = m_pStaticJob[index];
+	SAFE_DELETE(pItem);
+	m_pStaticJob[index] = NULL;
 }
 
-int Sloong::Universal::CThreadPool::GetTaskTotal()
+int Sloong::Universal::CThreadPool::GetTaskTotal( bool bStatic /* = false */ )
 {
-	return (int)m_pJobList.size();
+	if ( bStatic )
+		return (int)m_pStaticJob.size();
+	else
+		return (int)m_pJobList.size();
 }
 
 thread* Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam)

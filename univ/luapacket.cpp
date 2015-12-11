@@ -109,22 +109,12 @@ int CLuaPacket::getdata(lua_State *L)
 
     try
     {
-        /*string key(PAS(L,1));
-            if( true == Exist(key) )
-            {
-                string value = m_oDataMap[key];
-                lua_pushlstring(L,value.c_str(),value.length());
-            }
-            else
-            {
-                lua_pushnil(L);
-            }*/
         string value = GetData(key);
         lua_pushlstring(L,value.c_str(),value.length());
     }
     catch(CExceptKeyNoFound ex)
     {
-        CLog::showLog(CUniversal::Format("get data fiald.%s",ex.what()));
+        cerr << CUniversal::Format("get data fiald.%s",ex.what());
         lua_pushnil(L);
     }
 

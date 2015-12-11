@@ -3,6 +3,7 @@
 #include "exception.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
+#include <boost/foreach.hpp>
 using namespace Sloong::Universal;
 
 
@@ -230,6 +231,14 @@ bool CLua::AddFunction( std::string pFunctionName, LuaFunctionType pFunction)
 	return true;
 }
 
+void CLua::AddFunctions(vector<LuaFunctionRegistr> *pFuncList)
+{
+    BOOST_FOREACH( LuaFunctionRegistr item, *pFuncList)
+    {
+        AddFunction(item.strFunctionName,item.pFunction);
+    }
+}
+
 
 std::string CLua::GetStringArgument(int num, std::string pDefault)
 {
@@ -317,9 +326,9 @@ lua_State* CLua::GetScriptContext()
 	return m_pScriptContext;
 }
 
-void CLua::SetErrorHandle(void(*pErrHandler)(std::string strError))
+void CLua::SetErrorHandle(ErrorHandleType pErr)
 {
-	m_pErrorHandler = pErrHandler;
+    m_pErrorHandler = pErr;
 }
 
 void CLua::PushPacket( CLuaPacket* pData )

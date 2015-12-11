@@ -20,23 +20,12 @@ queue<string> g_logList;
 const string g_szStart = "---------------------------------Start---------------------------------";
 const string g_szEnd = "----------------------------------End----------------------------------";
 
-bool CLog::g_bDebug = true;
 WCHAR g_szFormatBuffer[2048];
-
-CLog g_pLog;
-
-void CLog::showLog(std::string str)
-{
-	if (!g_pLog.IsInitialize())
-	{
-		g_pLog.Initialize();
-	}
-	g_pLog.WriteLine(str);
-}
 
 CLog::CLog()
 {
 	m_bInit = false;
+    m_bDebug = true;
 }
 
 
@@ -207,7 +196,7 @@ void* CLog::LogSystemWorkLoop(void* param)
 
 			// write log message to file
 			pThis->m_oFile << str;
-            //if ( !g_bDebug )
+            if ( pThis->m_bDebug )
 				cout<<str;
 		}
 	}
@@ -285,7 +274,7 @@ std::string CLog::GetPath()
 	return m_szFilePath;
 }
 
-void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel)
+void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
 {
 	if (!szFileName.empty())
 	{
@@ -326,10 +315,12 @@ void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGT
 	{
 		m_emLevel = *pLevel;
 	}
+
+    m_bDebug = bDebug;
 }
 
 
-void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	// All value init
 	g_hRes = true;
@@ -345,14 +336,14 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, LOGLEVEL emL
 	m_bIsCoverPrev = bIsCoverPrev;
 	if (emType != LOGTYPE::ONEFILE)
 	{
-		SetConfiguration("", szPathName, NULL, NULL);
+        SetConfiguration("", szPathName, NULL, NULL, bDebug);
 	}
 	else
 	{
-		SetConfiguration(szPathName, "", NULL, NULL);
+        SetConfiguration(szPathName, "", NULL, NULL, bDebug);
 	}
 
-	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this);
+    CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this,1);
 	
 	WriteLine(g_szStart);
 }

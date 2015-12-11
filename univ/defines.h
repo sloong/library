@@ -1,134 +1,132 @@
-// ÏÂÁÐ ifdef ¿éÊÇ´´½¨Ê¹´Ó DLL µ¼³ö¸ü¼òµ¥µÄ
-// ºêµÄ±ê×¼·½·¨¡£´Ë DLL ÖÐµÄËùÓÐÎÄ¼þ¶¼ÊÇÓÃÃüÁîÐÐÉÏ¶¨ÒåµÄ STRING_EXPORTS
-// ·ûºÅ±àÒëµÄ¡£ÔÚÊ¹ÓÃ´Ë DLL µÄ
-// ÈÎºÎÆäËûÏîÄ¿ÉÏ²»Ó¦¶¨Òå´Ë·ûºÅ¡£ÕâÑù£¬Ô´ÎÄ¼þÖÐ°üº¬´ËÎÄ¼þµÄÈÎºÎÆäËûÏîÄ¿¶¼»á½«
-// STRING_API º¯ÊýÊÓÎªÊÇ´Ó DLL µ¼ÈëµÄ£¬¶ø´Ë DLL Ôò½«ÓÃ´Ëºê¶¨ÒåµÄ
-// ·ûºÅÊÓÎªÊÇ±»µ¼³öµÄ¡£
+// ä¸‹åˆ— ifdef å—æ˜¯åˆ›å»ºä½¿ä»Ž DLL å¯¼å‡ºæ›´ç®€å•çš„
+// å®çš„æ ‡å‡†æ–¹æ³•ã€‚æ­¤ DLL ä¸­çš„æ‰€æœ‰æ–‡ä»¶éƒ½æ˜¯ç”¨å‘½ä»¤è¡Œä¸Šå®šä¹‰çš„ STRING_EXPORTS
+// ç¬¦å·ç¼–è¯‘çš„ã€‚åœ¨ä½¿ç”¨æ­¤ DLL çš„
+// ä»»ä½•å…¶ä»–é¡¹ç›®ä¸Šä¸åº”å®šä¹‰æ­¤ç¬¦å·ã€‚è¿™æ ·ï¼Œæºæ–‡ä»¶ä¸­åŒ…å«æ­¤æ–‡ä»¶çš„ä»»ä½•å…¶ä»–é¡¹ç›®éƒ½ä¼šå°†
+// STRING_API å‡½æ•°è§†ä¸ºæ˜¯ä»Ž DLL å¯¼å…¥çš„ï¼Œè€Œæ­¤ DLL åˆ™å°†ç”¨æ­¤å®å®šä¹‰çš„
+// ç¬¦å·è§†ä¸ºæ˜¯è¢«å¯¼å‡ºçš„ã€‚
 
 #ifndef DEFINES_H
 #define DEFINES_H
 
 // close warning
 #ifdef _WINDOWS
-#pragma warning( disable:4251 )
-#pragma warning(disable:4996)
-#endif
+    #pragma warning( disable:4251 )
+    #pragma warning(disable:4996)
+    #define SLEEP(t) Sleep(t)
+
+#else
+    #define SLEEP(t) sleep((double)t/1000.0)
+
+    #ifndef 	LPCWSTR
+    #define		LPCWSTR		const wchar_t*
+    #endif
+    #ifndef 	LPWSTR
+    #define		LPWSTR		wchar_t*
+    #endif
+    #ifndef 	LPCSTR
+    #define		LPCSTR		const char*
+    #endif
+    #ifndef 	LPSTR
+    #define		LPSTR		char*
+    #endif
+    #ifndef 	TRUE
+    #define		TRUE		1
+    #endif
+    #ifndef 	FALSE
+    #define		FALSE		0
+    #endif
+    #ifndef		WCHAR
+    #define 	WCHAR		wchar_t
+    #endif
+    #ifndef		CHAR
+    #define 	CHAR		char
+    #endif
+
+    #ifndef		DWORD
+    #define		DWORD		unsigned long
+    #endif
+
+    #ifndef LPVOID
+    #define LPVOID	void*
+    #endif // !LPVOID
+
+    #ifndef HRESULT
+    #define HRESULT long
+    #endif // !HRESULT
+
+    #ifndef LONG
+    #define LONG long
+    #endif // !LONG
+
+    #ifndef SHORT
+    #define SHORT short
+    #endif // !SHORT
+
+    #ifndef BOOL
+    #define BOOL int
+    #endif // !BOOL
+
+    #ifndef ULONG
+    #define ULONG unsigned long
+    #endif // !ULONG
+
+    #ifndef MAX_PATH
+    #define MAX_PATH 256
+    #endif
+
+    #ifndef _T
+    #define _T(x) L ## X
+    #endif // !_T
+
+    #ifndef tagRECT
+    typedef struct tagRECT
+    {
+        LONG    left;
+        LONG    top;
+        LONG    right;
+        LONG    bottom;
+    } RECT, *PRECT;
+    #endif // !tagRECT
+
+    #ifndef tagPOINT
+    typedef struct tagPOINT
+    {
+        LONG  x;
+        LONG  y;
+    } POINT, *PPOINT;
+    #endif // !tagPOINT
+
+    #ifndef tagSIZE
+    typedef struct tagSIZE
+    {
+        LONG        cx;
+        LONG        cy;
+    } SIZE, *PSIZE, *LPSIZE;
+    #endif // !tagSIZE
+
+    #ifndef tagPOINTS
+    typedef struct tagPOINTS
+    {
+        SHORT   x;
+        SHORT   y;
+    } POINTS, *PPOINTS, *LPPOINTS;
+    #endif // !tagPOINTS
+
+    #ifndef S_OK
+    #define S_OK                            ((HRESULT)0L)
+    #endif // !S_OK
+
+    #ifndef S_FALSE
+    #define S_FALSE                                ((HRESULT)1L)
+    #endif // !S_FALSE
 
 
+    #ifndef S_FAILED
+    #define S_FAILED						((HRESULT)-1L)
+    #endif // !S_FAILED
 
-#ifndef _WINDOWS
-
-
-#ifndef 	LPCWSTR
-#define		LPCWSTR		const wchar_t*
-#endif
-#ifndef 	LPWSTR
-#define		LPWSTR		wchar_t*
-#endif
-#ifndef 	LPCSTR
-#define		LPCSTR		const char*
-#endif
-#ifndef 	LPSTR
-#define		LPSTR		char*
-#endif
-#ifndef 	TRUE
-#define		TRUE		1
-#endif
-#ifndef 	FALSE
-#define		FALSE		0
-#endif
-#ifndef		WCHAR
-#define 	WCHAR		wchar_t
-#endif
-#ifndef		CHAR
-#define 	CHAR		char
-#endif
-
-#ifndef		DWORD
-#define		DWORD		unsigned long
-#endif
-
-#ifndef LPVOID
-#define LPVOID	void*
-#endif // !LPVOID
-
-#ifndef HRESULT
-#define HRESULT long
-#endif // !HRESULT
-
-#ifndef LONG
-#define LONG long
-#endif // !LONG
-
-#ifndef SHORT
-#define SHORT short
-#endif // !SHORT
-
-#ifndef BOOL
-#define BOOL int
-#endif // !BOOL
-
-#ifndef ULONG
-#define ULONG unsigned long
-#endif // !ULONG
-
-#ifndef MAX_PATH
-#define MAX_PATH 256
-#endif
-
-#ifndef _T
-#define _T(x) L ## X
-#endif // !_T
-
-#ifndef tagRECT
-typedef struct tagRECT
-{
-	LONG    left;
-	LONG    top;
-	LONG    right;
-	LONG    bottom;
-} RECT, *PRECT;
-#endif // !tagRECT
-
-#ifndef tagPOINT
-typedef struct tagPOINT
-{
-	LONG  x;
-	LONG  y;
-} POINT, *PPOINT;
-#endif // !tagPOINT
-
-#ifndef tagSIZE
-typedef struct tagSIZE
-{
-	LONG        cx;
-	LONG        cy;
-} SIZE, *PSIZE, *LPSIZE;
-#endif // !tagSIZE
-
-#ifndef tagPOINTS
-typedef struct tagPOINTS
-{
-	SHORT   x;
-	SHORT   y;
-} POINTS, *PPOINTS, *LPPOINTS;
-#endif // !tagPOINTS
-
-#ifndef S_OK
-#define S_OK                            ((HRESULT)0L)
-#endif // !S_OK
-
-#ifndef S_FALSE
-#define S_FALSE                                ((HRESULT)1L)
-#endif // !S_FALSE
-
-
-#ifndef S_FAILED
-#define S_FAILED						((HRESULT)-1L)
-#endif // !S_FAILED
-
-#define SUCCEEDED(hr)   (((HRESULT)(hr)) >= 0)
-#define FAILED(hr)      (((HRESULT)(hr)) < 0)
+    #define SUCCEEDED(hr)   (((HRESULT)(hr)) >= 0)
+    #define FAILED(hr)      (((HRESULT)(hr)) < 0)
 
 #endif // !_WINDOWS
 

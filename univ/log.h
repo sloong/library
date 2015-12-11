@@ -37,12 +37,12 @@ namespace Sloong
 			CLog();
 			~CLog();
 
-			virtual void Initialize(std::string szPathName = "./Log.log", LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+            virtual void Initialize(std::string szPathName = "./Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
 			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatWinMsg = true, bool bJustFailedWrite = true);
-			virtual void SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel);
+            virtual void SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
 			virtual bool IsOpen();
 			virtual void Close();
 			virtual std::string GetFileName();
@@ -67,9 +67,7 @@ namespace Sloong
 			bool		m_bIsCoverPrev;
 			bool		g_hRes;
 			bool		m_bInit;
-		public:
-			static void showLog( std::string str );
-            static bool     g_bDebug;
+            bool        m_bDebug;
 		};
 	}
 }

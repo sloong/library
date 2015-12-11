@@ -5,7 +5,6 @@
 
 #ifndef _WINDOWS
 #include <unistd.h>
-#define Sleep sleep
 #endif
 
 using namespace Sloong::Universal;
@@ -18,7 +17,6 @@ bool Sloong::Universal::CThreadPool::m_bStart;
 
 mutex Sloong::Universal::CThreadPool::g_oMutex;
 
-CThreadPool g_oThreadPool;
 
 Sloong::Universal::CThreadPool::CThreadPool()
 {
@@ -58,12 +56,12 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 			}
 			if (m_bStart == false)
 			{
-                Sleep(0.1);
+                SLEEP(100);
 				continue;
 			}
 			if ((m_pJobList.empty() || 0 == m_pJobList.size()) && m_pStaticJob.size() == 0)
 			{
-                Sleep(0.1);
+                SLEEP(100);
 				continue;
 			}
 			std::lock_guard<mutex> lck(g_oMutex);
@@ -150,10 +148,15 @@ int Sloong::Universal::CThreadPool::GetTaskTotal( bool bStatic /* = false */ )
 		return (int)m_pJobList.size();
 }
 
-thread* Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam)
+int Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nNum /* = 1*/ )
 {
-	thread* pThread = new thread(pJob, pParam);
-	g_oThreadPool.m_pThreadList.push_back(pThread);
-	return pThread;
+    int nIndex = CThreadPool::m_pThreadList.size();
+    for( int i = 0; i < nNum; i++ )
+    {
+        thread* pThread = new thread(pJob, pParam);
+        CThreadPool::m_pThreadList.push_back(pThread);
+    }
+
+    return nIndex;
 }
 

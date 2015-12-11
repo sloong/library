@@ -44,7 +44,10 @@ namespace Sloong
 			virtual int GetTaskTotal( bool bStatic = false );
 
 		public:
-			static thread* AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam);
+            // Add a work thread to the threadlist.
+            // return the thread index in threadlist. if the nNum param is not 1, the other
+            // thread index is base on return value.
+            static int AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nNum = 1);
 
 		protected:
 			static vector<thread*> m_pThreadList;

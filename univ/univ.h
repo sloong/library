@@ -17,6 +17,7 @@
 #include <list>
 #include <string>
 #include <fstream>
+#include <sstream>
 using namespace std;
 #include "defines.h"
 #include <boost/format.hpp>
@@ -37,6 +38,15 @@ namespace Sloong
 			static string replace(const string& str, const string& src, const string& dest);
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
+
+            template<typename T>
+            static string ntos(T n)
+            {
+                stringstream ss;
+                ss << n;
+                return ss.str();
+            }
+
             // packaging the boost::format;
             template<class TFirst>
             static void Format(boost::format& fmt, TFirst&& first) {  fmt % first; }

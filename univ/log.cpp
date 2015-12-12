@@ -114,7 +114,7 @@ void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwC
 {
 	std::string strLogText;
 
-	if (true != g_hRes || false == bJustFailedWrite || INF == emLevel)
+    if (true != g_hRes || dwCode != 0 || false == bJustFailedWrite || INF == emLevel)
 	{
 		switch (emLevel)
 		{

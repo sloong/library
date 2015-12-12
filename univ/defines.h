@@ -43,7 +43,7 @@
     #endif
 
     #ifndef		DWORD
-    #define		DWORD		unsigned long
+    #define		DWORD		long
     #endif
 
     #ifndef LPVOID

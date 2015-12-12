@@ -142,16 +142,14 @@ bool CLua::RunString(std::string strCommand)
 
 std::string CLua::GetErrorString()
 {
-	std::string strError(luaL_checkstring(m_pScriptContext, -1));
-
     int level = 0;
     int firstpart = 1;
 
     lua_Debug ar;
-    /*if(!lua_isstring(m_pScriptContext,1))
-        return lua_gettop(m_pScriptContext);*/
+    if(!lua_isstring(m_pScriptContext,1))
+        return "";
 
-    /*lua_settop(m_pScriptContext,1);
+    lua_settop(m_pScriptContext,1);
     lua_pushliteral(m_pScriptContext,"\r\n");
     lua_pushliteral(m_pScriptContext,"Call Stack:\r\n");
     while (lua_getstack(m_pScriptContext,level++,&ar))
@@ -204,23 +202,9 @@ std::string CLua::GetErrorString()
         lua_concat(m_pScriptContext,lua_gettop(m_pScriptContext));
     }
 
-    lua_concat(m_pScriptContext,lua_gettop((m_pScriptContext)));*/
+    lua_concat(m_pScriptContext,lua_gettop((m_pScriptContext)));
 
-    time_t st;
-    time(&st);
-    struct tm* lt = localtime(&st);
-    std::string strTime = (boost::format("[%d/%d/%d - %.2d:%.2d:%.2d] : ") %(lt->tm_year + 1900) % lt->tm_mon % lt->tm_mday %
-        lt->tm_hour% lt->tm_min% lt->tm_sec).str();
-
-    FILE* pf = fopen("scripterr.log","a+b");
-    if(pf)
-    {
-        fwrite(strTime.c_str(),1,strTime.length(),pf);
-        fwrite(lua_tostring(m_pScriptContext,-1),1,luaL_len(m_pScriptContext,-1),pf);
-        fclose(pf);
-    }
-
-	return strError;
+    return lua_tostring(m_pScriptContext,-1);
 }
 
 

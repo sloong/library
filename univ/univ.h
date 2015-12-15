@@ -73,6 +73,22 @@ namespace Sloong
                 Format(fmt, first, other...);
                 return fmt.str();
             }
+
+            static void tolower(string& str)
+            {
+                transform(str.begin(), str.end(), str.begin(), ::tolower);
+            }
+
+            static void touper(string& str)
+            {
+                transform(str.begin(), str.end(), str.begin(), ::toupper);
+            }
+
+            static string MD5_Encoding(string str, bool bFile = false);
+
+            static string Base64_Encoding(string str);
+            static string Base64_Decoding(string str);
+
 		};
 
 #ifdef _WINDOWS

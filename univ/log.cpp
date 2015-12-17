@@ -188,17 +188,26 @@ void* CLog::LogSystemWorkLoop(void* param)
 	while(true)
 	{
 		if( g_logList.size() > 0 )
-		{
+        {
+            unique_lock<mutex> lck(g_oLogListMutex);
+            if ( g_logList.size() == 0 )
+            {
+                continue;
+            }
 			pThis->IsOpen();
 			// get log message from queue.
 			string str = g_logList.front();
 			g_logList.pop();
-
+            lck.unlock();
 			// write log message to file
 			pThis->m_oFile << str;
             if ( pThis->m_bDebug )
 				cout<<str;
 		}
+        else
+        {
+            SLEEP(100);
+        }
 	}
 	return 0;
 }

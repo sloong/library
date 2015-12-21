@@ -177,6 +177,10 @@
 #define SAFE_DEL_ALL_DATA_FROM_LIST(p,type,del) {if(NULL!=p){for(int i=0;i<p->m_nNum;i++){CLinkList* pNode=p->Locate(i);type pData=(type)pNode->GetData();del(pData);pNode->SetData(NULL,false);}}}
 #endif // !SAFE_DEL_ALL_DATA_FROM_LIST
 
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(arr) (sizeof(arr)/sizeof((arr)[0]))
+#endif // ARRAY_SIZE
+
 #ifdef _UNICODE
 #define _tofstream		wofstream
 #define _tifstream		wifstream

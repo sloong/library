@@ -7,7 +7,6 @@
 #include<map>
 using std::mutex;
 using std::map;
-#include"Lunar.h"
 struct lua_State;
 namespace Sloong
 {
@@ -17,7 +16,6 @@ namespace Sloong
         {
         public:
             static const char className[];
-            static Lunar<CLuaPacket>::RegType methods[];
         public:
             CLuaPacket();
             CLuaPacket(lua_State* L);

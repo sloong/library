@@ -7,13 +7,15 @@ extern "C" {
 #include "../lua/src/lauxlib.h"
 }
 
-template <typename T> class Lunar {
+template <typename T> class Lunar
+{
   typedef struct { T *pT; } userdataType;
 public:
   typedef int (T::*mfp)(lua_State *L);
   typedef struct { const char *name; mfp mfunc; } RegType;
 
-  static void Register(lua_State *L) {
+  static void Register(lua_State *L,RegType *tmethods )
+  {
     lua_newtable(L);
     int methods = lua_gettop(L);
 
@@ -47,7 +49,7 @@ public:
     lua_setmetatable(L, methods);
 
     // fill method table with methods from class T
-    for (RegType *l = T::methods; l->name; l++) {
+    for (RegType *l = tmethods; l->name; l++) {
       lua_pushstring(L, l->name);
       lua_pushlightuserdata(L, (void*)l);
       lua_pushcclosure(L, thunk, 1);

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include"Lunar.h"
+#include "Lunar.h"
 #include "luapacket.h"
 #include <sstream>
 #include "exception.h"
@@ -24,23 +24,7 @@ using namespace Sloong::Universal;
 
 #define PAD(L,n) (double)(lua_gettop(L) >= abs(n) && lua_isnumber(L,n) ? luaL_checknumber((L),(n)) : 0.0f) // get float param
 
-
-template<typename T>
-string ntos(T n)
-{
-    stringstream ss;
-    ss << n;
-    return ss.str();
-}
-
 const char CLuaPacket::className[] =  "LuaPacket";
-Lunar<CLuaPacket>::RegType CLuaPacket::methods[] =
-{
-    METHOD(CLuaPacket,empty),
-    METHOD(CLuaPacket,setdata),
-    METHOD(CLuaPacket,getdata),
-    {0,0}
-};
 
 CLuaPacket::CLuaPacket()
 {
@@ -71,7 +55,7 @@ int CLuaPacket::setdata(lua_State *L)
     string key, value;
     if(lua_isnumber(L,1))
     {
-        key = ntos(PAI(L,1));
+        key = CUniversal::ntos(PAI(L,1));
     }
     else
     {
@@ -103,7 +87,7 @@ int CLuaPacket::getdata(lua_State *L)
     string key;
     if(lua_isnumber(L,1))
     {
-        key = ntos(PAI(L,1));
+        key = CUniversal::ntos(PAI(L,1));
     }
     else
         key = string(PAS(L,1));

@@ -4,8 +4,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
+#include <io.h>
 using namespace Sloong::Universal;
-
 
 typedef int(*LuaFunc)(lua_State* pLuaState);
 
@@ -14,8 +14,7 @@ extern "C" {
 #include "../lua/src/lua.h"
 #include "../lua/src/lualib.h"
 #include "../lua/src/lauxlib.h"
-
-                }
+ }
 
 #include "Lunar.h"
 CLua::CLua()
@@ -25,6 +24,7 @@ CLua::CLua()
 	m_pScriptContext = luaL_newstate();
 	luaL_openlibs(m_pScriptContext);
     Lunar<CLuaPacket>::Register(m_pScriptContext);
+	m_strScriptFolder = "./";
 }
 
 CLua::~CLua()
@@ -33,50 +33,29 @@ CLua::~CLua()
 		lua_close(m_pScriptContext);
 }
 
-static std::string findScript(std::string strFullName)
+std::string CLua::findScript(std::string strFullName)
 {
-	string strFileName = strFullName;
-	
-	FILE* fFind;
-
-	char szDir[MAX_PATH] = {0};
-
-	getcwd(szDir,MAX_PATH);
-	string strDir(szDir);
-	strDir += "/";
-
-    string strTestFile = strDir + ("script/") + strFileName;
-	fFind = fopen(strTestFile.c_str(), "r");
-	if (!fFind)
+	string list[] =
 	{
-        strTestFile = strDir + ("script\\") + strFileName + (".lua");
-		fFind = fopen(strTestFile.c_str(), "r");
-	}
+		"%pathdir%script/%filename%.lua",
+		"%pathdir%script/%filename%",
+		"%pathdir%script/%filename%.lub",
+		"%pathdir%%filename%.lua",
+		"%pathdir%%filename%",
+		"%pathdir%%filename%.lub",
+	};
 
-    if (!fFind)
-    {
-        strTestFile = strDir + ("script\\") + strFileName + (".lub");
-        fFind = fopen(strTestFile.c_str(), "r");
-    }
-
-	if (!fFind)
+	string testFile(""),res("");
+	for (int i = 0; i<sizeof(list)/sizeof(list[0]); i++)
 	{
-		strTestFile = strDir + strFileName + (".lub");
-		fFind = fopen(strTestFile.c_str(), "r");
+		testFile = CUniversal::Replace(CUniversal::Replace(list[i], "%pathdir%", m_strScriptFolder), "%filename%", strFullName);;
+		if (0 == access(testFile.c_str(), ACC_R))
+		{
+			res = testFile;
+			break;
+		}
 	}
-
-	if (!fFind)
-	{
-		strTestFile = strDir + strFileName + (".lua");
-		fFind = fopen(strTestFile.c_str(), "r");
-	}
-
-	if (fFind)
-	{
-		fclose(fFind);
-	}
-
-	return strTestFile;
+	return res;
 }
 
 bool CLua::RunScript(std::string strFileName)
@@ -383,4 +362,14 @@ bool CLua::RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket*
     }
     lua_settop(m_pScriptContext,nTop);
     return true;
+}
+
+void Sloong::Universal::CLua::SetScriptFolder(string folder)
+{
+	m_strScriptFolder = folder;
+	if (m_strScriptFolder[m_strScriptFolder.length() - 1] != '/' ||
+		m_strScriptFolder[m_strScriptFolder.length() - 1] != '\\')
+	{
+		m_strScriptFolder += '/';
+	}
 }

@@ -42,7 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\;$(BOOST_DIR);$(IncludePath)</IncludePath>
     <LibraryPath>$(OutDir);$(ProjectDir)Include/$(PlatformTarget);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

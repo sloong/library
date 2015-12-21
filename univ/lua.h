@@ -14,7 +14,7 @@ using std::mutex;
 #pragma comment(lib,"lua.lib")
 #endif
 
-class lua_State;
+struct lua_State;
 namespace Sloong
 {
 	namespace Universal
@@ -24,7 +24,7 @@ namespace Sloong
 
 		struct LuaFunctionRegistr
 		{
-			LPCTSTR strFunctionName;
+			string strFunctionName;
 			LuaFunctionType pFunction;
 		};
 
@@ -74,11 +74,16 @@ namespace Sloong
 			map<string, string> GetTableParam(int index);
 			LuaType	CheckType(int index);
 			double  StringToNumber(std::string string);
+			void	SetScriptFolder(string folder);
+
+		protected:
+			string findScript(std::string strFullName);
 
 		private:
 			lua_State *m_pScriptContext;
             ErrorHandleType m_pErrorHandler;
 			mutex	m_oMutex;
+			string m_strScriptFolder;
 		};
 
 	}

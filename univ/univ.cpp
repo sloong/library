@@ -8,7 +8,7 @@
 #include "univ.h"
 #include "Version.h"
 #include <assert.h>
-
+#include "exception.h"
 #ifndef _WINDOWS
 #include <libgen.h>
 #include <openssl/md5.h>
@@ -222,7 +222,7 @@ string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= fa
     HINSTANCE hDLL = LoadLibrary(L"Cryptdll.dll");
     if (hDLL == NULL)
     {
-        throw normal_exception("load cryptdll error.");
+        throw normal_except("load cryptdll error.");
     }
     MD5Init_Tpye   MD5Init;
     MD5Update_Tpye MD5Update;
@@ -233,7 +233,7 @@ string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= fa
     if (MD5Init == NULL || MD5Update == NULL || MD5Final == NULL)
     {
         FreeLibrary(hDLL);
-        throw normal_exception("get md5 function from cryptdll error.");
+		throw normal_except("get md5 function from cryptdll error.");
     }
     MD5_CTX md5_context;
     MD5Init(&md5_context);
@@ -297,6 +297,19 @@ string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= fa
     }
     return md5buf;
 #endif // _WINDOWS
+}
+
+std::string Sloong::Universal::CUniversal::Replace(const string& str, const string& src, const string& dest)
+{
+	string res = str;
+	for (string::size_type pos(0); pos != string::npos; pos += dest.length())   
+	{
+		if ((pos = str.find(src, pos)) != string::npos)
+			res.replace(pos, src.length(), dest);
+		else   
+			break;
+	}
+	return  res;
 }
 
 

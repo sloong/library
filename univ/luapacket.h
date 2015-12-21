@@ -8,7 +8,7 @@
 using std::mutex;
 using std::map;
 #include"Lunar.h"
-class lua_State;
+struct lua_State;
 namespace Sloong
 {
     namespace Universal

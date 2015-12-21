@@ -2,9 +2,9 @@
 #define LUNAR_H
 
 extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include "../lua/src/lua.h"
+#include "../lua/src/lualib.h"
+#include "../lua/src/lauxlib.h"
 }
 
 template <typename T> class Lunar {

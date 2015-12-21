@@ -1,4 +1,4 @@
-#ifdef _WINDOWS
+﻿#ifdef _WINDOWS
 	#ifdef SLOONGUNIVERSAL_EXPORTS
 		#define UNIVERSAL_API __declspec(dllexport)
 	#else
@@ -21,6 +21,11 @@
 using namespace std;
 #include "defines.h"
 #include <boost/format.hpp>
+#define	ACC_R	4		/* Test for read permission.  */
+#define	ACC_W	2		/* Test for write permission.  */
+#define	ACC_RUN	1		/* Test for execute permission.  */
+#define	ACC_E	0		/* Test for existence.  */
+#define ACC_RW  6
 
 namespace Sloong
 {
@@ -88,6 +93,8 @@ namespace Sloong
 
             static string Base64_Encoding(string str);
             static string Base64_Decoding(string str);
+
+			static string Replace(const string& str, const string& src, const string& dest);
 
 		};
 

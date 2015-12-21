@@ -4,6 +4,7 @@
 #include <sstream>
 #include "exception.h"
 #include "log.h"
+#include <iostream>
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
 

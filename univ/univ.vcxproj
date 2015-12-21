@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(OutDir);D:\WCB\Boost\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)..\;D:\WCB\Boost\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>$(OutDir);$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\;$(BOOST_DIR);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exception.h" />
+    <ClInclude Include="luapacket.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="lua.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="exception.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="lua.cpp" />
+    <ClCompile Include="luapacket.cpp" />
     <ClCompile Include="threadpool.cpp" />
     <ClCompile Include="univ.cpp" />
     <ClCompile Include="stdafx.cpp">

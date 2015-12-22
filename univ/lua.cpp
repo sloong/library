@@ -31,9 +31,9 @@ Lunar<CLuaPacket>::RegType g_methods[] =
 
 string g_SearchList[] =
 {
-    "%pathdir%script/%filename%.lua",
-    "%pathdir%script/%filename%",
-    "%pathdir%script/%filename%.lub",
+    "%pathdir%scripts/%filename%.lua",
+    "%pathdir%scripts/%filename%",
+    "%pathdir%scripts/%filename%.lub",
     "%pathdir%%filename%.lua",
     "%pathdir%%filename%",
     "%pathdir%%filename%.lub",
@@ -380,8 +380,8 @@ bool CLua::RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket*
 void Sloong::Universal::CLua::SetScriptFolder(string folder)
 {
 	m_strScriptFolder = folder;
-	if (m_strScriptFolder[m_strScriptFolder.length() - 1] != '/' ||
-		m_strScriptFolder[m_strScriptFolder.length() - 1] != '\\')
+    char tag = m_strScriptFolder[m_strScriptFolder.length() - 1];
+    if (tag != '/' && tag != '\\')
 	{
 		m_strScriptFolder += '/';
 	}

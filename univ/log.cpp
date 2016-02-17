@@ -19,6 +19,11 @@ mutex g_oLogListMutex;
 queue<string> g_logList;
 const string g_szStart = "---------------------------------Start---------------------------------";
 const string g_szEnd = "----------------------------------End----------------------------------";
+#ifndef _WINDOWS
+const string g_szNewLine = "\n";
+#else
+const string g_szNewLine = "\r\n";
+#endif // !_WINDOWS
 
 WCHAR g_szFormatBuffer[2048];
 
@@ -164,15 +169,7 @@ void CLog::WriteLine(std::string szLog)
 	struct tm* lt = localtime(&st);
 	std::string strTime = (boost::format("[%d/%d/%d - %.2d:%.2d:%.2d] : ") %(lt->tm_year + 1900) % lt->tm_mon % lt->tm_mday %
 		lt->tm_hour% lt->tm_min% lt->tm_sec).str();
-	Write(strTime);
-	Write(szLog);
-#ifndef _WINDOWS
-	Write(("\n"));
-#else
-	Write(("\r\n"));
-#endif // !_WINDOWS
-
-	
+	Write(strTime+szLog+g_szNewLine);
 }
 
 void CLog::Write(std::string szMessage)
@@ -192,17 +189,20 @@ void* CLog::LogSystemWorkLoop(void* param)
             unique_lock<mutex> lck(g_oLogListMutex);
             if ( g_logList.size() == 0 )
             {
+				lck.unlock();
                 continue;
             }
-			pThis->IsOpen();
 			// get log message from queue.
 			string str = g_logList.front();
 			g_logList.pop();
             lck.unlock();
+
+			pThis->IsOpen();
+
 			// write log message to file
 			pThis->m_oFile << str;
             if ( pThis->m_bDebug )
-				cout<<str;
+				cout << str;
 		}
         else
         {

@@ -4,7 +4,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
+#ifdef _WINDOWS
 #include <io.h>
+#endif // _WINDOWS
 using namespace Sloong::Universal;
 
 typedef int(*LuaFunc)(lua_State* pLuaState);
@@ -17,13 +19,34 @@ extern "C" {
  }
 
 #include "Lunar.h"
+
+Lunar<CLuaPacket>::RegType g_methods[] =
+{
+    METHOD(CLuaPacket,empty),
+    METHOD(CLuaPacket,setdata),
+    METHOD(CLuaPacket,getdata),
+    {0,0}
+};
+
+
+string g_SearchList[] =
+{
+    "%pathdir%script/%filename%.lua",
+    "%pathdir%script/%filename%",
+    "%pathdir%script/%filename%.lub",
+    "%pathdir%%filename%.lua",
+    "%pathdir%%filename%",
+    "%pathdir%%filename%.lub",
+};
+
+
 CLua::CLua()
 {
 	m_pErrorHandler = NULL;
 
 	m_pScriptContext = luaL_newstate();
 	luaL_openlibs(m_pScriptContext);
-    Lunar<CLuaPacket>::Register(m_pScriptContext);
+    Lunar<CLuaPacket>::Register(m_pScriptContext,g_methods);
 	m_strScriptFolder = "./";
 }
 
@@ -35,20 +58,10 @@ CLua::~CLua()
 
 std::string CLua::findScript(std::string strFullName)
 {
-	string list[] =
-	{
-		"%pathdir%script/%filename%.lua",
-		"%pathdir%script/%filename%",
-		"%pathdir%script/%filename%.lub",
-		"%pathdir%%filename%.lua",
-		"%pathdir%%filename%",
-		"%pathdir%%filename%.lub",
-	};
-
 	string testFile(""),res("");
-	for (int i = 0; i<sizeof(list)/sizeof(list[0]); i++)
+    for (int i = 0; i< ARRAY_SIZE(g_SearchList); i++)
 	{
-		testFile = CUniversal::Replace(CUniversal::Replace(list[i], "%pathdir%", m_strScriptFolder), "%filename%", strFullName);;
+        testFile = CUniversal::Replace(CUniversal::Replace(g_SearchList[i], "%pathdir%", m_strScriptFolder), "%filename%", strFullName);;
 		if (0 == access(testFile.c_str(), ACC_R))
 		{
 			res = testFile;

@@ -19,6 +19,8 @@ namespace Sloong
 		{
 			LPCALLBACKFUNC	pJob;
 			LPVOID			pParam;
+			mutex			oMutex;
+			bool		    bIsRunning;
 		};
 
 		class UNIVERSAL_API CThreadPool
@@ -54,7 +56,7 @@ namespace Sloong
 			static queue<ThreadParam*>	m_pJobList;
 			static vector<ThreadParam*>	m_pStaticJob;
 			static void ThreadWorkLoop(void);
-			static mutex g_oMutex;
+			static mutex g_oJobListMutex;
 			static bool m_bExit;
 			static bool m_bStart;
 			

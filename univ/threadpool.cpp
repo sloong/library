@@ -15,7 +15,7 @@ vector<ThreadParam*> Sloong::Universal::CThreadPool::m_pStaticJob;
 bool Sloong::Universal::CThreadPool::m_bExit;
 bool Sloong::Universal::CThreadPool::m_bStart;
 
-mutex Sloong::Universal::CThreadPool::g_oMutex;
+mutex Sloong::Universal::CThreadPool::g_oJobListMutex;
 
 
 Sloong::Universal::CThreadPool::CThreadPool()
@@ -59,37 +59,54 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
                 SLEEP(100);
 				continue;
 			}
-			if ((m_pJobList.empty() || 0 == m_pJobList.size()) && m_pStaticJob.size() == 0)
+			if (m_pJobList.empty() && m_pStaticJob.empty())
 			{
                 SLEEP(100);
 				continue;
 			}
-			std::lock_guard<mutex> lck(g_oMutex);
+			
 			// Run the job list first. 
-			if (!m_pJobList.empty() && 0 < m_pJobList.size())
+			if (!m_pJobList.empty())
 			{
+				std::unique_lock<mutex> lck(g_oJobListMutex);
+				if (m_pJobList.empty())
+				{
+					lck.unlock();
+					continue;
+				}
 				auto pJob = m_pJobList.front();
 				m_pJobList.pop();
+				lck.unlock();
 				(*pJob->pJob)(pJob->pParam);
-				// Just delete the ThreadParam, the pParmam function should be delete in the job.
+				// Just delete the ThreadParam, the pParmam function should be delete in the job. 
+				// because don't know the pararm type. 
 				SAFE_DELETE(pJob);
 			}
 			
 			// Then foreach the static job 
-			if ( m_pStaticJob.size() > 0)
+			if ( !m_pStaticJob.empty())
 			{
 				BOOST_FOREACH (auto pItem , m_pStaticJob)
 				{
-					if (pItem)
+					// check the isRunning tag first. it should be fast than mutex.
+					if (pItem && pItem->bIsRunning == false)
 					{
+						if (false == pItem->oMutex.try_lock())
+						{
+							continue;
+						}
+
+						pItem->bIsRunning = true;
 						(*pItem->pJob)(pItem->pParam);
+						pItem->bIsRunning = false;
+						pItem->oMutex.unlock();
 					}
 				}
 			}
 		}
 		catch (...)
 		{
-			printf( "Error happened in threadpool work loop.");
+			printf( "Unknown error happened in threadpool work loop.");
 		}
 	}
 }
@@ -119,7 +136,7 @@ int Sloong::Universal::CThreadPool::AddTask(LPCALLBACKFUNC pJob, LPVOID pParam, 
 	ThreadParam* pItem = new ThreadParam();
 	pItem->pJob = pJob;
 	pItem->pParam = pParam;
-	std::lock_guard<mutex> lck(g_oMutex);
+	std::lock_guard<mutex> lck(g_oJobListMutex);
 	if (bStatic)
 	{
 		m_pStaticJob.push_back(pItem);

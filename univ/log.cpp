@@ -184,10 +184,10 @@ void* CLog::LogSystemWorkLoop(void* param)
 	CLog* pThis = (CLog*)param;
 	while(true)
 	{
-		if( g_logList.size() > 0 )
+		if( !g_logList.empty() )
         {
             unique_lock<mutex> lck(g_oLogListMutex);
-            if ( g_logList.size() == 0 )
+            if ( g_logList.empty() )
             {
 				lck.unlock();
                 continue;
@@ -206,7 +206,7 @@ void* CLog::LogSystemWorkLoop(void* param)
 		}
         else
         {
-            SLEEP(100);
+            SLEEP(1000);
         }
 	}
 	return 0;

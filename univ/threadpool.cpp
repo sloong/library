@@ -56,7 +56,7 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 			}
 			if (m_bStart == false)
 			{
-                SLEEP(100);
+                SLEEP(10000);
 				continue;
 			}
 			if (m_pJobList.empty() && m_pStaticJob.empty())

@@ -38,7 +38,12 @@ namespace Sloong
 			~CLog();
 
             virtual void Initialize(std::string szPathName = "./Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
-
+			/************************************************************************/
+			/* SetWorkInterval function                                             */
+			/* Set the log system work loop sleep time when the log list is empty   */
+			/* in default, it is 100. you can change it by your need.               */
+			/************************************************************************/
+			virtual void SetWorkInterval(int nInterval = 100);
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
 			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatWinMsg = true, bool bJustFailedWrite = true);
@@ -68,6 +73,7 @@ namespace Sloong
 			bool		g_hRes;
 			bool		m_bInit;
             bool        m_bDebug;
+			int			m_nSleepInterval;
 		};
 	}
 }

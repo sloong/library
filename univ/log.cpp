@@ -206,7 +206,7 @@ void* CLog::LogSystemWorkLoop(void* param)
 		}
         else
         {
-            SLEEP(1000);
+			SLEEP(pThis->m_nSleepInterval);
         }
 	}
 	return 0;
@@ -353,13 +353,18 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug 
 	}
 
     CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this,1);
-	
+	SetWorkInterval();
 	WriteLine(g_szStart);
 }
 
 bool CLog::IsInitialize()
 {
 	return m_bInit;
+}
+
+void Sloong::Universal::CLog::SetWorkInterval(int nInterval /*= 100*/)
+{
+	m_nSleepInterval = nInterval;
 }
 
 // namespace YaoUtil {

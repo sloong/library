@@ -31,11 +31,6 @@ CLog::CLog()
 {
 	m_bInit = false;
     m_bDebug = true;
-#ifdef _WINDOWS
-#else
-	sem_init(&m_stSem, 0, 0);
-#endif // _WINDOWS
-
 }
 
 
@@ -355,7 +350,10 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug 
 	{
         SetConfiguration(szPathName, "", NULL, NULL, bDebug);
 	}
-
+#ifdef _WINDOWS
+#else
+    sem_init(&m_stSem, 0, 0);
+#endif // _WINDOWS
     CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this,1);
 	SetWorkInterval();
 	WriteLine(g_szStart);

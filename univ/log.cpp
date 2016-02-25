@@ -31,6 +31,11 @@ CLog::CLog()
 {
 	m_bInit = false;
     m_bDebug = true;
+#ifdef _WINDOWS
+#else
+	sem_init(&m_stSem, 0, 0);
+#endif // _WINDOWS
+
 }
 
 
@@ -176,6 +181,11 @@ void CLog::Write(std::string szMessage)
 {
 	lock_guard<mutex> lck(g_oLogListMutex);
 	g_logList.push(szMessage);
+#ifdef _WINDOWS
+#else
+	sem_post(&m_stSem);
+#endif // _WINDOWS
+
 }
 
 
@@ -206,7 +216,12 @@ void* CLog::LogSystemWorkLoop(void* param)
 		}
         else
         {
+#ifdef _WINDOWS
 			SLEEP(pThis->m_nSleepInterval);
+#else
+			sem_wait(&pThis->m_stSem);
+#endif // _WINDOWS
+
         }
 	}
 	return 0;
@@ -249,18 +264,11 @@ bool CLog::IsOpen()
 		time(&now);
 		tmNow = localtime(&now);
 		strftime(szCurrentDate, 9, format[m_emType], tmNow);
-		
-		//		TCHAR szTmpPath[MAX_PATH] = {0};
+	
 		if (m_szLastDate.empty() || (m_szLastDate!=szCurrentDate))
 		{
 			std::string szTemp = (boost::format("%s\\%s.log")%m_szFilePath% szCurrentDate).str();
-			
-			// 			_tcscpy_s(szTmpPath, MAX_PATH, m_szFilePath );
-			// 			_tcscat_s(szTmpPath,MAX_PATH, TEXT("\\"));
-			// 			_tcscat_s(szTmpPath,MAX_PATH, szCurrentDate);
-			// 			_tcscat_s(szTmpPath,MAX_PATH, TEXT(".log"));
 			SetConfiguration(szTemp, "", NULL, NULL);
-			//m_pUniversal->CopyStringToPoint(m_szLastDate, szCurrentDate);
 			m_szLastDate = szCurrentDate;
 			Close();
 		}
@@ -288,10 +296,8 @@ void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGT
 	if (!szFileName.empty())
 	{
 		assert(szFileName.c_str());
-		//SAFE_DELETE_ARR( m_szFileName );
 		Close();
 		m_szFileName = szFileName;
-		//m_pUniversal->CopyStringToPoint(m_szFileName, szFileName);
 	}
 
 	#ifdef _WINDOWS
@@ -309,8 +315,6 @@ void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGT
 		else
 		{
 			GetFullPathName(CUniversal::toutf(szFilePath).c_str(), MAX_PATH, temp, NULL);
-			//SAFE_DELETE_ARR(m_szFilePath);
-			//m_pUniversal->CopyStringToPoint(m_szFilePath, temp);
 			m_szFilePath = CUniversal::toansi(temp);
 		}
 	}

@@ -4,6 +4,8 @@
 
 #include "univ.h"
 #ifdef _WINDOWS
+#else
+#include <semaphore.h>
 #endif
 using namespace Sloong::Universal;
 
@@ -74,6 +76,12 @@ namespace Sloong
 			bool		m_bInit;
             bool        m_bDebug;
 			int			m_nSleepInterval;
+#ifdef _WINDOWS
+
+#else
+			sem_t		m_stSem;
+#endif // _WINDOWS
+
 		};
 	}
 }

@@ -10,7 +10,7 @@
 using namespace Sloong::Universal;
 
 #include <boost/format.hpp>
-
+#include <condition_variable>
 namespace Sloong
 {
 	namespace Universal
@@ -76,6 +76,8 @@ namespace Sloong
 			bool		m_bInit;
             bool        m_bDebug;
 			int			m_nSleepInterval;
+			condition_variable m_CV;
+			mutex		m_Mutex;
 #ifdef _WINDOWS
 
 #else

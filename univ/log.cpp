@@ -179,12 +179,14 @@ void CLog::WriteLine(std::string szLog)
 
 void CLog::Write(std::string szMessage)
 {
-	lock_guard<mutex> lck(g_oLogListMutex);
+	//lock_guard<mutex> lck(g_oLogListMutex);
+	unique_lock <mutex> lck(m_Mutex);
 	g_logList.push(szMessage);
-#ifdef _WINDOWS
-#else
-	sem_post(&m_stSem);
-#endif // _WINDOWS
+	m_CV.notify_all();
+// #ifdef _WINDOWS
+// #else
+// 	sem_post(&m_stSem);
+// #endif // _WINDOWS
 
 }
 
@@ -216,11 +218,13 @@ void* CLog::LogSystemWorkLoop(void* param)
 		}
         else
         {
-#ifdef _WINDOWS
-			SLEEP(pThis->m_nSleepInterval);
-#else
-			sem_wait(&pThis->m_stSem);
-#endif // _WINDOWS
+			unique_lock <mutex> lck(pThis->m_Mutex);
+			pThis->m_CV.wait(lck);
+// #ifdef _WINDOWS
+// 			SLEEP(pThis->m_nSleepInterval);
+// #else
+// 			sem_wait(&pThis->m_stSem);
+// #endif // _WINDOWS
 
         }
 	}

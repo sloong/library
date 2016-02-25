@@ -386,3 +386,8 @@ void Sloong::Universal::CLua::SetScriptFolder(string folder)
 		m_strScriptFolder += '/';
 	}
 }
+
+void Sloong::Universal::CLua::CreateNewThread()
+{
+	lua_newthread(m_pScriptContext);
+}

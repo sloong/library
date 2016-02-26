@@ -216,26 +216,45 @@ void CLua::AddFunctions(vector<LuaFunctionRegistr> *pFuncList)
 }
 
 
+string CLua::GetStringArgument(lua_State* l, int nNum, std::string pDefault /* = "" */)
+{
+	auto str = luaL_optstring(l, nNum, pDefault.c_str());
+	return str;
+}
+
 std::string CLua::GetStringArgument(int num, std::string pDefault)
 {
-	auto str = luaL_optstring(m_pScriptContext, num, pDefault.c_str());
+	return GetStringArgument(m_pScriptContext, num, pDefault);
+}
 
-	return str;
+double CLua::GetNumberArgument(lua_State* l, int nNum, double dDefault /* = -1.0f */)
+{
+	return luaL_optnumber(l, nNum, dDefault);
 }
 
 double CLua::GetNumberArgument(int num, double dDefault)
 {
-	return luaL_optnumber(m_pScriptContext, num, dDefault);
+	return GetNumberArgument(m_pScriptContext, num, dDefault);
+}
+
+void CLua::PushString(lua_State* l, std::string strString)
+{
+	lua_pushstring(l, strString.c_str());
 }
 
 void CLua::PushString(std::string pString)
 {
-	lua_pushstring(m_pScriptContext, pString.c_str());
+	CLua::PushString(m_pScriptContext, pString);
+}
+
+void CLua::PushNumber(lua_State* l, double dValue)
+{
+	lua_pushnumber(l, dValue);
 }
 
 void CLua::PushNumber(double value)
 {
-	lua_pushnumber(m_pScriptContext, value);
+	CLua::PushNumber(m_pScriptContext,value);
 }
 
 bool CLua::RunFunction(std::string strFunctionName, std::string args)

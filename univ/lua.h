@@ -61,8 +61,8 @@ namespace Sloong
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);
             void    AddFunctions(vector<LuaFunctionRegistr>* pFuncList);
-			std::string	GetStringArgument(int nNum, std::string pDefault = "");
-			double	GetNumberArgument(int nNum, double pDefault = -1.0f);
+			std::string	GetStringArgument(int nNum, std::string strDefault = "");
+			double	GetNumberArgument(int nNum, double dDefault = -1.0f);
 			void	PushString(std::string strString);
 			void	PushNumber(double dValue);
             void    PushPacket( CLuaPacket* pData );
@@ -75,6 +75,12 @@ namespace Sloong
 			LuaType	CheckType(int index);
 			double  StringToNumber(std::string string);
 			void	SetScriptFolder(string folder);
+
+		public:
+			static std::string	GetStringArgument(lua_State* l, int nNum, std::string strDefault = "");
+			static double GetNumberArgument(lua_State* l, int nNum, double dDefault = -1.0f);
+			static void	PushString(lua_State* l, std::string strString);
+			static void	PushNumber(lua_State* l, double dValue);
 
 		protected:
 			string findScript(std::string strFullName);

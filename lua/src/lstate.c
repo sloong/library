@@ -337,8 +337,4 @@ LUA_API void lua_close (lua_State *L) {
   close_state(L);
 }
 
-LUA_API void lua_setlock(lua_State *L,void(*lock)(void), void(*unlock)(void))
-{
-	G(L)->lockfun = lock;
-	G(L)->unlockfun = unlock;
-}
+

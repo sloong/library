@@ -196,10 +196,7 @@ typedef unsigned long Instruction;
 #define LUA_MINBUFFER	32
 #endif
 
-// define lock /unlock function
- #define lua_lock(L) ((*G(L)->lockfun)());
- #define lua_unlock(L) ((*G(L)->unlockfun)());
-	
+
 /*
 ** macros that are executed whenether program enters the Lua core
 ** ('lua_lock') and leaves the core ('lua_unlock')

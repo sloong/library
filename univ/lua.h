@@ -75,7 +75,6 @@ namespace Sloong
 			LuaType	CheckType(int index);
 			double  StringToNumber(std::string string);
 			void	SetScriptFolder(string folder);
-			void	CreateNewThread();
 
 		protected:
 			string findScript(std::string strFullName);

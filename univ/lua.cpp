@@ -375,7 +375,6 @@ bool CLua::RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket*
     int nTop = lua_gettop(m_pScriptContext);
     int nErr = 0;
 
-    //GetLuaFuncRef(,);
     PushFunction("OnError");
     nErr = lua_gettop(m_pScriptContext);
 
@@ -404,4 +403,29 @@ void Sloong::Universal::CLua::SetScriptFolder(string folder)
 	{
 		m_strScriptFolder += '/';
 	}
+}
+
+int Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pUserInfo, string& strRequest, string& strResponse)
+{
+	int nTop = lua_gettop(m_pScriptContext);
+	int nErr = 0;
+
+	PushFunction("OnError");
+	nErr = lua_gettop(m_pScriptContext);
+
+	PushFunction(strFunctionName);
+
+	PushPacket(pUserInfo);
+	PushString(strRequest);
+	
+	if (0 != lua_pcall(m_pScriptContext, 3, LUA_MULTRET, nErr))
+	{
+		strResponse = GetErrorString();
+		return -2;
+	}
+	strResponse = lua_tostring(m_pScriptContext, -2);
+	int nRes = lua_tonumber(m_pScriptContext, -1);
+
+	lua_settop(m_pScriptContext, nTop);
+	return nRes;
 }

@@ -3,15 +3,15 @@
 
 
 // Version
-#define VERSION_NUMBER						2,0,1,109
-#define VERSION_FILEVERSION					L"2.0.1.109"
-#define VERSION_BUILDTIME					L"2016/02/17"
+#define VERSION_NUMBER						2,1,1,127
+#define VERSION_FILEVERSION					L"2.1.1.127"
+#define VERSION_BUILDTIME					L"2016/03/04"
 #ifdef _DEBUG
-#define VERSION_PRODUCTVERSION 				L"Ver.2.0 for Debug"
+#define VERSION_PRODUCTVERSION 				L"Ver.2.1 for Debug"
 #define	VERSION_FILEDESCRIPTION				L"Sloong Universal Debug Libaray"
 #define	VERSION_PRODUCTNAME					L"Sloong Universal Debug Libaray"
 #else
-#define VERSION_PRODUCTVERSION 				L"Ver.2.0")
+#define VERSION_PRODUCTVERSION 				L"Ver.2.1")
 #define	VERSION_FILEDESCRIPTION				L"Sloong Universal Libaray"
 #define	VERSION_PRODUCTNAME					L"Sloong Universal Libaray"
 #endif // _DEBUG

@@ -416,9 +416,9 @@ int Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pUs
 	PushFunction(strFunctionName);
 
 	PushPacket(pUserInfo);
-	PushString(strRequest);
+    PushString(strRequest);
 	
-	if (0 != lua_pcall(m_pScriptContext, 3, LUA_MULTRET, nErr))
+    if (0 != lua_pcall(m_pScriptContext, 2, LUA_MULTRET, nErr))
 	{
 		strResponse = GetErrorString();
 		return -2;

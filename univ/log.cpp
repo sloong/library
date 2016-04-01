@@ -36,8 +36,7 @@ CLog::CLog()
 
 CLog::~CLog()
 {
-	WriteLine(g_szEnd);
-	Close();
+	End();
 	m_bInit = false;
 }
 
@@ -189,7 +188,7 @@ void CLog::Write(std::string szMessage)
 void* CLog::LogSystemWorkLoop(void* param)
 {
 	CLog* pThis = (CLog*)param;
-	while(true)
+	while (pThis->m_bRunning)
 	{
 		if( !g_logList.empty() )
         {
@@ -285,6 +284,15 @@ void CLog::Close()
 }
 
 
+void CLog::End()
+{
+	WriteLine(g_szEnd);
+	Close();
+	m_bRunning = false;
+	m_CV.notify_all();
+}
+
+
 std::string CLog::GetPath()
 {
 	return m_szFilePath;
@@ -358,9 +366,7 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug 
 #else
     sem_init(&m_stSem, 0, 0);
 #endif // _WINDOWS
-    CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop,this,1);
-	SetWorkInterval();
-	WriteLine(g_szStart);
+	Start();
 }
 
 bool CLog::IsInitialize()
@@ -371,6 +377,17 @@ bool CLog::IsInitialize()
 void Sloong::Universal::CLog::SetWorkInterval(int nInterval /*= 100*/)
 {
 	m_nSleepInterval = nInterval;
+}
+
+void Sloong::Universal::CLog::Start()
+{
+	if (m_bRunning == true)
+		return;
+
+	m_bRunning = true;
+	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop, this, 1);
+	SetWorkInterval();
+	WriteLine(g_szStart);
 }
 
 // namespace YaoUtil {

@@ -40,6 +40,8 @@ namespace Sloong
 			~CLog();
 
             virtual void Initialize(std::string szPathName = "./Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Start();
+			virtual void End();
 			/************************************************************************/
 			/* SetWorkInterval function                                             */
 			/* Set the log system work loop sleep time when the log list is empty   */
@@ -78,6 +80,7 @@ namespace Sloong
 			int			m_nSleepInterval;
 			condition_variable m_CV;
 			mutex		m_Mutex;
+			bool		m_bRunning;
 #ifdef _WINDOWS
 
 #else

@@ -429,3 +429,24 @@ int Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pUs
 	lua_settop(m_pScriptContext, nTop);
 	return nRes;
 }
+
+int Sloong::Universal::CLua::GetIntegerArgument(lua_State*l, int nNum, int nDev /*= -1*/)
+{
+	return luaL_optinteger(l, nNum, nDev);
+}
+
+void Sloong::Universal::CLua::PushInteger(lua_State*l, int nValue)
+{
+	lua_pushinteger(l, nValue);
+}
+
+void Sloong::Universal::CLua::PushInteger(int nValue)
+{
+	PushInteger(m_pScriptContext, nValue);
+}
+
+int Sloong::Universal::CLua::StringToInteger(std::string value)
+{
+	lua_stringtonumber(m_pScriptContext, value.c_str());
+	return lua_tointeger(m_pScriptContext, -1);
+}

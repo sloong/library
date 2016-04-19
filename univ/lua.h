@@ -66,6 +66,7 @@ namespace Sloong
 			double	GetNumberArgument(int nNum, double dDefault = -1.0f);
 			void	PushString(std::string strString);
 			void	PushNumber(double dValue);
+			void	PushInteger(int nValue);
             void    PushPacket( CLuaPacket* pData );
             bool    PushFunction( int nFuncRef );
             bool    PushFunction( const string& strFuncName );
@@ -75,14 +76,16 @@ namespace Sloong
 			map<string, string> GetTableParam(int index);
 			LuaType	CheckType(int index);
 			double  StringToNumber(std::string string);
+			int		StringToInteger(std::string value);
 			void	SetScriptFolder(string folder);
 
 		public:
 			static std::string	GetStringArgument(lua_State* l, int nNum, std::string strDefault = "");
 			static double GetNumberArgument(lua_State* l, int nNum, double dDefault = -1.0f);
+			static int GetIntegerArgument(lua_State*l, int nNum, int nDev = -1);
 			static void	PushString(lua_State* l, std::string strString);
 			static void	PushNumber(lua_State* l, double dValue);
-
+			static void PushInteger(lua_State*l, int nValue);
 		protected:
 			string findScript(std::string strFullName);
 

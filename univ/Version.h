@@ -3,9 +3,9 @@
 
 
 // Version
-#define VERSION_NUMBER						2,1,1,130
-#define VERSION_FILEVERSION					L"2.1.1.130"
-#define VERSION_BUILDTIME					L"2016/04/01"
+#define VERSION_NUMBER						2,1,1,131
+#define VERSION_FILEVERSION					L"2.1.1.131"
+#define VERSION_BUILDTIME					L"$CUR_DATE"
 #ifdef _DEBUG
 #define VERSION_PRODUCTVERSION 				L"Ver.2.1 for Debug"
 #define	VERSION_FILEDESCRIPTION				L"Sloong Universal Debug Libaray"

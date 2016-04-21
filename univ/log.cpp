@@ -390,6 +390,11 @@ void Sloong::Universal::CLog::Start()
 	WriteLine(g_szStart);
 }
 
+void Sloong::Universal::CLog::Info(std::string strInfo, std::string strTitle /* ="INFO" */)
+{
+	WriteLine(CUniversal::Format("[%s]:[%s]", strTitle.c_str(), strInfo.c_str()));
+}
+
 // namespace YaoUtil {
 // 
 // 	// max size of ini file, in bytes

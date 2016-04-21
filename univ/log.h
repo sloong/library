@@ -51,6 +51,7 @@ namespace Sloong
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
 			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatWinMsg = true, bool bJustFailedWrite = true);
+			virtual void Info(std::string strInfo, std::string strTitle="INFO");
             virtual void SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
 			virtual bool IsOpen();
 			virtual void Close();

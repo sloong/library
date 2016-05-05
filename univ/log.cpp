@@ -261,7 +261,7 @@ bool CLog::IsOpen()
 		strftime(szCurrentDate, 9, format[m_emType], tmNow);
 	
 		if (m_szLastDate.empty() || (m_szLastDate!=szCurrentDate))
-		{			
+		{
 			std::string szTemp = (boost::format("%s%s.log")%m_szFilePath% szCurrentDate).str();
 			SetConfiguration(szTemp, "", NULL, NULL);
 			m_szLastDate = szCurrentDate;
@@ -295,31 +295,33 @@ std::string CLog::GetPath()
 	return m_szFilePath;
 }
 
-void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
+void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
 {
-	if (!szFileName.empty())
-	{
-		assert(szFileName.c_str());
-		Close();
-		m_szFileName = szFileName;
-	}
-
-	if ( !szFilePath.empty())
-	{
-		CUniversal::replace(szFilePath, "\\", "/");
-		char pLast = szFilePath.c_str()[szFilePath.length() - 1];
-		if (pLast != '/')
-		{
-			szFilePath += "/";
-		}
-		m_szFilePath = szFilePath;
-	}
-	
-
 	if (pType)
 	{
 		m_emType = *pType;
 	}
+
+	if (!szFileName.empty())
+	{
+		if ( m_emType != LOGTYPE::ONEFILE)
+		{
+			CUniversal::replace(szFileName, "\\", "/");
+			char pLast = szFileName.c_str()[szFileName.length() - 1];
+			if (pLast != '/')
+			{
+				szFileName += "/";
+			}
+			m_szFilePath = szFileName;
+		}
+		else
+		{
+			assert(szFileName.c_str());
+			Close();
+			m_szFileName = szFileName;
+		}
+	}
+
 
 	if (pLevel)
 	{
@@ -344,14 +346,8 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug 
 	// Set value
 	m_emType = emType;
 	m_bIsCoverPrev = bIsCoverPrev;
-	if (emType != LOGTYPE::ONEFILE)
-	{
-        SetConfiguration("", szPathName, NULL, NULL, bDebug);
-	}
-	else
-	{
-        SetConfiguration(szPathName, "", NULL, NULL, bDebug);
-	}
+	
+    SetConfiguration( szPathName, NULL, NULL, bDebug);
 
 	Start();
 }

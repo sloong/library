@@ -263,7 +263,7 @@ bool CLog::IsOpen()
 		if (m_szLastDate.empty() || (m_szLastDate!=szCurrentDate))
 		{
 			std::string szTemp = (boost::format("%s%s.log")%m_szFilePath% szCurrentDate).str();
-			SetConfiguration(szTemp, "", NULL, NULL);
+			SetConfiguration(szTemp, NULL, NULL);
 			m_szLastDate = szCurrentDate;
 			Close();
 		}

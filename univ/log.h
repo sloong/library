@@ -50,7 +50,7 @@ namespace Sloong
 			virtual void SetWorkInterval(int nInterval = 100);
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
-			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatWinMsg = true, bool bJustFailedWrite = true);
+			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatSysMsg = true, bool bJustFailedWrite = true);
 			virtual void Info(std::string strInfo, std::string strTitle="INFO");
             virtual void SetConfiguration(std::string szFileName, std::string szFilePath, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
 			virtual bool IsOpen();
@@ -60,10 +60,10 @@ namespace Sloong
 			virtual bool IsInitialize();
 
 		protected:
-			std::string FormatFatalMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			std::string FormatErrorMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			std::string FormatWarningMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
-			std::string FormatInformationMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite);
+			std::string FormatFatalMessage(DWORD dwCode, std::string strErrorText);
+			std::string FormatErrorMessage(DWORD dwCode, std::string strErrorText);
+			std::string FormatWarningMessage(DWORD dwCode, std::string strErrorText);
+			std::string FormatInformationMessage(DWORD dwCode, std::string strErrorText);
 			bool OpenFile();
 			static LPVOID LogSystemWorkLoop(LPVOID param);
 
@@ -82,12 +82,6 @@ namespace Sloong
 			condition_variable m_CV;
 			mutex		m_Mutex;
 			bool		m_bRunning;
-#ifdef _WINDOWS
-
-#else
-			sem_t		m_stSem;
-#endif // _WINDOWS
-
 		};
 	}
 }

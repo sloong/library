@@ -19,10 +19,12 @@ mutex g_oLogListMutex;
 queue<string> g_logList;
 const string g_szStart = "---------------------------------Start---------------------------------";
 const string g_szEnd = "----------------------------------End----------------------------------";
-#ifndef _WINDOWS
-const string g_szNewLine = "\n";
-#else
+#ifdef _WINDOWS
 const string g_szNewLine = "\r\n";
+
+#else
+const string g_szNewLine = "\n";
+#include <errno.h>
 #endif // !_WINDOWS
 
 WCHAR g_szFormatBuffer[2048];
@@ -40,11 +42,11 @@ CLog::~CLog()
 	m_bInit = false;
 }
 
-std::string CLog::FormatFatalMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatFatalMessage(DWORD dwCode, std::string strErrorText)
 {
 	if (FATAL <= m_emLevel)
 	{
-		if (true == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes)
 		{
 			strErrorText = (boost::format("[SUCCESS];[FATAL %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
@@ -60,11 +62,11 @@ std::string CLog::FormatFatalMessage(DWORD dwCode, std::string strErrorText, boo
 	}
 }
 
-std::string CLog::FormatErrorMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatErrorMessage(DWORD dwCode, std::string strErrorText)
 {
 	if (ERR <= m_emLevel)
 	{
-		if (true == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes)
 		{
 			strErrorText = (boost::format("[SUCCESS];[ERROR %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
@@ -80,11 +82,11 @@ std::string CLog::FormatErrorMessage(DWORD dwCode, std::string strErrorText, boo
 	}
 }
 
-std::string CLog::FormatWarningMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatWarningMessage(DWORD dwCode, std::string strErrorText)
 {
 	if (WARN <= m_emLevel)
 	{
-		if (true == g_hRes && false == bJustFailedWrite)
+		if (true == g_hRes)
 		{
 			strErrorText = (boost::format("[SUCCESS];[WARN %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
 		}
@@ -100,7 +102,7 @@ std::string CLog::FormatWarningMessage(DWORD dwCode, std::string strErrorText, b
 	}
 }
 
-std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorText, bool bFormatWinMsg, bool bJustFailedWrite)
+std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorText)
 {
 	if (INF <= m_emLevel)
 	{
@@ -114,7 +116,7 @@ std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorTex
 }
 
 
-void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwCode /* = 0 */, bool bFormatWinMsg /* = false */, bool bJustFailedWrite /* = true */)
+void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwCode /* = 0 */, bool bFormatSysMsg /* = false */, bool bJustFailedWrite /* = true */)
 {
 	std::string strLogText;
 
@@ -123,39 +125,45 @@ void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwC
 		switch (emLevel)
 		{
 		case LOGLEVEL::FATAL:
-			strLogText = this->FormatFatalMessage(dwCode, strErrorText, bFormatWinMsg, bJustFailedWrite);
+			strLogText = this->FormatFatalMessage(dwCode, strErrorText);
 			//PostQuitMessage(dwCode);
 			break;
 		case LOGLEVEL::ERR:
-			strLogText = this->FormatErrorMessage(dwCode, strErrorText, bFormatWinMsg, bJustFailedWrite);
+			strLogText = this->FormatErrorMessage(dwCode, strErrorText);
 			break;
 		case LOGLEVEL::WARN:
-			strLogText = this->FormatWarningMessage(dwCode, strErrorText, bFormatWinMsg, bJustFailedWrite);
+			strLogText = this->FormatWarningMessage(dwCode, strErrorText);
 			break;
 		case LOGLEVEL::INF:
 		case LOGLEVEL::All:
 		default:
-			strLogText = this->FormatInformationMessage(dwCode, strErrorText, bFormatWinMsg, bJustFailedWrite);
+			strLogText = this->FormatInformationMessage(dwCode, strErrorText);
 			break;
 		}
 	}
 
     WriteLine(strLogText);
 
-	#ifdef _WINDOWS
-	if (true != g_hRes && true == bFormatWinMsg)
+	
+	if (true != g_hRes && true == bFormatSysMsg)
 	{
-		DWORD dwWinErrCode = GetLastError();
-		if (S_OK != dwWinErrCode)
+		DWORD dwSysCode;
+		string errMsg;
+#ifdef _WINDOWS
+		dwSysCode = GetLastError();
+		errMsg = CUniversal::toansi(CUniversal::FormatWindowsErrorMessage(dwSysCode));
+		errMsg = errMsg.substr(0, errMsg.length() - 2);
+#else
+		dwSysCode = errno;
+		errMsg = strerror(dwSysCode);
+#endif
+		if (0 != dwSysCode)
 		{
-			wstring szWinErrText = CUniversal::FormatWindowsErrorMessage(dwWinErrCode);
-			szWinErrText = szWinErrText.substr(0, szWinErrText.length() - 2);
-			// Add WINDOWS MSG in head.
-			std::string str = (boost::format("[WINDOWS MESSAGE] : [%s]") % (CUniversal::toansi(szWinErrText))).str();
+			std::string str = CUniversal::Format("[SYS CODE]:[%d];[SYSTEM MESSAGE]:[%s]", dwSysCode, errMsg.c_str());
 			WriteLine(str);
 		}
 	}
-	#endif
+	
 }
 
 void CLog::WriteLine(std::string szLog)
@@ -177,11 +185,6 @@ void CLog::Write(std::string szMessage)
 	unique_lock <mutex> lck(m_Mutex);
 	g_logList.push(szMessage);
 	m_CV.notify_all();
-// #ifdef _WINDOWS
-// #else
-// 	sem_post(&m_stSem);
-// #endif // _WINDOWS
-
 }
 
 
@@ -214,12 +217,6 @@ void* CLog::LogSystemWorkLoop(void* param)
         {
 			unique_lock <mutex> lck(pThis->m_Mutex);
 			pThis->m_CV.wait(lck);
-// #ifdef _WINDOWS
-// 			SLEEP(pThis->m_nSleepInterval);
-// #else
-// 			sem_wait(&pThis->m_stSem);
-// #endif // _WINDOWS
-
         }
 	}
 	return 0;
@@ -264,8 +261,8 @@ bool CLog::IsOpen()
 		strftime(szCurrentDate, 9, format[m_emType], tmNow);
 	
 		if (m_szLastDate.empty() || (m_szLastDate!=szCurrentDate))
-		{
-			std::string szTemp = (boost::format("%s\\%s.log")%m_szFilePath% szCurrentDate).str();
+		{			
+			std::string szTemp = (boost::format("%s%s.log")%m_szFilePath% szCurrentDate).str();
 			SetConfiguration(szTemp, "", NULL, NULL);
 			m_szLastDate = szCurrentDate;
 			Close();
@@ -307,25 +304,18 @@ void CLog::SetConfiguration(std::string szFileName, std::string szFilePath, LOGT
 		m_szFileName = szFileName;
 	}
 
-	#ifdef _WINDOWS
-	if (!szFilePath.empty())
+	if ( !szFilePath.empty())
 	{
-		assert(szFilePath.c_str());
-		WIN32_FIND_DATA wfd;
-		TCHAR temp[MAX_PATH + 1] = { 0 };
-
-		if (FindFirstFile(CUniversal::toutf(szFilePath).c_str(), &wfd) == INVALID_HANDLE_VALUE && CreateDirectory(CUniversal::toutf(szFilePath).c_str(), NULL) == 0)
+		CUniversal::replace(szFilePath, "\\", "/");
+		char pLast = szFilePath.c_str()[szFilePath.length() - 1];
+		if (pLast != '/')
 		{
-			assert(false);
-			exit(1);
+			szFilePath += "/";
 		}
-		else
-		{
-			GetFullPathName(CUniversal::toutf(szFilePath).c_str(), MAX_PATH, temp, NULL);
-			m_szFilePath = CUniversal::toansi(temp);
-		}
+		m_szFilePath = szFilePath;
 	}
-	#endif
+	
+
 	if (pType)
 	{
 		m_emType = *pType;
@@ -362,10 +352,7 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug 
 	{
         SetConfiguration(szPathName, "", NULL, NULL, bDebug);
 	}
-#ifdef _WINDOWS
-#else
-    sem_init(&m_stSem, 0, 0);
-#endif // _WINDOWS
+
 	Start();
 }
 

@@ -72,7 +72,7 @@ namespace Sloong
 			ofstream	m_oFile;
 			std::string		m_szFilePath;
 			std::string		m_szFileName;
-			std::string		m_szLastDate;
+			int		m_nLastDate;
 			int		m_emType;
 			bool		m_bIsCoverPrev;
 			bool		g_hRes;

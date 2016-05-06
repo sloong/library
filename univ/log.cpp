@@ -33,6 +33,7 @@ CLog::CLog()
 {
 	m_bInit = false;
     m_bDebug = true;
+	m_nLastDate = 0;
 }
 
 
@@ -251,19 +252,19 @@ bool CLog::IsOpen()
 		throw normal_except("No Initialize!");
 	if (m_emType != LOGTYPE::ONEFILE)
 	{
-		char szCurrentDate[10];
-		static const char format[3][10] = { ("%Y"), ("%Y-%m"), ("%Y%m%d") };
-
+		
 		time_t now;
 		struct tm* tmNow;
 		time(&now);
 		tmNow = localtime(&now);
-		strftime(szCurrentDate, 9, format[m_emType], tmNow);
-	
-		if (m_szLastDate.empty() || (m_szLastDate!=szCurrentDate))
+		
+		if (m_nLastDate == 0 || (m_nLastDate != tmNow->tm_mday))
 		{
+			char szCurrentDate[10];
+			static const char format[3][10] = { ("%Y"), ("%Y-%m"), ("%Y%m%d") };
+			strftime(szCurrentDate, 9, format[m_emType], tmNow);
 			m_szFileName = (boost::format("%s%s.log") % m_szFilePath% szCurrentDate).str();
-			m_szLastDate = szCurrentDate;
+			m_nLastDate = tmNow->tm_mday;
 			Close();
 		}
 	}
@@ -339,7 +340,7 @@ void CLog::Initialize(std::string szPathName /*= TEXT("Log.log")*/, bool bDebug 
 	m_emLevel = emLevel;
 	m_szFilePath.clear();
 	m_szFileName.clear();
-	m_szLastDate.clear();
+	m_nLastDate = 0;
 	m_bIsCoverPrev = false;
 
 	// Set value

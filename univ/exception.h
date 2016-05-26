@@ -22,7 +22,12 @@ namespace Sloong
             }
             normal_except& operator= (const normal_except&){return (*this);}
             virtual ~normal_except(){}
-            virtual const char* what() const noexcept {return m_strMessage.c_str();}
+#ifdef _WINDOWS
+			virtual const char* what() const { return m_strMessage.c_str(); }
+#elif
+			virtual const char* what() const noexcept { return m_strMessage.c_str(); }
+#endif // _WINDOWS
+            
 			
 		protected:
 			long m_hResult;

@@ -24,7 +24,7 @@ namespace Sloong
             virtual ~normal_except(){}
 #ifdef _WINDOWS
 			virtual const char* what() const { return m_strMessage.c_str(); }
-#elif
+#else
 			virtual const char* what() const noexcept { return m_strMessage.c_str(); }
 #endif // _WINDOWS
             

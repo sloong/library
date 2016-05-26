@@ -151,7 +151,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exception.h" />
-    <ClInclude Include="file.h" />
     <ClInclude Include="luapacket.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="log.h" />
@@ -178,7 +177,6 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="exception.cpp" />
-    <ClCompile Include="file.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="lua.cpp" />
     <ClCompile Include="luapacket.cpp" />

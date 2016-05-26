@@ -40,6 +40,7 @@ namespace Sloong
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
 			static int splitString(const string& str, vector<string>& res, string sep = ",");
 			static string trim(const string& str);
+			static wstring trim(const wstring& str);
 			static string replace(const string& str, const string& src, const string& dest);
 			static wstring replace(const wstring& str, const wstring& src, const wstring& dest);
 			static string toansi(const wstring& str);

@@ -8,13 +8,14 @@ namespace Sloong
 {
 	namespace Universal
 	{
-		class UNIVERSAL_API normal_except
+
+		class UNIVERSAL_API normal_except : exception
 		{
 		public:
             normal_except(){}
             normal_except(std::string lpstr){m_strMessage = lpstr;}
 			// in windows os ,the hRes is GetLastError function, in linux os the hRes is errno
-            normal_except(std::string lpStr, long hRes)
+			normal_except(std::string lpStr, long hRes)
             {
                 m_strMessage = lpStr;
                 m_hResult = hRes;
@@ -26,6 +27,26 @@ namespace Sloong
 		protected:
 			long m_hResult;
 			std::string m_strMessage;
+		};
+
+		class UNIVERSAL_API wnormal_except : exception
+		{
+		public:
+			wnormal_except() {}
+			wnormal_except(std::wstring lpstr) { m_strMessage = lpstr; }
+			// in windows os ,the hRes is GetLastError function, in linux os the hRes is errno
+			wnormal_except(std::wstring lpStr, long hRes)
+			{
+				m_strMessage = lpStr;
+				m_hResult = hRes;
+			}
+			wnormal_except& operator= (const normal_except&) { return (*this); }
+			virtual ~wnormal_except() {}
+			virtual const wchar_t* w_what() const { return m_strMessage.c_str(); }
+
+		protected:
+			long m_hResult;
+			std::wstring m_strMessage;
 		};
 
         class UNIVERSAL_API CExceptKeyNoFound : public normal_except

@@ -41,6 +41,7 @@ namespace Sloong
 			static int splitString(const string& str, vector<string>& res, string sep = ",");
 			static string trim(const string& str);
 			static string replace(const string& str, const string& src, const string& dest);
+			static wstring replace(const wstring& str, const wstring& src, const wstring& dest);
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
 
@@ -52,6 +53,7 @@ namespace Sloong
                 return ss.str();
             }
 
+#pragma region Boost Format
             // packaging the boost::format;
             template<class TFirst>
             static void Format(boost::format& fmt, TFirst&& first) {  fmt % first; }
@@ -78,6 +80,35 @@ namespace Sloong
                 Format(fmt, first, other...);
                 return fmt.str();
             }
+
+			// packaging the boost::wformat;
+			template<class TFirst>
+			static void Format(boost::wformat& fmt, TFirst&& first) { fmt % first; }
+
+			template<class TFirst>
+			static wstring Format(const wchar_t* format, TFirst&& first)
+			{
+				boost::wformat fmt(format);
+				Format(fmt, first);
+				return fmt.str();
+			}
+
+			template<class TFirst, class... TOther>
+			static void Format(boost::wformat& fmt, TFirst&& first, TOther&&... other)
+			{
+				fmt % first;
+				Format(fmt, other...);
+			}
+
+			template<class TFirst, class... TOther>
+			static wstring Format(const wchar_t* format, TFirst&& first, TOther&&... other)
+			{
+				boost::wformat fmt(format);
+				Format(fmt, first, other...);
+				return fmt.str();
+			}
+
+#pragma endregion
 
             static void tolower(string& str)
             {

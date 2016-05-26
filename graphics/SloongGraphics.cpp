@@ -3168,7 +3168,7 @@ bool Sloong::Graphics::CDDraw::IsBackSurfaceLocked()
 	return m_bBackSurfaceLocked;
 }
 
-void WINAPI Sloong::Graphics::CDDraw::DrawLine_API(int x1, int x2, int y1, int y2, COLORREF dwColor)
+void Sloong::Graphics::CDDraw::DrawLine_API(int x1, int x2, int y1, int y2, COLORREF dwColor)
 {
 	if (m_pThis)
 	{

@@ -9,7 +9,7 @@
 #endif
 using namespace Sloong::Universal;
 
-#include <boost/format.hpp>
+
 #include <condition_variable>
 namespace Sloong
 {
@@ -39,7 +39,8 @@ namespace Sloong
 			CLog();
 			~CLog();
 
-            virtual void Initialize(std::string szPathName = "./Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+            virtual void Initialize(wstring szPathName = L"Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void InitializeA(string szPathName = "Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 			virtual void Start();
 			virtual void End();
 			/************************************************************************/
@@ -52,11 +53,14 @@ namespace Sloong
 			virtual void WriteLine(std::string szLog);
 			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatSysMsg = true, bool bJustFailedWrite = true);
 			virtual void Info(std::string strInfo, std::string strTitle="INFO");
-            virtual void SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
+            virtual void SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
+			virtual void SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
 			virtual bool IsOpen();
 			virtual void Close();
-			virtual std::string GetFileName();
-			virtual std::string GetPath();
+			virtual std::wstring GetFileName();
+			virtual std::string GetFileNameA();
+			virtual std::wstring GetPath();
+			virtual std::string GetPathA();
 			virtual bool IsInitialize();
 
 		protected:
@@ -70,8 +74,8 @@ namespace Sloong
 		protected:
 			LOGLEVEL	m_emLevel;
 			ofstream	m_oFile;
-			std::string		m_szFilePath;
-			std::string		m_szFileName;
+			std::wstring		m_szFilePath;
+			std::wstring		m_szFileName;
 			int		m_nLastDate;
 			int		m_emType;
 			bool		m_bIsCoverPrev;

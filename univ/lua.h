@@ -9,9 +9,8 @@ using std::mutex;
 
 #include "univ.h"
 #include "luapacket.h"
-
 #ifdef _WINDOWS
-#pragma comment(lib,"lua.lib")
+#pragma comment(lib,"lua.5.3.1.lib")
 #endif
 
 struct lua_State;
@@ -62,7 +61,7 @@ namespace Sloong
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);
             void    AddFunctions(vector<LuaFunctionRegistr>* pFuncList);
-			std::string	GetStringArgument(int nNum, std::string strDefault = "");
+			string	GetStringArgument(int nNum, std::string strDefault = "");
 			double	GetNumberArgument(int nNum, double dDefault = -1.0f);
 			void	PushString(std::string strString);
 			void	PushNumber(double dValue);

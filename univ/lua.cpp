@@ -200,7 +200,7 @@ std::string CLua::GetErrorString()
 }
 
 
-bool CLua::AddFunction( std::string pFunctionName, LuaFunctionType pFunction)
+bool CLua::AddFunction(std::string pFunctionName, LuaFunctionType pFunction)
 {
 	LuaFunc pFunc = (LuaFunc)pFunction;
 	lua_register(m_pScriptContext, pFunctionName.c_str(), pFunc);

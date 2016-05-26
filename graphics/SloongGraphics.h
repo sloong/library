@@ -93,7 +93,7 @@ namespace Sloong
 			~CDDraw();
 
 		public:// Static function
-			static void WINAPI DrawLine_API(int x1, int x2, int y1, int y2, COLORREF dwColor);
+			static void DrawLine_API(int x1, int x2, int y1, int y2, COLORREF dwColor);
 			static HRESULT DrawClipLine(int x0, int y0, int x1, int y1, COLORREF color, LPBYTE lpVideoBuffer, int lpitch, RECT rcScreen);
 			static int Clip_Line(int &x1, int &y1, int &x2, int &y2, RECT rcScreen);
 			static int Draw_Line(int xo, int yo, int x1, int y1, COLORREF color, LPBYTE vb_start, int lpitch);

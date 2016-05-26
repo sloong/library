@@ -11,6 +11,7 @@
 #include <queue>
 #include <mutex>
 #include <iostream>
+#include <fstream>
 #include <stdarg.h> // for va_list,va_start and va_end
 #include <boost/format.hpp>
 //#include <boost/algorithm/string.hpp>
@@ -236,7 +237,7 @@ bool CLog::OpenFile()
 	if (m_bIsCoverPrev == true)
 		flag = ios::out;
 
-	m_oFile.open(m_szFileName.c_str(),flag);
+	m_oFile.open(CUniversal::toansi(m_szFileName).c_str(),flag);
 
 	return m_oFile.is_open();
 }

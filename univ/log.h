@@ -39,8 +39,9 @@ namespace Sloong
 			CLog();
 			~CLog();
 
-            virtual void Initialize(wstring szPathName = L"Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
-			virtual void InitializeA(string szPathName = "Log.log", bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize();
+            virtual void Initialize(wstring szPathName, bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize(string szPathName, bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 			virtual void Start();
 			virtual void End();
 			/************************************************************************/

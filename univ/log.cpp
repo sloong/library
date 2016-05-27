@@ -348,7 +348,12 @@ void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pL
 }
 
 
-void CLog::Initialize(wstring szPathName /*= L"Log.log"*/, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void Sloong::Universal::CLog::Initialize()
+{
+	Initialize(L"./log.log");
+}
+
+void CLog::Initialize(wstring szPathName, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	
 	// All value init
@@ -369,7 +374,7 @@ void CLog::Initialize(wstring szPathName /*= L"Log.log"*/, bool bDebug /*= true 
 	Start();
 }
 
-void CLog::InitializeA(string szPathName /*= L"Log.log"*/, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void CLog::Initialize(string szPathName , bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	Initialize(CUniversal::toutf(szPathName), bDebug, emLevel, emType, bIsCoverPrev);
 }

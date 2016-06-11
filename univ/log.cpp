@@ -312,6 +312,16 @@ std::string Sloong::Universal::CLog::GetPathA()
 	return CUniversal::toansi(GetPath());
 }
 
+
+/************************************************************************/
+/* Flush function                                                       */
+/* Add for issue #9 [https://git.sloong.com/public/library/issues/9]    */
+/************************************************************************/
+void Sloong::Universal::CLog::Flush()
+{
+	m_oFile.flush();
+}
+
 void CLog::SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
 {
 	if (pType)

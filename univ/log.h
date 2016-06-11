@@ -63,7 +63,7 @@ namespace Sloong
 			virtual std::wstring GetPath();
 			virtual std::string GetPathA();
 			virtual bool IsInitialize();
-
+			virtual void Flush();
 		protected:
 			std::string FormatFatalMessage(DWORD dwCode, std::string strErrorText);
 			std::string FormatErrorMessage(DWORD dwCode, std::string strErrorText);

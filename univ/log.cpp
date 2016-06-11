@@ -212,8 +212,14 @@ void* CLog::LogSystemWorkLoop(void* param)
 
 			// write log message to file
 			pThis->m_oFile << str;
-            if ( pThis->m_bDebug )
+			// in debug mode, flush the message when write down. 
+			// for issue #8 [https://git.sloong.com/public/library/issues/8]
+			if (pThis->m_bDebug)
+			{
 				cout << str;
+				pThis->m_oFile.flush();
+			}
+				
 		}
         else
         {

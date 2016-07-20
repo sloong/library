@@ -35,6 +35,7 @@ CLog::CLog()
 	m_bInit = false;
     m_bDebug = true;
 	m_nLastDate = 0;
+	m_bOpenFileFirst = false;
 }
 
 
@@ -237,7 +238,14 @@ bool CLog::OpenFile()
 	if (m_szFileName.empty())
 		throw normal_except("Open log file failed.file name is empty.");
 
-	cout<<"File no open , try open file. file path is :"<< CUniversal::toansi(m_szFileName) <<endl;
+	if (m_bOpenFileFirst)
+	{
+		m_bOpenFileFirst = true;
+	}
+	else
+	{
+		cout << "File no open , try open file. file path is :" << CUniversal::toansi(m_szFileName) << endl;
+	}
 	
 	auto flag = ios::out | ios::app;
 	if (m_bIsCoverPrev == true)

@@ -3,8 +3,8 @@
 
 
 // Version
-#define VERSION_NUMBER						2,2,4,159
-#define VERSION_FILEVERSION					L"2.2.4.159"
+#define VERSION_NUMBER						2,2,4,161
+#define VERSION_FILEVERSION					L"2.2.4.161"
 #define VERSION_BUILDTIME					L"2016/06/30"
 
 #ifdef _DEBUG

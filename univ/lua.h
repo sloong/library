@@ -85,6 +85,7 @@ namespace Sloong
 			static void	PushString(lua_State* l, std::string strString);
 			static void	PushNumber(lua_State* l, double dValue);
 			static void PushInteger(lua_State*l, int nValue);
+			static map<string, string> GetTableParam(lua_State*l, int index);
 		protected:
 			string findScript(std::string strFullName);
 

@@ -274,33 +274,7 @@ void CLua::HandlerError(std::string strErrorType, std::string strCmd)
 
 map<string, string> CLua::GetTableParam(int index)
 {
-	auto L = m_pScriptContext;
-	map<string, string> data;
-	lua_pushnil(L);
-	// 现在的栈：-1 => nil; index => table
-	if ( index >= lua_gettop(L))
-	{
-		throw normal_except("The index is too big.");
-	}
-
-	while (lua_next(L, index))
-	{
-		// 现在的栈：-1 => value; -2 => key; index => table
-		// 拷贝一份 key 到栈顶，然后对它做 lua_tostring 就不会改变原始的 key 值了
-		lua_pushvalue(L, -2);
-		// 现在的栈：-1 => key; -2 => value; -3 => key; index => table
-		
-		string key = std::string(lua_tostring(L, -1));
-		string value = std::string(lua_tostring(L, -2));
-
-		data[key] = value;
-		// 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数
-		lua_pop(L, 2);
-		// 现在的栈：-1 => key; index => table
-	}
-	// 现在的栈：index => table （最后 lua_next 返回 0 的时候它已经把上一次留下的 key 给弹出了）
-	// 所以栈已经恢复到进入这个函数时的状态
-	return data;
+	GetTableParam(m_pScriptContext, index);
 }
 
 LuaType CLua::CheckType(int index)
@@ -438,6 +412,36 @@ int Sloong::Universal::CLua::GetIntegerArgument(lua_State*l, int nNum, int nDev 
 void Sloong::Universal::CLua::PushInteger(lua_State*l, int nValue)
 {
 	lua_pushinteger(l, nValue);
+}
+
+map<std::string, std::string> Sloong::Universal::CLua::GetTableParam(lua_State*l, int index)
+{
+	map<string, string> data;
+	lua_pushnil(l);
+	// 现在的栈：-1 => nil; index => table
+	if (index >= lua_gettop(l))
+	{
+		throw normal_except("The index is too big.");
+	}
+
+	while (lua_next(l, index))
+	{
+		// 现在的栈：-1 => value; -2 => key; index => table
+		// 拷贝一份 key 到栈顶，然后对它做 lua_tostring 就不会改变原始的 key 值了
+		lua_pushvalue(l, -2);
+		// 现在的栈：-1 => key; -2 => value; -3 => key; index => table
+
+		string key = std::string(lua_tostring(l, -1));
+		string value = std::string(lua_tostring(l, -2));
+
+		data[key] = value;
+		// 弹出 value 和拷贝的 key，留下原始的 key 作为下一次 lua_next 的参数
+		lua_pop(l, 2);
+		// 现在的栈：-1 => key; index => table
+	}
+	// 现在的栈：index => table （最后 lua_next 返回 0 的时候它已经把上一次留下的 key 给弹出了）
+	// 所以栈已经恢复到进入这个函数时的状态
+	return data;
 }
 
 void Sloong::Universal::CLua::PushInteger(int nValue)

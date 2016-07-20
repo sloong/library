@@ -274,7 +274,7 @@ void CLua::HandlerError(std::string strErrorType, std::string strCmd)
 
 map<string, string> CLua::GetTableParam(int index)
 {
-	GetTableParam(m_pScriptContext, index);
+	return GetTableParam(m_pScriptContext, index);
 }
 
 LuaType CLua::CheckType(int index)

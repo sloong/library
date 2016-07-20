@@ -57,6 +57,7 @@ namespace Sloong
 			bool	RunFunction(std::string strFunctionName, std::string args);
             bool    RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket* pRequest, CLuaPacket* pResponse );
 			int     RunFunction(string strFunctionName, CLuaPacket* pUserInfo, string& strRequest, string& strResponse);
+			void    RunFunction(string strFunctionName, CLuaPacket* pUserInfo);
 			std::string	GetErrorString();
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);

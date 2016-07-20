@@ -404,6 +404,25 @@ int Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pUs
 	return nRes;
 }
 
+void Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pUserInfo)
+{
+	int nTop = lua_gettop(m_pScriptContext);
+	int nErr = 0;
+
+	PushFunction("OnError");
+	nErr = lua_gettop(m_pScriptContext);
+
+	PushFunction(strFunctionName);
+
+	PushPacket(pUserInfo);
+
+	if (0 != lua_pcall(m_pScriptContext, 2, LUA_MULTRET, nErr))
+	{
+		throw normal_except( GetErrorString());
+	}
+	lua_settop(m_pScriptContext, nTop);
+}
+
 int Sloong::Universal::CLua::GetIntegerArgument(lua_State*l, int nNum, int nDev /*= -1*/)
 {
 	return luaL_optinteger(l, nNum, nDev);

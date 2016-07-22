@@ -12,8 +12,16 @@
 #ifndef _WINDOWS
 #include <libgen.h>
 #include <openssl/md5.h>
+#include <stdarg.h>  
+#include <sys/stat.h>  
+#define ACCESS access  
+#define MKDIR(a) mkdir((a),0755)  
 #else
 #include <Wincrypt.h>
+#include <direct.h>  
+#include <io.h>  
+#define ACCESS _access  
+#define MKDIR(a) _mkdir((a))  
 #endif // !_WINDOWS
 
 using namespace std;
@@ -172,6 +180,46 @@ wstring CUniversal::replace(const wstring& str, const wstring& src, const wstrin
 		ret.append(str.begin() + pos_begin, str.end());
 	}
 	return ret;
+}
+
+std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
+{
+	if (filePath == "")
+	{
+		return "";
+	}
+
+	int iLen = filePath.size();
+	char* pszDir = new char[iLen + 1];
+	memset(pszDir, 0, iLen + 1);
+	memcpy(pszDir, filePath.c_str(), iLen);
+	string strDir;
+	int iRet;
+	// 创建中间目录  
+	for (int i = 1; i < iLen; i++)
+	{
+		if (pszDir[i] == '\\' || pszDir[i] == '/')
+		{
+			pszDir[i] = '\0';
+			strDir = pszDir;
+
+			//如果不存在,创建  
+			iRet = ACCESS(pszDir, 0);
+			if (iRet != 0)
+			{
+				iRet = MKDIR(pszDir);
+				if (iRet != 0)
+				{
+					return pszDir;
+				}
+			}
+			//支持linux,将所有\换成/  
+			pszDir[i] = '/';
+		}
+	}
+
+	SAFE_DELETE_ARR(pszDir);
+	return strDir;
 }
 
 string Sloong::Universal::CUniversal::toansi(const wstring& str)

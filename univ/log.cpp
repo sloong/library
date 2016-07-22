@@ -246,7 +246,8 @@ bool CLog::OpenFile()
 	{
 		cout << "File no open , try open file. file path is :" << CUniversal::toansi(m_szFileName) << endl;
 	}
-	
+	wstring folder = m_szFileName.substr(0,m_szFileName.find_last_of(L'/'));
+	CUniversal::CheckFileDirectory(CUniversal::toansi(folder));
 	auto flag = ios::out | ios::app;
 	if (m_bIsCoverPrev == true)
 		flag = ios::out;

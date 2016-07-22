@@ -38,6 +38,7 @@ namespace Sloong
 			static void CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom);
 			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
+			static string CheckFileDirectory(string filepath);
 			static int splitString(const string& str, vector<string>& res, string sep = ",");
 			static string trim(const string& str);
 			static wstring trim(const wstring& str);

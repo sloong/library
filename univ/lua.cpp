@@ -416,7 +416,7 @@ void Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pU
 
 	PushPacket(pUserInfo);
 
-	if (0 != lua_pcall(m_pScriptContext, 2, LUA_MULTRET, nErr))
+	if (0 != lua_pcall(m_pScriptContext, 1, LUA_MULTRET, nErr))
 	{
 		throw normal_except( GetErrorString());
 	}
@@ -437,7 +437,7 @@ map<std::string, std::string> Sloong::Universal::CLua::GetTableParam(lua_State*l
 {
 	map<string, string> data;
 	lua_pushnil(l);
-	// ÏÖÔÚµÄÕ»£º-1 => nil; index => table
+	// ç°åœ¨çš„æ ˆï¼š-1 => nil; index => table
 	if (index >= lua_gettop(l))
 	{
 		throw normal_except("The index is too big.");
@@ -445,21 +445,21 @@ map<std::string, std::string> Sloong::Universal::CLua::GetTableParam(lua_State*l
 
 	while (lua_next(l, index))
 	{
-		// ÏÖÔÚµÄÕ»£º-1 => value; -2 => key; index => table
-		// ¿½±´Ò»·İ key µ½Õ»¶¥£¬È»ºó¶ÔËü×ö lua_tostring ¾Í²»»á¸Ä±äÔ­Ê¼µÄ key ÖµÁË
+		// ç°åœ¨çš„æ ˆï¼š-1 => value; -2 => key; index => table
+		// æ‹·è´ä¸€ä»½ key åˆ°æ ˆé¡¶ï¼Œç„¶åå¯¹å®ƒåš lua_tostring å°±ä¸ä¼šæ”¹å˜åŸå§‹çš„ key å€¼äº†
 		lua_pushvalue(l, -2);
-		// ÏÖÔÚµÄÕ»£º-1 => key; -2 => value; -3 => key; index => table
+		// ç°åœ¨çš„æ ˆï¼š-1 => key; -2 => value; -3 => key; index => table
 
 		string key = std::string(lua_tostring(l, -1));
 		string value = std::string(lua_tostring(l, -2));
 
 		data[key] = value;
-		// µ¯³ö value ºÍ¿½±´µÄ key£¬ÁôÏÂÔ­Ê¼µÄ key ×÷ÎªÏÂÒ»´Î lua_next µÄ²ÎÊı
+		// å¼¹å‡º value å’Œæ‹·è´çš„ keyï¼Œç•™ä¸‹åŸå§‹çš„ key ä½œä¸ºä¸‹ä¸€æ¬¡ lua_next çš„å‚æ•°
 		lua_pop(l, 2);
-		// ÏÖÔÚµÄÕ»£º-1 => key; index => table
+		// ç°åœ¨çš„æ ˆï¼š-1 => key; index => table
 	}
-	// ÏÖÔÚµÄÕ»£ºindex => table £¨×îºó lua_next ·µ»Ø 0 µÄÊ±ºòËüÒÑ¾­°ÑÉÏÒ»´ÎÁôÏÂµÄ key ¸øµ¯³öÁË£©
-	// ËùÒÔÕ»ÒÑ¾­»Ö¸´µ½½øÈëÕâ¸öº¯ÊıÊ±µÄ×´Ì¬
+	// ç°åœ¨çš„æ ˆï¼šindex => table ï¼ˆæœ€å lua_next è¿”å› 0 çš„æ—¶å€™å®ƒå·²ç»æŠŠä¸Šä¸€æ¬¡ç•™ä¸‹çš„ key ç»™å¼¹å‡ºäº†ï¼‰
+	// æ‰€ä»¥æ ˆå·²ç»æ¢å¤åˆ°è¿›å…¥è¿™ä¸ªå‡½æ•°æ—¶çš„çŠ¶æ€
 	return data;
 }
 

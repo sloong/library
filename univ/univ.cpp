@@ -12,8 +12,17 @@
 #ifndef _WINDOWS
 #include <libgen.h>
 #include <openssl/md5.h>
+#include <stdarg.h>  
+#include <sys/stat.h>  
+#include <libzip.h>
+#define ACCESS access  
+#define MKDIR(a) mkdir((a),0755)  
 #else
 #include <Wincrypt.h>
+#include <direct.h>  
+#include <io.h>  
+#define ACCESS _access  
+#define MKDIR(a) _mkdir((a))  
 #endif // !_WINDOWS
 
 using namespace std;
@@ -174,6 +183,46 @@ wstring CUniversal::replace(const wstring& str, const wstring& src, const wstrin
 	return ret;
 }
 
+std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
+{
+	if (filePath == "")
+	{
+		return "";
+	}
+
+	int iLen = filePath.size();
+	char* pszDir = new char[iLen + 1];
+	memset(pszDir, 0, iLen + 1);
+	memcpy(pszDir, filePath.c_str(), iLen);
+	string strDir;
+	int iRet;
+	// 创建中间目录  
+	for (int i = 1; i < iLen; i++)
+	{
+		if (pszDir[i] == '\\' || pszDir[i] == '/')
+		{
+			pszDir[i] = '\0';
+			strDir = pszDir;
+
+			//如果不存在,创建  
+			iRet = ACCESS(pszDir, 0);
+			if (iRet != 0)
+			{
+				iRet = MKDIR(pszDir);
+				if (iRet != 0)
+				{
+					return pszDir;
+				}
+			}
+			//支持linux,将所有\换成/  
+			pszDir[i] = '/';
+		}
+	}
+
+	SAFE_DELETE_ARR(pszDir);
+	return strDir;
+}
+
 string Sloong::Universal::CUniversal::toansi(const wstring& str)
 {
 	string strResult;
@@ -249,7 +298,8 @@ typedef void (CALLBACK* MD5Update_Tpye)(MD5_CTX* context,unsigned char* input,un
 typedef void (CALLBACK* MD5Final_Tpye)(MD5_CTX* context);
 #endif // _WINDOWS
 
-string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= false*/)
+
+string Sloong::Universal::CUniversal::MD5_Binary_Encoding(string str, char* md, bool bFile /*= false*/ )
 {
 #ifdef _WINDOWS
     // use the windows api
@@ -293,18 +343,12 @@ string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= fa
     }
     MD5Final(&md5_context);
 
-    char dest[100] = { 0 };
-    char *p = dest;
     for(int i = 0; i < 16; ++i)
-    {
-         sprintf_s(p, 3, "%02x", md5_context.digest[i]);
-         p += 2;
-     }
-     FreeLibrary(hDLL);
-     return dest;
+	{
+		md[i] = md5_context.digest[i];
+	}
+	FreeLibrary(hDLL);
 #else
-    unsigned char md[16];
-    char tmp[3] = { '\0' }, md5buf[33] = { '\0' };
     if ( bFile )
     {
         FILE *fd = fopen(str.c_str(), "r");
@@ -323,14 +367,21 @@ string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= fa
     {
         MD5((unsigned char *)str.c_str(), str.length(), md);
     }
+#endif // _WINDOWS
+}
 
-    for (int i = 0; i < 16; i++)
+string Sloong::Universal::CUniversal::MD5_Encoding(string str, bool bFile /*= false*/)
+{
+	unsigned char md[16];
+    char tmp[3] = { '\0' }, md5buf[33] = { '\0' };
+	MD5_Binary_Encoding(str,md,bFile);
+	for (int i = 0; i < 16; i++)
     {
         sprintf(tmp, "%02X", md[i]);
         strcat(md5buf, tmp);
     }
-    return md5buf;
-#endif // _WINDOWS
+
+	return md5buf;
 }
 
 std::string Sloong::Universal::CUniversal::Replace(const string& str, const string& src, const string& dest)
@@ -347,9 +398,230 @@ std::string Sloong::Universal::CUniversal::Replace(const string& str, const stri
 }
 
 
+#ifndef _WINDOWS
 
-#ifdef _WINDOWS
+static int compressString(const char* apData, int auDataSize, char* apOutBuf, int auOutBufSize, int* apOutBufLen)
+{
+	int ret = -1;
+	*apOutBufLen = 0;
 
+	zip_t *za;
+	zip_source_t *zs;
+	zip_stat_t zst;
+	struct stat st;
+	zip_source_t *src;
+	zip_error_t error;
+	int err;
+
+
+	do
+	{
+		src = zip_source_buffer_create(NULL, 0, 0, &error);
+		if (src == NULL) {
+			err = zip_error_code_zip(&error);
+			errno = zip_error_code_system(&error);
+			fprintf(stderr, "zip_source_buffer_create faild: %d\n", err);
+			break;
+		}
+
+		za = zip_open_from_source(src, 1, &error);
+		if (za == NULL) {
+			err = zip_error_code_zip(&error);
+			errno = zip_error_code_system(&error);
+			fprintf(stderr, "zip_open_from_source faild: %d\n", err);
+			break;
+		}
+
+		zip_source_keep(src);
+
+		if ((zs = zip_source_buffer(za, apData, auDataSize, 0)) == NULL) {
+			fprintf(stderr, "can't create zip_source from buffer: %s\n", zip_strerror(za));
+			break;
+		}
+
+		if (zip_add(za, archive, zs) == -1) {
+			fprintf(stderr, "can't add file '%s': %s\n", archive, zip_strerror(za));
+			break;
+		}
+
+		if (zip_close(za) == -1) {
+			fprintf(stderr, "can't close zip archive '%s': %s\n", archive, zip_strerror(za));
+			break;
+		}
+
+		za = NULL;
+
+		if (zip_source_stat(src, &zst) < 0) {
+			fprintf(stderr, "zip_source_stat on buffer failed: %s\n", zip_error_strerror(zip_source_error(src)));
+			break;
+		}
+
+		if (zst.size <= 0) {
+			printf(" size error 000\n");
+			break;
+		}
+
+		if (zst.size >= auOutBufSize) {
+			printf(" size error 111\n");
+			break;
+		}
+
+		if (zip_source_open(src) < 0) {
+			if (zip_error_code_zip(zip_source_error(src)) == ZIP_ER_DELETED) {
+				if (unlink(archive) < 0 && errno != ENOENT) {
+					fprintf(stderr, "unlink failed: %s\n", strerror(errno));
+					break;
+				}
+				break;
+			}
+			fprintf(stderr, "zip_source_open on buffer failed: %s\n", zip_error_strerror(zip_source_error(src)));
+			break;
+		}
+
+
+		if (zip_source_read(src, apOutBuf, zst.size) < (zip_int64_t)zst.size) {
+			fprintf(stderr, "zip_source_read on buffer failed: %s\n", zip_error_strerror(zip_source_error(src)));
+			zip_source_close(src);
+			break;
+		}
+
+		zip_source_close(src);
+		*apOutBufLen = (int)(zst.size);
+		ret = 0;
+
+		//saveZip(apOutBuf,*apOutBufLen );
+
+	} while (0);
+
+	if (NULL != src)
+	{
+		zip_source_free(src);
+		src = NULL;
+	}
+
+	if (NULL != za)
+	{
+		zip_close(za);
+		za = NULL;
+	}
+
+
+	return ret;
+}
+
+
+static int uncompressString(const char* apData, int auDataSize, char* apOutBuf, int auOutBufSize, int* apOutBufLen)
+{
+	int ret = -1;
+
+	*apOutBufLen = 0;
+	zip_error_t error;
+	int err = 0;
+	char* buf = apOutBuf;
+	int   totalSize = 0;
+	zip_int64_t n = 0;
+	zip_source_t *src = NULL;
+	zip_t *za = NULL;
+	struct zip_file *f = NULL;
+
+
+	do
+	{
+		zip_error_init(&error);
+
+		/* create source from buffer */
+		if ((src = zip_source_buffer_create(apData, auDataSize, 1, &error)) == NULL) {
+			fprintf(stderr, "can't create source: %s\n", zip_error_strerror(&error));
+			zip_error_fini(&error);
+			break;
+		}
+
+		/* open zip archive from source */
+		if ((za = zip_open_from_source(src, 0, &error)) == NULL) {
+			fprintf(stderr, "can't open zip from source: %s\n", zip_error_strerror(&error));
+			zip_error_fini(&error);
+			break;
+		}
+
+
+		zip_error_fini(&error);
+		zip_source_keep(src);
+
+		zip_int64_t  c = zip_get_num_entries(za, ZIP_FL_UNCHANGED);
+		if (c != 1)
+		{
+			printf("zip_get_num_entries 0 \n");
+			break;
+		}
+
+		const char * name = zip_get_name(za, 0, ZIP_FL_ENC_GUESS);
+		if (NULL == name)
+		{
+			printf("zip_get_name 0 \n");
+			break;
+		}
+
+		f = zip_fopen(za, name, 0);
+		if (NULL == f)
+		{
+			printf("zip_fopen 0 \n");
+			break;
+		}
+
+		if (auOutBufSize < 4096)
+		{
+			printf("auOutBufSize < 4096 \n");
+			break;
+		}
+
+		totalSize = 0;
+		while (totalSize < auOutBufSize)
+		{
+			buf = apOutBuf + totalSize;
+			n = zip_fread(f, buf, 4096);
+			if (n <= 0)
+			{
+				break;
+			}
+
+			totalSize += n;
+		}
+
+		if (totalSize >= auOutBufSize)
+		{
+			printf("totalSize too big \n");
+			break;
+		}
+
+		*apOutBufLen = totalSize;
+		ret = 0;
+
+	} while (0);
+
+
+	if (NULL != f)
+	{
+		zip_fclose(f);
+		f = NULL;
+	}
+
+	if (NULL != za)
+	{
+		//lt-in-memory: free(): invalid pointer: 0x00007fff9c75c6d0 ***
+		//zip_close(za);
+		za = NULL;
+	}
+
+	if (NULL != src)
+	{
+		zip_source_free(src);
+		src = NULL;
+	}
+
+	return ret;
+}
+
+#else
 
 // Remarks:
 //		Format the windows error message

@@ -79,6 +79,7 @@ namespace Sloong
 			std::wstring		m_szFileName;
 			int		m_nLastDate;
 			int		m_emType;
+			bool		m_bOpenFileFirst;
 			bool		m_bIsCoverPrev;
 			bool		g_hRes;
 			bool		m_bInit;

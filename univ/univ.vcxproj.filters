@@ -48,6 +48,9 @@
     <ClInclude Include="luapacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

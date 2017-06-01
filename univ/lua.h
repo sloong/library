@@ -57,6 +57,7 @@ namespace Sloong
 			bool	RunFunction(std::string strFunctionName, std::string args);
             bool    RunFunction(string strFunctionName,CLuaPacket* pUserInfo, CLuaPacket* pRequest, CLuaPacket* pResponse );
 			int     RunFunction(string strFunctionName, CLuaPacket* pUserInfo, string& strRequest, string& strResponse);
+			void    RunFunction(string strFunctionName, CLuaPacket* pUserInfo);
 			std::string	GetErrorString();
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);
@@ -85,6 +86,7 @@ namespace Sloong
 			static void	PushString(lua_State* l, std::string strString);
 			static void	PushNumber(lua_State* l, double dValue);
 			static void PushInteger(lua_State*l, int nValue);
+			static map<string, string> GetTableParam(lua_State*l, int index);
 		protected:
 			string findScript(std::string strFullName);
 

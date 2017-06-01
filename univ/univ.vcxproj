@@ -150,6 +150,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="defines.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="luapacket.h" />
     <ClInclude Include="resource.h" />

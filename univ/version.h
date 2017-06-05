@@ -3,8 +3,8 @@
 
 
 // Version
-#define VERSION_NUMBER						2,2,6,168
-#define VERSION_FILEVERSION					L"2.2.6.168"
+#define VERSION_NUMBER						2,2,6,169
+#define VERSION_FILEVERSION					L"2.2.6.169"
 #define VERSION_BUILDTIME					L"2016/07/27"
 
 #ifdef _DEBUG
@@ -18,7 +18,7 @@
 #endif // _DEBUG
 #define VERSION_INTERNALNAME				L"Universal.dll")
 #define VERSION_COMPANYNAME 				L"Sloong, Inc.")
-#define	VERSION_LEGALCOPYRIGHT				L"Copyright (C) 2014-2016 Sloong, Inc."
+#define	VERSION_LEGALCOPYRIGHT				L"Copyright (C) 2014-2017 Sloong, Inc."
 
 
 #endif // !VERSION_H

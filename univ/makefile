@@ -148,6 +148,10 @@ Debug: $(PROGRAM)
 
 Release: $(PROGRAM)
 
+debug: $(PROGRAM)
+
+release: $(PROGRAM)
+
 # Rules for creating dependency files (.d).
 #------------------------------------------
 
@@ -237,7 +241,7 @@ endif
 endif
 
 clean:
-	$(RM) $(OBJS) $(PROGRAM) $(PROGRAM).exe
+	$(RM) $(OBJS) $(PROGRAM) $(PROGRAM).so
 
 distclean: clean
 	$(RM) $(DEPS) TAGS

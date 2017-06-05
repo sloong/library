@@ -15,7 +15,7 @@ build(){
 	make clean
 	make $MAKEFLAG
 	cd ..
-	rm -rdf OUTPATH
+	rm -rdf $OUTPATH
 	mkdir -p $OUTPATH
 	cp -f $TARGPATH/libuniv.so $OUTPATH/libuniv.so
 	mkdir -p $OUTPATH/include/univ/

@@ -17,11 +17,11 @@ build(){
 	cd ..
 	rm -rdf OUTPATH
 	mkdir -p $OUTPATH
-	cp $TARGPATH/libuniv.so $OUTPATH/libuniv.so
+	cp -f $TARGPATH/libuniv.so $OUTPATH/libuniv.so
 	mkdir -p $OUTPATH/include/univ/
 	cp -f $TARGPATH/*.h $OUTPATH/include/univ/
 	cp -f $TARGPATH/sloong.conf $OUTPATH/sloong.conf
-	cp install.sh $OUTPATH/install.sh
+	cp -f install.sh $OUTPATH/install.sh
 }
 
 build_debug(){

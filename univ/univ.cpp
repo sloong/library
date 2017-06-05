@@ -14,7 +14,7 @@
 #include <openssl/md5.h>
 #include <stdarg.h>  
 #include <sys/stat.h>  
-#include <libzip.h>
+//#include <libzip.h>
 #define ACCESS access  
 #define MKDIR(a) mkdir((a),0755)  
 #else
@@ -196,7 +196,7 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 	memcpy(pszDir, filePath.c_str(), iLen);
 	string strDir;
 	int iRet;
-	// ´´½¨ÖÐ¼äÄ¿Â¼  
+	// åˆ›å»ºä¸­é—´ç›®å½•  
 	for (int i = 1; i < iLen; i++)
 	{
 		if (pszDir[i] == '\\' || pszDir[i] == '/')
@@ -204,7 +204,7 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 			pszDir[i] = '\0';
 			strDir = pszDir;
 
-			//Èç¹û²»´æÔÚ,´´½¨  
+			//å¦‚æžœä¸å­˜åœ¨,åˆ›å»º  
 			iRet = ACCESS(pszDir, 0);
 			if (iRet != 0)
 			{
@@ -214,7 +214,7 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 					return pszDir;
 				}
 			}
-			//Ö§³Ölinux,½«ËùÓÐ\»»³É/  
+			//æ”¯æŒlinux,å°†æ‰€æœ‰\æ¢æˆ/  
 			pszDir[i] = '/';
 		}
 	}
@@ -299,7 +299,7 @@ typedef void (CALLBACK* MD5Final_Tpye)(MD5_CTX* context);
 #endif // _WINDOWS
 
 
-string Sloong::Universal::CUniversal::MD5_Binary_Encoding(string str, char* md, bool bFile /*= false*/ )
+string Sloong::Universal::CUniversal::MD5_Binary_Encoding(string str, unsigned char* md, bool bFile /*= false*/ )
 {
 #ifdef _WINDOWS
     // use the windows api
@@ -399,7 +399,7 @@ std::string Sloong::Universal::CUniversal::Replace(const string& str, const stri
 
 
 #ifndef _WINDOWS
-
+/*
 static int compressString(const char* apData, int auDataSize, char* apOutBuf, int auOutBufSize, int* apOutBufLen)
 {
 	int ret = -1;
@@ -529,14 +529,14 @@ static int uncompressString(const char* apData, int auDataSize, char* apOutBuf, 
 	{
 		zip_error_init(&error);
 
-		/* create source from buffer */
+		// create source from buffer 
 		if ((src = zip_source_buffer_create(apData, auDataSize, 1, &error)) == NULL) {
 			fprintf(stderr, "can't create source: %s\n", zip_error_strerror(&error));
 			zip_error_fini(&error);
 			break;
 		}
 
-		/* open zip archive from source */
+		// open zip archive from source 
 		if ((za = zip_open_from_source(src, 0, &error)) == NULL) {
 			fprintf(stderr, "can't open zip from source: %s\n", zip_error_strerror(&error));
 			zip_error_fini(&error);
@@ -620,7 +620,7 @@ static int uncompressString(const char* apData, int auDataSize, char* apOutBuf, 
 
 	return ret;
 }
-
+*/
 #else
 
 // Remarks:
@@ -1295,3 +1295,4 @@ inline CRect CRect::MulDiv(
 }
 
 #endif // _WINDOWS
+

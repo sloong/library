@@ -123,7 +123,7 @@ namespace Sloong
             }
 
             static string MD5_Encoding(string str, bool bFile = false);
-			static void MD5_Binary_Encoding(string str, unsigned char* md, bool bFile = false);
+			static string MD5_Binary_Encoding(string str, unsigned char* md, bool bFile = false);
 
             static string Base64_Encoding(string str);
 			static string Base64_Encoding(const unsigned char *str, int length);

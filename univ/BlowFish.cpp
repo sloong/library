@@ -5,9 +5,9 @@
 //
 //    Implementation of Bruce Schneier's BLOWFISH algorithm from "Applied 
 //    Cryptography", Second Edition.
-#include "StdAfx.h"
+#include "stdafx.h"
 #include <cstring>
-#include <exception>
+#include "exception.h"
 #include "Blowfish.h"
 
 using namespace Sloong::Universal;
@@ -299,7 +299,7 @@ unsigned int CBlowFish::FTrans(unsigned int ui)
 CBlowFish::CBlowFish(unsigned char* ucKey, size_t keysize, const SBlock& roChain) : m_oChain0(roChain), m_oChain(roChain)
 {
 	if(keysize<1)
-		throw exception("Incorrect key length");
+		throw normal_except("Incorrect key length");
 	//Check the Key - the key length should be between 1 and 56 bytes
 	if(keysize>56)
 		keysize = 56;
@@ -441,7 +441,7 @@ void CBlowFish::Encrypt(unsigned char* buf, size_t n, int iMode)
 {
 	//Check the buffer's length - should be > 0 and multiple of 8
 	if((n==0)||(n%8!=0))
-		throw exception("Incorrect buffer length");
+		throw normal_except("Incorrect buffer length");
 	SBlock work;
 	if(iMode == CBC) //CBC mode, using the Chain
 	{
@@ -484,7 +484,7 @@ void CBlowFish::Decrypt(unsigned char* buf, size_t n, int iMode)
 {
 	//Check the buffer's length - should be > 0 and multiple of 8
 	if((n==0)||(n%8!=0))
-		throw exception("Incorrect buffer length");
+		throw normal_except("Incorrect buffer length");
 	SBlock work;
 	if(iMode == CBC) //CBC mode, using the Chain
 	{
@@ -562,7 +562,7 @@ void CBlowFish::Encrypt(const unsigned char* in, unsigned char* out, size_t k, i
 
 	len = n;
 	if((n==0)||(n%8!=0))
-		throw exception("Incorrect buffer length");
+		throw normal_except("Incorrect buffer length");
 	SBlock work;
 	if(iMode == CBC) //CBC mode, using the Chain
 	{
@@ -635,7 +635,7 @@ void CBlowFish::Decrypt(const unsigned char* in, unsigned char* out, size_t k, i
 	n = len/2;
 	//Check the buffer's length - should be > 0 and multiple of 8
 	if((n==0)||(n%8!=0))
-		throw exception("Incorrect buffer length");
+		throw normal_except("Incorrect buffer length");
 	SBlock work;
 	if(iMode == CBC) //CBC mode, using the Chain
 	{

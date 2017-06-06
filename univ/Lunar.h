@@ -1,11 +1,7 @@
 #ifndef LUNAR_H
 #define LUNAR_H
 
-extern "C" {
-#include "../lua/src/lua.h"
-#include "../lua/src/lualib.h"
-#include "../lua/src/lauxlib.h"
-}
+#include "lua.hpp"
 
 template <typename T> class Lunar
 {

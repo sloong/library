@@ -160,6 +160,7 @@ copy $(ProjectDir)openssl\lib32\libeay32.dll $(Outdir)</Command>
     <ClInclude Include="DES.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="luapacket.h" />
+    <ClInclude Include="Lunar.h" />
     <ClInclude Include="MD5.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="log.h" />

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "Lunar.h"
 #include "luapacket.h"
 #include <sstream>
@@ -7,6 +8,7 @@
 #include <iostream>
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
+
 
 extern "C" {
 #include "lua.h"

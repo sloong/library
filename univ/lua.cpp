@@ -12,7 +12,6 @@ using namespace Sloong::Universal;
 typedef int(*LuaFunc)(lua_State* pLuaState);
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
-
 #include "Lunar.h"
 
 extern "C" {
@@ -20,6 +19,7 @@ extern "C" {
 #include "lualib.h"
 #include "lauxlib.h"
 }
+
 
 Lunar<CLuaPacket>::RegType g_methods[] =
 {

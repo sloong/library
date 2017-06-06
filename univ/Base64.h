@@ -13,6 +13,7 @@ namespace Sloong
 
 			static string Encoding(const unsigned char* str, int len);
 			static string Decoding(string str);
+			static string deciToBin_6bit(int deci);
 			static int Binary_Decoding(string strBase64, unsigned char * outBuf);
 		};
 

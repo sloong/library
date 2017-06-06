@@ -6,7 +6,8 @@ show_help(){
 }
 
 # default value is release
-OUTPATH=output/release
+VERSION_STR=$(cat version)
+OUTPATH=libuniv_release/$VERSION_STR
 TARGPATH=univ
 MAKEFLAG=release
 
@@ -25,7 +26,7 @@ build(){
 }
 
 build_debug(){
-	OUTPATH=output/debug
+	OUTPATH=libuniv_debug/$VERSION_STR
 	MAKEFLAG=debug
 	build
 }

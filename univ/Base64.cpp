@@ -85,7 +85,7 @@ string CBase64::Encoding(const unsigned char *str, int length)
 }
 
 
-string deciToBin_6bit(int deci)                                //10进制转2进制函数
+string CBase64::deciToBin_6bit(int deci)                                //10进制转2进制函数
 {
 
 	string hexStr(6, ' ');
@@ -115,7 +115,6 @@ string CBase64::Decoding(string str)
 	string value("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 	string out0;
 	string out1;
-	string deciToBin_6bit(int);
 
 	for (auto x = str.cbegin(); (*x) != '=' && x != str.cend(); ++x)    //排除等号
 		out0 += deciToBin_6bit(value.find(*x));

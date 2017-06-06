@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "MD5.h"
 #include <assert.h>
+#ifdef _WINDOWS
 #include <Wincrypt.h>
 #include <direct.h> 
+#else
+#include <openssl/md5.h>
+#endif
 #include "exception.h"
 
 using namespace Sloong::Universal;
@@ -89,7 +93,7 @@ string CMD5::Encoding(string str, bool bFile /*= false*/)
 	char *p = dest;
 	for (int i = 0; i < 16; ++i)
 	{
-		sprintf_s(p, 3, "%02x", md5[i]);
+		sprintf(p,  "%02x", md5[i]);
 		p += 2;
 	}
 

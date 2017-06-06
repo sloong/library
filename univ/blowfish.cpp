@@ -8,7 +8,7 @@
 #include "stdafx.h"
 #include <cstring>
 #include "exception.h"
-#include "Blowfish.h"
+#include "blowfish.h"
 
 using namespace Sloong::Universal;
 
@@ -759,7 +759,8 @@ int CBlowFish::CompressBlowfish(const char * strsrc, char* szDestStr, string* lo
 		if (log != NULL && nLenAyersData == 0)
 		{
 			char s[9] = { 0 };
-			itoa(lRes, s, 16);
+			//itoa(lRes, s, 16);
+			sprintf(s, "%d", lRes);
 			*log = string("Des:") + szBuf + string(".Res:") + s;
 		}
 		szBuf[0] = 0;
@@ -785,7 +786,7 @@ int CBlowFish::UncompressBlowfish(const char * strsrc, char szDestStr[], int nSi
 	{
 		char ch = *pStr;
 
-		sprintf_s(szBuf, 3, "%02X", (unsigned char)ch);
+		sprintf(szBuf, "%02X", (unsigned char)ch);
 
 		szDestStr[i] = szBuf[0];
 		szDestStr[i + 1] = szBuf[1];

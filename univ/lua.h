@@ -9,9 +9,6 @@ using std::mutex;
 
 #include "univ.h"
 #include "luapacket.h"
-#ifdef _WINDOWS
-#pragma comment(lib,"lua.5.3.1.lib")
-#endif
 
 struct lua_State;
 namespace Sloong
@@ -75,8 +72,6 @@ namespace Sloong
 			lua_State*	GetScriptContext();
 			map<string, string> GetTableParam(int index);
 			LuaType	CheckType(int index);
-			double  StringToNumber(std::string string);
-			int		StringToInteger(std::string value);
 			void	SetScriptFolder(string folder);
 
 		public:

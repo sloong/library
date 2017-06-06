@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -27,26 +27,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -68,13 +68,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(OutDir);$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)..\;$(BOOST_DIR);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)openssl\lib;$(OutDir);$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)openssl\;$(ProjectDir)..\;$(BOOST_DIR);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(OutDir);$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)..\;$(BOOST_DIR);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)lua\lib;$(ProjectDir)openssl\lib32;$(OutDir);$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)lua\include;$(ProjectDir)openssl\;$(ProjectDir)..\;$(BOOST_DIR);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -111,6 +111,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)lua\lib\lua52.dll $(Outdir)
+copy $(ProjectDir)openssl\lib32\libeay32.dll $(Outdir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -150,9 +154,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Base64.h" />
+    <ClInclude Include="BlowFish.h" />
     <ClInclude Include="defines.h" />
+    <ClInclude Include="DES.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="luapacket.h" />
+    <ClInclude Include="MD5.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="lua.h" />
@@ -163,6 +171,9 @@
     <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Base64.cpp" />
+    <ClCompile Include="BlowFish.cpp" />
+    <ClCompile Include="DES.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -181,6 +192,7 @@
     <ClCompile Include="log.cpp" />
     <ClCompile Include="lua.cpp" />
     <ClCompile Include="luapacket.cpp" />
+    <ClCompile Include="MD5.cpp" />
     <ClCompile Include="threadpool.cpp" />
     <ClCompile Include="univ.cpp" />
     <ClCompile Include="stdafx.cpp">

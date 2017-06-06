@@ -7,6 +7,8 @@
 
 #include "targetver.h"
 
+#include <string>
+using namespace std;
 #ifdef _WINDOWS
 	#define WIN32_LEAN_AND_MEAN             // 从 Windows 头中排除极少使用的资料
 	// Windows 头文件: 
@@ -18,6 +20,8 @@
 	#include <fstream>
 	#include <windows.h>
 	#include <winerror.h>
+	#pragma comment(lib,"libeay32.lib")
+	#pragma comment(lib,"lua52.lib")
 #else
 	#include <stdarg.h>
 	#include <string.h>
@@ -27,3 +31,4 @@
 #endif
 #include "univ.h"
 #endif //STDAFX_H
+

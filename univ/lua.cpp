@@ -12,13 +12,14 @@ using namespace Sloong::Universal;
 typedef int(*LuaFunc)(lua_State* pLuaState);
 
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
-extern "C" {
-#include "../lua/src/lua.h"
-#include "../lua/src/lualib.h"
-#include "../lua/src/lauxlib.h"
- }
 
 #include "Lunar.h"
+
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
 
 Lunar<CLuaPacket>::RegType g_methods[] =
 {
@@ -283,12 +284,6 @@ LuaType CLua::CheckType(int index)
 	return (LuaType)nType;
 }
 
-double CLua::StringToNumber(std::string string)
-{
-	lua_stringtonumber(m_pScriptContext, string.c_str());
-	
-	return lua_tonumber(m_pScriptContext, -1);
-}
 
 lua_State* CLua::GetScriptContext()
 {
@@ -468,8 +463,3 @@ void Sloong::Universal::CLua::PushInteger(int nValue)
 	PushInteger(m_pScriptContext, nValue);
 }
 
-int Sloong::Universal::CLua::StringToInteger(std::string value)
-{
-	lua_stringtonumber(m_pScriptContext, value.c_str());
-	return lua_tointeger(m_pScriptContext, -1);
-}

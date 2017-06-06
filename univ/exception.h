@@ -9,7 +9,7 @@ namespace Sloong
 	namespace Universal
 	{
 
-		class UNIVERSAL_API normal_except : exception
+		class UNIVERSAL_API normal_except
 		{
 		public:
             normal_except(){}
@@ -34,7 +34,7 @@ namespace Sloong
 			std::string m_strMessage;
 		};
 
-		class UNIVERSAL_API wnormal_except : exception
+		class UNIVERSAL_API wnormal_except
 		{
 		public:
 			wnormal_except() {}

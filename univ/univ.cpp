@@ -21,7 +21,13 @@
 #include <io.h>  
 #define ACCESS _access  
 #define MKDIR(a) _mkdir((a))  
+#define F_OK	0
+#define W_OK	2
+#define R_OK	4
+#define X_OK	6
 #endif // !_WINDOWS
+
+
 
 using namespace std;
 using namespace Sloong::Universal;
@@ -174,7 +180,6 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 	memset(pszDir, 0, iLen + 1);
 	memcpy(pszDir, filePath.c_str(), iLen);
 	string strDir;
-	int iRet;
 	// 创建中间目录  
 	for (int i = 1; i < iLen; i++)
 	{
@@ -184,22 +189,67 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 			strDir = pszDir;
 
 			//如果不存在,创建  
-			iRet = ACCESS(pszDir, 0);
-			if (iRet != 0)
+			if (0 != ACCESS(pszDir, F_OK))
 			{
-				iRet = MKDIR(pszDir);
-				if (iRet != 0)
+				if (0 != MKDIR(pszDir))
 				{
-					return pszDir;
+					return "";
 				}
 			}
+
 			//支持linux,将所有\换成/  
 			pszDir[i] = '/';
 		}
 	}
 
+	// 没有写权限
+	if ( 0 != ACCESS(pszDir,W_OK))
+	{
+		return "";
+	}
+
 	SAFE_DELETE_ARR(pszDir);
 	return strDir;
+}
+
+
+
+
+/************************************************************************/
+/* Move File Function for Windows and Linux
+Returns:
+	if move failed, return 0. else return other value. 
+Remarks:
+	work in linux: 
+		1> check org file exist and read access.
+		2> check new file foder exist and write access.
+		3> run 'mv' system cmd and check result. */
+/************************************************************************/
+int Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lpNewFileName)
+{
+#ifdef _WINDOWS
+	return MoveFile(lpExistingFileName, lpNewFileName);
+#else
+	if (lpExistingFileName == NULL || lpNewFileName == NULL)
+	{
+		return 0;
+	}
+
+	// check org file exist.
+	if (0 == ACCESS(lpExistingFileName.c_str(), R_OK))
+	{
+		string strDir = CheckFileDirectory(lpNewFileName);
+		if (strDir == "")
+		{
+			// 检查目标路径失败
+			return 0;
+		}
+
+		if (RunSystemCmd(CUniversal::Format("mv %s %s", lpExistingFileName.c_str(), lpNewFileName.c_str())))
+			return 1;
+	}
+	return 0;
+#endif
 }
 
 string Sloong::Universal::CUniversal::toansi(const wstring& str)
@@ -229,6 +279,44 @@ wstring Sloong::Universal::CUniversal::toutf(const string& str)
 	return strResult;
 }
 
+/************************************************************************/
+/*			Run System Cmd Function
+Returns:
+	return true if run succeed. else return false.						*/
+/************************************************************************/
+bool Sloong::Universal::CUniversal::RunSystemCmd(string cmd)
+{
+#ifdef _WINDOWS
+	return system(cmd.c_str()) == 0;
+#else
+	int res = system(cmd.c_str());
+	if (-1 == res)
+	{
+		printf("system error!");
+	}
+	else
+	{
+		printf("exit status value = [0x%x]\n", res);
+		if (WIFEXITED(res))
+		{
+			if (0 == WEXITSTATUS(res))
+			{
+				printf("run shell script successfully.\n");
+				return true;
+			}
+			else
+			{
+				printf("run shell script fail, script exit code: %d\n", WEXITSTATUS(res));
+			}
+		}
+		else
+		{
+			printf("exit status = [%d]\n", WEXITSTATUS(res));
+		}
+	}
+	return false;
+#endif
+}
 
 std::string Sloong::Universal::CUniversal::Replace(const string& str, const string& src, const string& dest)
 {

@@ -39,6 +39,7 @@ namespace Sloong
 			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
 			static string CheckFileDirectory(string filepath);
+			static int MoveFile(string lpExistingFileName, string lpNewFileName);
 			static int splitString(const string& str, vector<string>& res, string sep = ",");
 			static string trim(const string& str);
 			static wstring trim(const wstring& str);
@@ -46,6 +47,7 @@ namespace Sloong
 			static wstring replace(const wstring& str, const wstring& src, const wstring& dest);
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
+			static bool RunSystemCmd(string cmd);
 
             template<typename T>
             static string ntos(T n)

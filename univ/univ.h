@@ -57,7 +57,6 @@ namespace Sloong
                 return ss.str();
             }
 
-#pragma region Boost Format
             // packaging the boost::format;
             template<class TFirst>
             static void Format(boost::format& fmt, TFirst&& first) {  fmt % first; }
@@ -112,8 +111,6 @@ namespace Sloong
 				return fmt.str();
 			}
 
-#pragma endregion
-
             static void tolower(string& str)
             {
                 transform(str.begin(), str.end(), str.begin(), ::tolower);
@@ -129,7 +126,6 @@ namespace Sloong
 		};
 
 #ifdef _WINDOWS
-#pragma region Windows Define
 		class CSize;
 		class CPoint;
 		class CRect;
@@ -398,11 +394,7 @@ namespace Sloong
 				int nMultiplier,
 				int nDivisor) const throw();
 		};
-#pragma endregion
 #endif // !_WINDOWS
-
-
-
 	}
 }
 

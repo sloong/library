@@ -230,7 +230,7 @@ int Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lp
 #ifdef _WINDOWS
 	return MoveFile(lpExistingFileName, lpNewFileName);
 #else
-	if (lpExistingFileName == NULL || lpNewFileName == NULL)
+	if (lpExistingFileName == "" || lpNewFileName == "")
 	{
 		return 0;
 	}

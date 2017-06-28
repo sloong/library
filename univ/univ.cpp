@@ -65,17 +65,17 @@ void CUniversal::CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom)
 
 string CUniversal::trim(const string& str)
 {
-    string::size_type pos = str.find_first_not_of(' ');
-    if (pos == string::npos)
-    {
-        return str;
-    }
-    string::size_type pos2 = str.find_last_not_of(' ');
-    if (pos2 != string::npos)
-    {
-        return str.substr(pos, pos2 - pos + 1);
-    }
-    return str.substr(pos);
+	string::size_type pos = str.find_first_not_of(' ');
+	if (pos == string::npos)
+	{
+		return str;
+	}
+	string::size_type pos2 = str.find_last_not_of(' ');
+	if (pos2 != string::npos)
+	{
+		return str.substr(pos, pos2 - pos + 1);
+	}
+	return str.substr(pos);
 }
 
 wstring CUniversal::trim(const wstring& str)
@@ -95,56 +95,56 @@ wstring CUniversal::trim(const wstring& str)
 
 int CUniversal::splitString(const string& str, vector<string>& ret_, string sep /* = "," */)
 {
-    if (str.empty())
-    {
-        return 0;
-    }
+	if (str.empty())
+	{
+		return 0;
+	}
 
-    string tmp;
-    string::size_type pos_begin = str.find_first_not_of(sep);
-    string::size_type comma_pos = 0;
+	string tmp;
+	string::size_type pos_begin = str.find_first_not_of(sep);
+	string::size_type comma_pos = 0;
 
-    while (pos_begin != string::npos)
-    {
-        comma_pos = str.find(sep, pos_begin);
-        if (comma_pos != string::npos)
-        {
-            tmp = str.substr(pos_begin, comma_pos - pos_begin);
-            pos_begin = comma_pos + sep.length();
-        }
-        else
-        {
-            tmp = str.substr(pos_begin);
-            pos_begin = comma_pos;
-        }
+	while (pos_begin != string::npos)
+	{
+		comma_pos = str.find(sep, pos_begin);
+		if (comma_pos != string::npos)
+		{
+			tmp = str.substr(pos_begin, comma_pos - pos_begin);
+			pos_begin = comma_pos + sep.length();
+		}
+		else
+		{
+			tmp = str.substr(pos_begin);
+			pos_begin = comma_pos;
+		}
 
-        if (!tmp.empty())
-        {
-            ret_.push_back(tmp);
-            tmp.clear();
-        }
-    }
-    return 0;
+		if (!tmp.empty())
+		{
+			ret_.push_back(tmp);
+			tmp.clear();
+		}
+	}
+	return 0;
 }
 
 string CUniversal::replace(const string& str, const string& src, const string& dest)
 {
-    string ret;
+	string ret;
 
-    string::size_type pos_begin = 0;
-    string::size_type pos       = str.find(src);
-    while (pos != string::npos)
-    {
-        ret.append(str.data() + pos_begin, pos - pos_begin);
-        ret += dest;
-        pos_begin = pos + 1;
-        pos       = str.find(src, pos_begin);
-    }
-    if (pos_begin < str.length())
-    {
-        ret.append(str.begin() + pos_begin, str.end());
-    }
-    return ret;
+	string::size_type pos_begin = 0;
+	string::size_type pos = str.find(src);
+	while (pos != string::npos)
+	{
+		ret.append(str.data() + pos_begin, pos - pos_begin);
+		ret += dest;
+		pos_begin = pos + 1;
+		pos = str.find(src, pos_begin);
+	}
+	if (pos_begin < str.length())
+	{
+		ret.append(str.begin() + pos_begin, str.end());
+	}
+	return ret;
 }
 
 
@@ -203,7 +203,7 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 	}
 
 	// 没有写权限
-	if ( 0 != ACCESS(pszDir,W_OK))
+	if (0 != ACCESS(pszDir, W_OK))
 	{
 		return "";
 	}
@@ -218,17 +218,17 @@ std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 /************************************************************************/
 /* Move File Function for Windows and Linux
 Returns:
-	if move failed, return 0. else return other value. 
+	if move failed, return 0. else return other value.
 Remarks:
-	work in linux: 
+	work in linux:
 		1> check org file exist and read access.
 		2> check new file foder exist and write access.
 		3> run 'mv' system cmd and check result. */
-/************************************************************************/
+		/************************************************************************/
 int Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lpNewFileName)
 {
 #ifdef _WINDOWS
-	return MoveFile(lpExistingFileName, lpNewFileName);
+	return ::MoveFileA(lpExistingFileName.c_str(), lpNewFileName.c_str());
 #else
 	if (lpExistingFileName == "" || lpNewFileName == "")
 	{
@@ -241,7 +241,7 @@ int Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lp
 		string strDir = CheckFileDirectory(lpNewFileName);
 		if (strDir == "")
 		{
-			// 检查目标路径失败
+			// 妫€鏌ョ洰鏍囪矾寰勫け璐�
 			return 0;
 		}
 
@@ -273,7 +273,7 @@ wstring Sloong::Universal::CUniversal::toutf(const string& str)
 	int nLen = (int)str.size();
 	LPWSTR strWide = new WCHAR[nLen + 1];
 	memset(strWide, 0, sizeof(TCHAR)*(nLen + 1));
-	mbstowcs(strWide,str.c_str(),nLen);
+	mbstowcs(strWide, str.c_str(), nLen);
 	strResult = strWide;
 	delete[] strWide;
 	return strResult;
@@ -283,7 +283,7 @@ wstring Sloong::Universal::CUniversal::toutf(const string& str)
 /*			Run System Cmd Function
 Returns:
 	return true if run succeed. else return false.						*/
-/************************************************************************/
+	/************************************************************************/
 bool Sloong::Universal::CUniversal::RunSystemCmd(string cmd)
 {
 #ifdef _WINDOWS
@@ -321,11 +321,11 @@ bool Sloong::Universal::CUniversal::RunSystemCmd(string cmd)
 std::string Sloong::Universal::CUniversal::Replace(const string& str, const string& src, const string& dest)
 {
 	string res = str;
-	for (string::size_type pos(0); pos != string::npos; pos += dest.length())   
+	for (string::size_type pos(0); pos != string::npos; pos += dest.length())
 	{
 		if ((pos = str.find(src, pos)) != string::npos)
 			res.replace(pos, src.length(), dest);
-		else   
+		else
 			break;
 	}
 	return  res;
@@ -463,14 +463,14 @@ static int uncompressString(const char* apData, int auDataSize, char* apOutBuf, 
 	{
 		zip_error_init(&error);
 
-		// create source from buffer 
+		// create source from buffer
 		if ((src = zip_source_buffer_create(apData, auDataSize, 1, &error)) == NULL) {
 			fprintf(stderr, "can't create source: %s\n", zip_error_strerror(&error));
 			zip_error_fini(&error);
 			break;
 		}
 
-		// open zip archive from source 
+		// open zip archive from source
 		if ((za = zip_open_from_source(src, 0, &error)) == NULL) {
 			fprintf(stderr, "can't open zip from source: %s\n", zip_error_strerror(&error));
 			zip_error_fini(&error);
@@ -559,7 +559,7 @@ static int uncompressString(const char* apData, int auDataSize, char* apOutBuf, 
 
 // Remarks:
 //		Format the windows error message
-wstring CUniversal::FormatWindowsErrorMessage( DWORD dwErrCode)
+wstring CUniversal::FormatWindowsErrorMessage(DWORD dwErrCode)
 {
 	wstring strError;
 	TCHAR szErr[1024] = { 0 };

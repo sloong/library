@@ -320,7 +320,6 @@ CBlowFish::CBlowFish(unsigned char* ucKey, size_t keysize, const SBlock& roChain
 		x=0;
 		for(int n=4; n--; )
 		{
-			int iVal = (int)(*p);
 			x <<= 8;
 			x |= *(p++);
 			iCount++;
@@ -760,7 +759,7 @@ int CBlowFish::CompressBlowfish(const char * strsrc, char* szDestStr, string* lo
 		{
 			char s[9] = { 0 };
 			//itoa(lRes, s, 16);
-			sprintf(s, "%d", lRes);
+			sprintf(s, "%ld", lRes);
 			*log = string("Des:") + szBuf + string(".Res:") + s;
 		}
 		szBuf[0] = 0;

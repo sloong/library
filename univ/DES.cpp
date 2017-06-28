@@ -76,8 +76,8 @@ int CDES::Encrypt(const char* datain, unsigned char* dataout, const unsigned cha
 			memset(in, 0, 8);
 			memset(out, 0, 8);
 			memcpy(tmp, src + 8 * i, 8);
-			//# define DES_ecb2_encrypt(i,o,k1,k2,e) \
-																		//DES_ecb3_encrypt((i),(o),(k1),(k2),(k1),(e))
+			//# define DES_ecb2_encrypt(i,o,k1,k2,e)
+			//DES_ecb3_encrypt((i),(o),(k1),(k2),(k1),(e))
 			DES_ecb3_encrypt((const_DES_cblock*)tmp, (DES_cblock*)(dst + 8 * i), &ks, &ks2, &ks3, DES_ENCRYPT);
 
 		}

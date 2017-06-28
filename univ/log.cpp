@@ -49,11 +49,7 @@ CLog::~CLog()
 
 void CLog::Log(std::string strErrorText, string strTitle, DWORD dwCode /* = 0 */, bool bFormatSysMsg /* = false */)
 {
-	std::string strLogText;
-
-	CUniversal::Format("[%s]:[%s]", strTitle, strErrorText);
-
-    WriteLine(strLogText);
+    WriteLine(CUniversal::Format("[%s]:[%s]", strTitle, strErrorText));
 		
 	if (bFormatSysMsg)
 	{

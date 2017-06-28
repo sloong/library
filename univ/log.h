@@ -26,11 +26,14 @@ namespace Sloong
 
 		typedef enum _emLogLevel
 		{
-			FATAL,
-			ERR,
-			WARN,
-			INF,
-			All,
+			All = 0,
+			Verbos = 1,
+			Debug = 2,
+			Info = 3,
+			Warn = 4,
+			Error = 5,
+			Assert = 6,
+			Fatal = 7,
 		}LOGLEVEL;
 		
 		class UNIVERSAL_API CLog
@@ -52,8 +55,14 @@ namespace Sloong
 			virtual void SetWorkInterval(int nInterval = 100);
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
-			virtual void Log(std::string strErrorText, LOGLEVEL emLevel = LOGLEVEL::INF, DWORD dwCode = 0 , bool bFormatSysMsg = true, bool bJustFailedWrite = true);
-			virtual void Info(std::string strInfo, std::string strTitle="INFO");
+			virtual void Log(std::string strErrorText, std::string strTitle , DWORD dwCode = 0 , bool bFormatSysMsg = false);
+			virtual void Verbos(std::string strMsg);
+			virtual void Debug(std::string strMsg);
+			virtual void Info(std::string strInfo);
+			virtual void Warn(std::string strMsg);
+			virtual void Error(std::string strMsg);
+			virtual void Assert(std::string strMsg);
+			virtual void Fatal(std::string strMsg);
             virtual void SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
 			virtual void SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
 			virtual bool IsOpen();
@@ -65,10 +74,6 @@ namespace Sloong
 			virtual bool IsInitialize();
 			virtual void Flush();
 		protected:
-			std::string FormatFatalMessage(DWORD dwCode, std::string strErrorText);
-			std::string FormatErrorMessage(DWORD dwCode, std::string strErrorText);
-			std::string FormatWarningMessage(DWORD dwCode, std::string strErrorText);
-			std::string FormatInformationMessage(DWORD dwCode, std::string strErrorText);
 			bool OpenFile();
 			static LPVOID LogSystemWorkLoop(LPVOID param);
 
@@ -81,8 +86,10 @@ namespace Sloong
 			int		m_emType;
 			bool		m_bOpenFileFirst;
 			bool		m_bIsCoverPrev;
-			bool		g_hRes;
 			bool		m_bInit;
+			// Debug mode
+			// if true, the text will write to hard disk in every call.
+			// if false, it just write to the cache. and the system to control to write to disk.
             bool        m_bDebug;
 			int			m_nSleepInterval;
 			condition_variable m_CV;

@@ -45,110 +45,17 @@ CLog::~CLog()
 	m_bInit = false;
 }
 
-std::string CLog::FormatFatalMessage(DWORD dwCode, std::string strErrorText)
-{
-	if (FATAL <= m_emLevel)
-	{
-		if (true == g_hRes)
-		{
-			strErrorText = (boost::format("[SUCCESS];[FATAL %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
-		}
-		else
-		{
-			strErrorText = (boost::format("[FAILED];[FATAL %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
-		}
-		return strErrorText;
-	}
-	else
-	{
-		return "";
-	}
-}
-
-std::string CLog::FormatErrorMessage(DWORD dwCode, std::string strErrorText)
-{
-	if (ERR <= m_emLevel)
-	{
-		if (true == g_hRes)
-		{
-			strErrorText = (boost::format("[SUCCESS];[ERROR %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
-		}
-		else
-		{
-			strErrorText = (boost::format("[FAILED];[ERROR %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
-		}
-		return strErrorText;
-	}
-	else
-	{
-		return "";
-	}
-}
-
-std::string CLog::FormatWarningMessage(DWORD dwCode, std::string strErrorText)
-{
-	if (WARN <= m_emLevel)
-	{
-		if (true == g_hRes)
-		{
-			strErrorText = (boost::format("[SUCCESS];[WARN %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
-		}
-		else
-		{
-			strErrorText = (boost::format("[FAILED];[WARN %05d : %s];[RETURN %d]") % dwCode % strErrorText % g_hRes).str();
-		}
-		return strErrorText;
-	}
-	else
-	{
-		return "";
-	}
-}
-
-std::string CLog::FormatInformationMessage(DWORD dwCode, std::string strErrorText)
-{
-	if (INF <= m_emLevel)
-	{
-        strErrorText = (boost::format("[INF] : [%s]") % strErrorText).str();
-		return strErrorText;
-	}
-	else
-	{
-		return "";
-	}
-}
 
 
-void CLog::Log(std::string strErrorText, LOGLEVEL emLevel /* = INF */, DWORD dwCode /* = 0 */, bool bFormatSysMsg /* = false */, bool bJustFailedWrite /* = true */)
+void CLog::Log(std::string strErrorText, string strTitle, DWORD dwCode /* = 0 */, bool bFormatSysMsg /* = false */)
 {
 	std::string strLogText;
 
-    if (true != g_hRes || dwCode != 0 || false == bJustFailedWrite || INF == emLevel)
-	{
-		switch (emLevel)
-		{
-		case LOGLEVEL::FATAL:
-			strLogText = this->FormatFatalMessage(dwCode, strErrorText);
-			//PostQuitMessage(dwCode);
-			break;
-		case LOGLEVEL::ERR:
-			strLogText = this->FormatErrorMessage(dwCode, strErrorText);
-			break;
-		case LOGLEVEL::WARN:
-			strLogText = this->FormatWarningMessage(dwCode, strErrorText);
-			break;
-		case LOGLEVEL::INF:
-		case LOGLEVEL::All:
-		default:
-			strLogText = this->FormatInformationMessage(dwCode, strErrorText);
-			break;
-		}
-	}
+	CUniversal::Format("[%s]:[%s]", strTitle, strErrorText);
 
     WriteLine(strLogText);
-
-	
-	if (true != g_hRes && true == bFormatSysMsg)
+		
+	if (bFormatSysMsg)
 	{
 		DWORD dwSysCode;
 		string errMsg;
@@ -382,7 +289,6 @@ void CLog::Initialize(wstring szPathName, bool bDebug /*= true */, LOGLEVEL emLe
 {
 	
 	// All value init
-	g_hRes = true;
 	m_bInit = true;
 	m_emLevel = emLevel;
 	m_szFilePath.clear();
@@ -425,10 +331,56 @@ void Sloong::Universal::CLog::Start()
 	WriteLine(g_szStart);
 }
 
-void Sloong::Universal::CLog::Info(std::string strInfo, std::string strTitle /* ="INFO" */)
+void Sloong::Universal::CLog::Info(std::string strMsg)
 {
-	WriteLine(CUniversal::Format("[%s]:[%s]", strTitle.c_str(), strInfo.c_str()));
+	if (m_emLevel > LOGLEVEL::Info)
+		return;
+	Log(strMsg, "Info");
 }
+
+void Sloong::Universal::CLog::Warn(std::string strMsg)
+{
+	if (m_emLevel > LOGLEVEL::Warn)
+		return;
+	Log(strMsg, "Warn");
+}
+
+void Sloong::Universal::CLog::Error(std::string strMsg)
+{
+	if (m_emLevel > LOGLEVEL::Error)
+		return;
+	Log(strMsg, "Error");
+}
+
+void Sloong::Universal::CLog::Assert(std::string strMsg)
+{
+	if (m_emLevel > LOGLEVEL::Assert)
+		return;
+	Log(strMsg, "Assert");
+}
+
+void Sloong::Universal::CLog::Fatal(std::string strMsg)
+{
+	if (m_emLevel > LOGLEVEL::Fatal)
+		return;
+	Log(strMsg, "Fatal");
+}
+
+void Sloong::Universal::CLog::Verbos(std::string strMsg)
+{
+	if (m_emLevel > LOGLEVEL::Verbos)
+		return;
+	Log(strMsg, "Verbos");
+}
+
+
+void Sloong::Universal::CLog::Debug(std::string strMsg)
+{
+	if (m_emLevel > LOGLEVEL::Debug)
+		return;
+	Log(strMsg, "Debug");
+}
+
 
 // namespace YaoUtil {
 // 

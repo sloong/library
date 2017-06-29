@@ -80,9 +80,8 @@ void CLog::WriteLine(std::string szLog)
 	time_t st;
     time(&st);
 	struct tm* lt = localtime(&st);
-	std::string strTime = CUniversal::Format("[%d/%d/%d - %.2d:%.2d:%.2d] : ",(lt->tm_year + 1900) , lt->tm_mon , lt->tm_mday ,
-		lt->tm_hour, lt->tm_min, lt->tm_sec);
-	Write(strTime+szLog+g_szNewLine);
+	Write(CUniversal::Format("[%d/%d/%d - %.2d:%.2d:%.2d]:%s%s",(lt->tm_year + 1900) , lt->tm_mon , lt->tm_mday ,
+		lt->tm_hour, lt->tm_min, lt->tm_sec,szLog,g_szNewLine));
 }
 
 void CLog::Write(std::string szMessage)
@@ -265,6 +264,7 @@ void CLog::SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* p
 	if (pLevel)
 	{
 		m_emLevel = *pLevel;
+		WriteLine(CUniversal::Format("[Info]:[Set Log Level To %d]",m_emLevel));
 	}
 
     m_bDebug = bDebug;
@@ -286,17 +286,15 @@ void CLog::Initialize(wstring szPathName, bool bDebug /*= true */, LOGLEVEL emLe
 	
 	// All value init
 	m_bInit = true;
-	m_emLevel = emLevel;
 	m_szFilePath.clear();
 	m_szFileName.clear();
 	m_nLastDate = 0;
 	m_bIsCoverPrev = false;
 
 	// Set value
-	m_emType = emType;
 	m_bIsCoverPrev = bIsCoverPrev;
 	
-    SetConfiguration( szPathName, NULL, NULL, bDebug);
+    SetConfiguration( szPathName, &emType, &emLevel, bDebug);
 
 	Start();
 }

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "univ.h"
 #include "threadpool.h"
-#include <boost/foreach.hpp>
 
 #ifndef _WINDOWS
 #include <unistd.h>

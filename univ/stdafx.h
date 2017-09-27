@@ -20,14 +20,18 @@ using namespace std;
 	#include <fstream>
 	#include <windows.h>
 	#include <winerror.h>
+	#include <WinSock2.h>
+	#include <vector>
 	#pragma comment(lib,"libeay32.lib")
 	#pragma comment(lib,"lua52.lib")
+	#pragma comment(lib,"ws2_32.lib")
 #else
 	#include <stdarg.h>
 	#include <string.h>
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <wchar.h>
+	#include <vector>
 #endif
 #include "univ.h"
 #endif //STDAFX_H

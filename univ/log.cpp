@@ -14,6 +14,7 @@
 #include <fstream>
 #include <stdarg.h> // for va_list,va_start and va_end
 #include <boost/format.hpp>
+#include <boost/foreach.hpp>
 //#include <boost/algorithm/string.hpp>
 using namespace Sloong;
 mutex g_oLogListMutex;
@@ -30,7 +31,7 @@ const string g_szNewLine = "\n";
 
 WCHAR g_szFormatBuffer[2048];
 
-CLog::CLog()
+Sloong::Universal::CLog::CLog()
 {
 	m_bInit = false;
     m_bDebug = true;
@@ -39,7 +40,7 @@ CLog::CLog()
 }
 
 
-CLog::~CLog()
+Sloong::Universal::CLog::~CLog()
 {
 	End();
 	m_bInit = false;
@@ -47,7 +48,7 @@ CLog::~CLog()
 
 
 
-void CLog::Log(std::string strErrorText, string strTitle, DWORD dwCode /* = 0 */, bool bFormatSysMsg /* = false */)
+void Sloong::Universal::CLog::Log(std::string strErrorText, string strTitle, DWORD dwCode /* = 0 */, bool bFormatSysMsg /* = false */)
 {
     WriteLine(CUniversal::Format("[%s]:[%s]", strTitle, strErrorText));
 		
@@ -72,7 +73,7 @@ void CLog::Log(std::string strErrorText, string strTitle, DWORD dwCode /* = 0 */
 	
 }
 
-void CLog::WriteLine(std::string szLog)
+void Sloong::Universal::CLog::WriteLine(std::string szLog)
 {
 	if (szLog.empty())
 		return;
@@ -84,7 +85,7 @@ void CLog::WriteLine(std::string szLog)
 		lt->tm_hour, lt->tm_min, lt->tm_sec,szLog,g_szNewLine));
 }
 
-void CLog::Write(std::string szMessage)
+void Sloong::Universal::CLog::Write(std::string szMessage)
 {
 	//lock_guard<mutex> lck(g_oLogListMutex);
 	unique_lock <mutex> lck(m_Mutex);
@@ -93,10 +94,10 @@ void CLog::Write(std::string szMessage)
 }
 
 
-void* CLog::LogSystemWorkLoop(void* param)
+void* Sloong::Universal::CLog::LogSystemWorkLoop(void* param)
 {
 	CLog* pThis = (CLog*)param;
-	while (pThis->m_bRunning)
+	while (pThis->m_stStatus!=RUNSTATUS::Exit)
 	{
 		if( !g_logList.empty() )
         {
@@ -115,6 +116,13 @@ void* CLog::LogSystemWorkLoop(void* param)
 
 			// write log message to file
 			pThis->m_oFile << str;
+
+			// send log message to socket
+			BOOST_FOREACH(SOCKET sock, pThis->m_vLogSocketList)
+			{
+				send(sock, str.c_str(), str.length()+1,0);
+			}
+
 			// in debug mode, flush the message when write down. 
 			// for issue #8 [https://git.sloong.com/public/library/issues/8]
 			if (pThis->m_bDebug)
@@ -122,7 +130,6 @@ void* CLog::LogSystemWorkLoop(void* param)
 				cout << str;
 				pThis->m_oFile.flush();
 			}
-				
 		}
         else
         {
@@ -133,7 +140,46 @@ void* CLog::LogSystemWorkLoop(void* param)
 	return 0;
 }
 
-bool CLog::OpenFile()
+
+/************************************************************************
+			               Enable Network Log 
+		Create by wcb in 2017/09/27											
+	Params:
+		port : the log system will license in this port,
+	Return: 
+		S_OK if listen succeed. 
+		else return error code.
+	Remarks: 
+		 when connect down,	the log system will send the log data to this port.
+*************************************************************************/
+int Sloong::Universal::CLog::EnableNetworkLog(int port)
+{
+	m_bNetLogListenSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (m_bNetLogListenSocket == INVALID_SOCKET)
+	{
+		return GetLastError();
+	}
+
+	sockaddr_in sin;
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(port);
+	sin.sin_addr.S_un.S_addr = INADDR_ANY; 
+	if(SOCKET_ERROR == ::bind(m_bNetLogListenSocket, (LPSOCKADDR)&sin, sizeof(sin)))
+	{
+		return GetLastError();
+	}
+
+	if (listen(m_bNetLogListenSocket, 5) == SOCKET_ERROR)
+	{
+		return GetLastError();
+	}
+
+	CThreadPool::AddWorkThread(AcceptNetlogLoop, this, 1);
+}
+
+
+
+bool Sloong::Universal::CLog::OpenFile()
 {
 	if (m_oFile.is_open())
 		return true;
@@ -159,7 +205,25 @@ bool CLog::OpenFile()
 	return m_oFile.is_open();
 }
 
-std::wstring CLog::GetFileName()
+LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
+{
+	CLog* pThis = (CLog*)param;
+	SOCKET sClient;
+	sockaddr_in remoteAddr;
+	int nAddrlen = sizeof(remoteAddr);
+	while (pThis->m_stStatus != RUNSTATUS::Exit)
+	{
+		sClient = accept(pThis->m_bNetLogListenSocket, (SOCKADDR*)&remoteAddr, &nAddrlen);
+		if (sClient == INVALID_SOCKET)
+		{
+			continue;
+		}
+		pThis->m_vLogSocketList.push_back(sClient);
+	}
+	return nullptr;
+}
+
+std::wstring Sloong::Universal::CLog::GetFileName()
 {
 	return m_szFileName;
 }
@@ -169,7 +233,7 @@ std::string Sloong::Universal::CLog::GetFileNameA()
 	return CUniversal::toansi(GetFileName());
 }
 
-bool CLog::IsOpen()
+bool Sloong::Universal::CLog::IsOpen()
 {
 	if (!m_bInit)
 		throw normal_except("No Initialize!");
@@ -195,7 +259,7 @@ bool CLog::IsOpen()
 	return OpenFile();
 }
 
-void CLog::Close()
+void Sloong::Universal::CLog::Close()
 {
 	if (m_oFile.is_open())
 	{
@@ -204,16 +268,23 @@ void CLog::Close()
 }
 
 
-void CLog::End()
+void Sloong::Universal::CLog::End()
 {
 	WriteLine(g_szEnd);
 	Close();
-	m_bRunning = false;
+	m_stStatus = RUNSTATUS::Exit;
 	m_CV.notify_all();
+	BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
+	{
+		closesocket(sock);
+	}
+	m_vLogSocketList.clear();
+	closesocket(m_bNetLogListenSocket);
+	m_bNetLogListenSocket = INVALID_SOCKET;
 }
 
 
-std::wstring CLog::GetPath()
+std::wstring Sloong::Universal::CLog::GetPath()
 {
 	return m_szFilePath;
 }
@@ -233,7 +304,7 @@ void Sloong::Universal::CLog::Flush()
 	m_oFile.flush();
 }
 
-void CLog::SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
+void Sloong::Universal::CLog::SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
 {
 	if (pType)
 	{
@@ -270,7 +341,7 @@ void CLog::SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* p
     m_bDebug = bDebug;
 }
 
-void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
+void Sloong::Universal::CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug /* = true */)
 {
 	SetConfiguration(CUniversal::toutf(szFileName), pType, pLevel, bDebug);
 }
@@ -281,7 +352,7 @@ void Sloong::Universal::CLog::Initialize()
 	Initialize(L"./log.log");
 }
 
-void CLog::Initialize(wstring szPathName, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void Sloong::Universal::CLog::Initialize(wstring szPathName, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	
 	// All value init
@@ -299,12 +370,12 @@ void CLog::Initialize(wstring szPathName, bool bDebug /*= true */, LOGLEVEL emLe
 	Start();
 }
 
-void CLog::Initialize(string szPathName , bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void Sloong::Universal::CLog::Initialize(string szPathName , bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
 {
 	Initialize(CUniversal::toutf(szPathName), bDebug, emLevel, emType, bIsCoverPrev);
 }
 
-bool CLog::IsInitialize()
+bool Sloong::Universal::CLog::IsInitialize()
 {
 	return m_bInit;
 }
@@ -316,10 +387,10 @@ void Sloong::Universal::CLog::SetWorkInterval(int nInterval /*= 100*/)
 
 void Sloong::Universal::CLog::Start()
 {
-	if (m_bRunning == true)
+	if (m_stStatus == RUNSTATUS::Running)
 		return;
 
-	m_bRunning = true;
+	m_stStatus = RUNSTATUS::Running;
 	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop, this, 1);
 	SetWorkInterval();
 	WriteLine(g_szStart);

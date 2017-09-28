@@ -6,6 +6,7 @@
 #ifdef _WINDOWS
 #else
 #include <semaphore.h>
+#define SOCKET int
 #endif
 using namespace Sloong::Universal;
 

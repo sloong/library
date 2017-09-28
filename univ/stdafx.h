@@ -32,6 +32,13 @@ using namespace std;
 	#include <stdio.h>
 	#include <wchar.h>
 	#include <vector>
+    #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+    #define INVALID_SOCKET -1
+    #define closesocket close
+
 #endif
 #include "univ.h"
 #endif //STDAFX_H

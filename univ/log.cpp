@@ -21,6 +21,7 @@ mutex g_oLogListMutex;
 queue<string> g_logList;
 const string g_szStart = "---------------------------------Start---------------------------------";
 const string g_szEnd = "----------------------------------End----------------------------------";
+const string g_szNetlogConnectMsg = "-------Network log system connected-------";
 #ifdef _WINDOWS
 const string g_szNewLine = "\r\n";
 
@@ -155,12 +156,13 @@ void* Sloong::Universal::CLog::LogSystemWorkLoop(void* param)
 int Sloong::Universal::CLog::EnableNetworkLog(int port)
 {
 	m_bNetLogListenSocket = socket(AF_INET, SOCK_STREAM, 0);
-	if (m_bNetLogListenSocket == INVALID_SOCKET)
-	{
-		return GetLastError();
-	}
 
-	sockaddr_in sin;
+#ifdef _WINDOWS
+    if (m_bNetLogListenSocket == INVALID_SOCKET)
+    {
+        return GetLastError();
+    }
+    struct sockaddr_in sin;
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(port);
 	sin.sin_addr.S_un.S_addr = INADDR_ANY; 
@@ -169,11 +171,20 @@ int Sloong::Universal::CLog::EnableNetworkLog(int port)
 		return GetLastError();
 	}
 
-	if (listen(m_bNetLogListenSocket, 5) == SOCKET_ERROR)
+    if (listen(m_bNetLogListenSocket, 10) == SOCKET_ERROR)
 	{
 		return GetLastError();
 	}
+#else
+    struct sockaddr_in address;
+        memset(&address,0,sizeof(address));
+        address.sin_addr.s_addr=htonl(INADDR_ANY);
+        address.sin_port=htons(port);
 
+        // 绑定端口
+        errno = bind(m_bNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
+        errno = listen(m_bNetLogListenSocket,10);
+#endif
 	CThreadPool::AddWorkThread(AcceptNetlogLoop, this, 1);
 }
 
@@ -209,15 +220,14 @@ LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
 {
 	CLog* pThis = (CLog*)param;
 	SOCKET sClient;
-	sockaddr_in remoteAddr;
-	int nAddrlen = sizeof(remoteAddr);
 	while (pThis->m_stStatus != RUNSTATUS::Exit)
 	{
-		sClient = accept(pThis->m_bNetLogListenSocket, (SOCKADDR*)&remoteAddr, &nAddrlen);
+        sClient = accept(pThis->m_bNetLogListenSocket, NULL,NULL);
 		if (sClient == INVALID_SOCKET)
 		{
 			continue;
 		}
+        send(sClient,g_szNetlogConnectMsg,sizeof(g_szNetlogConnectMsg),0);
 		pThis->m_vLogSocketList.push_back(sClient);
 	}
 	return nullptr;

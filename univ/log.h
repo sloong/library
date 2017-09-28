@@ -3,15 +3,10 @@
 
 
 #include "univ.h"
-#ifdef _WINDOWS
-#else
-#include <semaphore.h>
-#define SOCKET int
-#endif
+#include <condition_variable>
+
 using namespace Sloong::Universal;
 
-
-#include <condition_variable>
 namespace Sloong
 {
 	namespace Universal

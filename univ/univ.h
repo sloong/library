@@ -27,6 +27,23 @@ using namespace std;
 #define	ACC_E	0		/* Test for existence.  */
 #define ACC_RW  6
 
+
+#ifdef _WINDOWS
+#include <WinSock2.h>
+#pragma comment(lib,"ws2_32.lib")
+#else
+#include  <inttypes.h> 
+inline uint64_t htonll(uint64_t val) {
+	return  (((uint64_t)htonl(val)) << 32) + htonl(val >> 32);
+}
+
+inline uint64_t ntohll(uint64_t val) {
+	return  (((uint64_t)ntohl(val)) << 32) + ntohl(val >> 32);
+}
+#define SOCKET int
+
+#endif
+
 namespace Sloong
 {
 	namespace Universal
@@ -48,6 +65,52 @@ namespace Sloong
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
 			static bool RunSystemCmd(string cmd);
+
+			static inline void LongToBytes(long long l, char* pBuf)
+			{
+				auto ul_MessageLen = htonll(l);
+				memcpy(pBuf, (void*)&ul_MessageLen, 8);
+			}
+
+			static inline long long BytesToLong(char* point)
+			{
+				long long netLen = 0;
+				memcpy(&netLen, point, 8);
+				return ntohll(netLen);
+			}
+
+			/************************************************************************/
+			/*		SendEx function.
+			Params:
+				sock	-> the socket handle
+				buf		-> the data buffer
+				nSize	-> the send size
+				nStart	-> the offset for the start index.
+				eagain	-> continue when the EINTR,EAGAIN error if value is true.
+							else return direct. in default is false.  *Only LinuxOS
+			Return:
+				如果请求成功，返回大于0的接收数据长度。
+				如果接收超时，返回0。
+				如果发生EINTR,EAGAIN错误且eagain为true，返回0。 *Only LinuxOS
+				如果发生其他错误，返回-1。			*/
+			/************************************************************************/
+			static int SendEx(SOCKET sock, const char* buf, int nSize, int nStart=0, bool eagain=false);
+			/************************************************************************/
+			/*		ReceEx function.
+			Params:
+				sock	-> the socket handle
+				buf		-> the data buffer
+				nSize	-> the receive size
+				nTimeout-> timeout time, default is 0. no need timeout
+				eagain	-> continue when the EINTR,EAGAIN error if value is true.
+							else return direct. in default is false.    *Only LinuxOS
+			Return:
+				如果请求成功，返回大于0的接收数据长度。
+				如果接收超时，返回0。
+				如果发生EINTR,EAGAIN错误且eagain为true，返回0。 *Only LinuxOS
+				如果发生其他错误，返回-1。			*/
+			/************************************************************************/
+			static int RecvEx(int sock, char* buf, int nSize, int nTimeout, bool bAgain = false );
 
             template<typename T>
             static string ntos(T n)

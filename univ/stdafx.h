@@ -20,11 +20,9 @@ using namespace std;
 	#include <fstream>
 	#include <windows.h>
 	#include <winerror.h>
-	#include <WinSock2.h>
 	#include <vector>
 	#pragma comment(lib,"libeay32.lib")
 	#pragma comment(lib,"lua52.lib")
-	#pragma comment(lib,"ws2_32.lib")
 #else
 	#include <stdarg.h>
 	#include <string.h>
@@ -33,12 +31,9 @@ using namespace std;
 	#include <wchar.h>
 	#include <vector>
     #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-    #define INVALID_SOCKET -1
-    #define closesocket close
-
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <semaphore.h>
 #endif
 #include "univ.h"
 #endif //STDAFX_H

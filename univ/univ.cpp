@@ -318,6 +318,102 @@ bool Sloong::Universal::CUniversal::RunSystemCmd(string cmd)
 #endif
 }
 
+int Sloong::Universal::CUniversal::SendEx(SOCKET sock, const char * buf, int nSize, int nStart, bool eagain)
+{
+	int nAllSent = nStart;
+	int nSentSize = nStart;
+	int nNosendSize = nSize - nStart;
+
+	while (nNosendSize > 0)
+	{
+		nSentSize = send(sock, buf + nSize - nNosendSize, nNosendSize, 0);
+
+#define SOCKET_ERROR            (-1)
+		if (nSentSize == SOCKET_ERROR)
+		{
+#ifdef _WINDOWS
+			return -1;
+#else
+			// if errno != EAGAIN or again for error and return is -1, return false
+			if (errno == EAGAIN && eagain == true)
+				continue;
+			else if (errno == SIGPIPE)
+				return -1;
+			else
+				return nAllSent;
+#endif // _WINDOWS
+		}
+
+		nNosendSize -= nSentSize;
+		nAllSent += nSentSize;
+	}
+	return nAllSent;
+}
+
+int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int nTimeout, bool bAgain)
+{
+	if (nSize <= 0)
+		return 0;
+
+	int nIsRecv = 0;
+	int nNoRecv = nSize;
+	int nRecv = 0;
+	char* pBuf = buf;
+	fd_set reset;
+	struct timeval tv;
+	FD_ZERO(&reset);
+	FD_SET(sock, &reset);
+	tv.tv_sec = nTimeout;
+	tv.tv_usec = 0;
+	while (nIsRecv < nSize)
+	{
+		auto error = select(sock + 1, &reset, NULL, NULL, nTimeout > 0 ? &tv : NULL);
+		if (error == 0)
+		{
+			// timeout
+			return 0;
+		}
+		else if (FD_ISSET(sock, &reset))
+		{
+			nRecv = recv(sock, pBuf + nSize - nNoRecv, nNoRecv, 0);
+			if (nRecv < 0)
+			{
+#ifdef _WINDOWS
+				return -1;
+#else
+				// 在非阻塞模式下，socket可能会收到EAGAIN和EINTR这两个错误，
+				// 不过这两个错误不应该直接返回。
+				if (errno == EAGAIN || errno == EINTR)
+				{
+					// 如果bAgain为true，并且已经在接收数据，那么开始重试
+					if (bAgain == true && nIsRecv != 0)
+					{
+						continue;
+					}
+					else
+					{
+						return -1;
+					}
+				}
+				// 如果是其他错误，则直接返回
+				else
+				{
+					return -1;
+				}
+#endif // _WINDOWS
+			}
+		}
+		else
+		{
+			// other error
+			return -1;
+		}
+		nNoRecv -= nRecv;
+		nIsRecv += nRecv;
+	}
+	return nIsRecv;
+}
+
 std::string Sloong::Universal::CUniversal::Replace(const string& str, const string& src, const string& dest)
 {
 	string res = str;

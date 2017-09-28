@@ -15,19 +15,19 @@
 #include <stdarg.h> // for va_list,va_start and va_end
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
-//#include <boost/algorithm/string.hpp>
 using namespace Sloong;
 mutex g_oLogListMutex;
 queue<string> g_logList;
-const string g_szStart = "---------------------------------Start---------------------------------";
-const string g_szEnd = "----------------------------------End----------------------------------";
-const string g_szNetlogConnectMsg = "-------Network log system connected-------";
+const string g_strStart = "---------------------------------Start---------------------------------";
+const string g_strEnd = "----------------------------------End----------------------------------";
+const string g_strConnect = "-------Network log system connected-------";
 #ifdef _WINDOWS
 const string g_szNewLine = "\r\n";
-
 #else
 const string g_szNewLine = "\n";
 #include <errno.h>
+#define INVALID_SOCKET -1
+#define closesocket close
 #endif // !_WINDOWS
 
 WCHAR g_szFormatBuffer[2048];
@@ -95,33 +95,38 @@ void Sloong::Universal::CLog::Write(std::string szMessage)
 }
 
 
-void* Sloong::Universal::CLog::LogSystemWorkLoop(void* param)
+LPVOID Sloong::Universal::CLog::LogSystemWorkLoop(LPVOID param)
 {
 	CLog* pThis = (CLog*)param;
-	while (pThis->m_stStatus!=RUNSTATUS::Exit)
+	while (pThis->m_stStatus != RUNSTATUS::Exit)
 	{
-		if( !g_logList.empty() )
-        {
-            unique_lock<mutex> lck(g_oLogListMutex);
-            if ( g_logList.empty() )
-            {
+		if (!g_logList.empty())
+		{
+			unique_lock<mutex> lck(g_oLogListMutex);
+			if (g_logList.empty())
+			{
 				lck.unlock();
-                continue;
-            }
+				continue;
+			}
 			// get log message from queue.
 			string str = g_logList.front();
 			g_logList.pop();
-            lck.unlock();
+			lck.unlock();
 
 			pThis->IsOpen();
 
 			// write log message to file
 			pThis->m_oFile << str;
 
+			char pBufLen[8] = { 0 };
+			auto len = str.length() + 1;
+			CUniversal::LongToBytes(len, pBufLen);
+
 			// send log message to socket
 			BOOST_FOREACH(SOCKET sock, pThis->m_vLogSocketList)
 			{
-				send(sock, str.c_str(), str.length()+1,0);
+				CUniversal::SendEx(sock, pBufLen, 8);
+				CUniversal::SendEx(sock, str.c_str(), len);
 			}
 
 			// in debug mode, flush the message when write down. 
@@ -132,16 +137,14 @@ void* Sloong::Universal::CLog::LogSystemWorkLoop(void* param)
 				pThis->m_oFile.flush();
 			}
 		}
-        else
-        {
+		else
+		{
 			unique_lock <mutex> lck(pThis->m_Mutex);
 			pThis->m_CV.wait(lck);
-        }
+		}
 	}
-	return 0;
+	return NULL;
 }
-
-
 /************************************************************************
 			               Enable Network Log 
 		Create by wcb in 2017/09/27											
@@ -186,6 +189,7 @@ int Sloong::Universal::CLog::EnableNetworkLog(int port)
         errno = listen(m_bNetLogListenSocket,10);
 #endif
 	CThreadPool::AddWorkThread(AcceptNetlogLoop, this, 1);
+	return NO_ERROR;
 }
 
 
@@ -227,10 +231,10 @@ LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
 		{
 			continue;
 		}
-        send(sClient,g_szNetlogConnectMsg,sizeof(g_szNetlogConnectMsg),0);
+        send(sClient,g_strConnect.c_str(),g_strConnect.length()+1,0);
 		pThis->m_vLogSocketList.push_back(sClient);
 	}
-	return nullptr;
+	return NULL;
 }
 
 std::wstring Sloong::Universal::CLog::GetFileName()
@@ -280,7 +284,7 @@ void Sloong::Universal::CLog::Close()
 
 void Sloong::Universal::CLog::End()
 {
-	WriteLine(g_szEnd);
+	WriteLine(g_strEnd);
 	Close();
 	m_stStatus = RUNSTATUS::Exit;
 	m_CV.notify_all();
@@ -403,7 +407,7 @@ void Sloong::Universal::CLog::Start()
 	m_stStatus = RUNSTATUS::Running;
 	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop, this, 1);
 	SetWorkInterval();
-	WriteLine(g_szStart);
+	WriteLine(g_strStart);
 }
 
 void Sloong::Universal::CLog::Info(std::string strMsg)

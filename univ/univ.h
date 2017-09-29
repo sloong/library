@@ -32,7 +32,9 @@ using namespace std;
 #include <WinSock2.h>
 #pragma comment(lib,"ws2_32.lib")
 #else
-#include  <inttypes.h> 
+#include <arpa/inet.h>
+#include <string.h>
+#include <inttypes.h>
 inline uint64_t htonll(uint64_t val) {
 	return  (((uint64_t)htonl(val)) << 32) + htonl(val >> 32);
 }

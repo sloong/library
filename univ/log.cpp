@@ -180,16 +180,16 @@ int Sloong::Universal::CLog::EnableNetworkLog(int port)
 	}
 #else
     struct sockaddr_in address;
-        memset(&address,0,sizeof(address));
-        address.sin_addr.s_addr=htonl(INADDR_ANY);
-        address.sin_port=htons(port);
+    memset(&address,0,sizeof(address));
+    address.sin_addr.s_addr=htonl(INADDR_ANY);
+    address.sin_port=htons(port);
 
-        // 绑定端口
-        errno = bind(m_bNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
-        errno = listen(m_bNetLogListenSocket,10);
+    // 绑定端口
+    errno = bind(m_bNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
+    errno = listen(m_bNetLogListenSocket,10);
 #endif
 	CThreadPool::AddWorkThread(AcceptNetlogLoop, this, 1);
-	return NO_ERROR;
+    return 0;
 }
 
 
@@ -224,6 +224,8 @@ LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
 {
 	CLog* pThis = (CLog*)param;
 	SOCKET sClient;
+    const char* pData = g_strConnect.c_str();
+    int nLen = g_strConnect.length()+1;
 	while (pThis->m_stStatus != RUNSTATUS::Exit)
 	{
         sClient = accept(pThis->m_bNetLogListenSocket, NULL,NULL);
@@ -231,7 +233,10 @@ LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
 		{
 			continue;
 		}
-        send(sClient,g_strConnect.c_str(),g_strConnect.length()+1,0);
+        char pLen[8] = {0};
+        CUniversal::LongToBytes(nLen,pLen);
+        CUniversal::SendEx(sClient,pLen,8);
+        CUniversal::SendEx(sClient,pData,nLen);
 		pThis->m_vLogSocketList.push_back(sClient);
 	}
 	return NULL;

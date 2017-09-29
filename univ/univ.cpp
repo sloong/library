@@ -13,6 +13,7 @@
 #include <libgen.h>
 #include <stdarg.h>  
 #include <sys/stat.h>  
+#include <signal.h>
 //#include <libzip.h>
 #define ACCESS access  
 #define MKDIR(a) mkdir((a),0755)  

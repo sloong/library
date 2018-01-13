@@ -1,6 +1,6 @@
-// stdafx.h : ±ê×¼ÏµÍ³°üº¬ÎÄ¼şµÄ°üº¬ÎÄ¼ş£¬
-// »òÊÇ¾­³£Ê¹ÓÃµ«²»³£¸ü¸ÄµÄ
-// ÌØ¶¨ÓÚÏîÄ¿µÄ°üº¬ÎÄ¼ş
+// stdafx.h : æ ‡å‡†ç³»ç»ŸåŒ…å«æ–‡ä»¶çš„åŒ…å«æ–‡ä»¶ï¼Œ
+// æˆ–æ˜¯ç»å¸¸ä½¿ç”¨ä½†ä¸å¸¸æ›´æ”¹çš„
+// ç‰¹å®šäºé¡¹ç›®çš„åŒ…å«æ–‡ä»¶
 //
 #ifndef STDAFX_H
 #define STDAFX_H
@@ -10,8 +10,8 @@
 #include <string>
 using namespace std;
 #ifdef _WINDOWS
-	#define WIN32_LEAN_AND_MEAN             // ´Ó Windows Í·ÖĞÅÅ³ı¼«ÉÙÊ¹ÓÃµÄ×ÊÁÏ
-	// Windows Í·ÎÄ¼ş: 
+	#define WIN32_LEAN_AND_MEAN             // ä» Windows å¤´ä¸­æ’é™¤æå°‘ä½¿ç”¨çš„èµ„æ–™
+	// Windows å¤´æ–‡ä»¶: 
 	#include <windows.h>
 	#include <tchar.h>
 	#include <assert.h>
@@ -20,6 +20,7 @@ using namespace std;
 	#include <fstream>
 	#include <windows.h>
 	#include <winerror.h>
+	#include <vector>
 	#pragma comment(lib,"libeay32.lib")
 	#pragma comment(lib,"lua52.lib")
 #else
@@ -28,6 +29,11 @@ using namespace std;
 	#include <stdlib.h>
 	#include <stdio.h>
 	#include <wchar.h>
+	#include <vector>
+    #include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <semaphore.h>
 #endif
 #include "univ.h"
 #endif //STDAFX_H

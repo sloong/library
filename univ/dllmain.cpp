@@ -1,4 +1,4 @@
-// dllmain.cpp : ∂®“Â DLL ”¶”√≥Ã–Úµƒ»Îø⁄µ„°£
+// dllmain.cpp : ÂÆö‰πâ DLL Â∫îÁî®Á®ãÂ∫èÁöÑÂÖ•Âè£ÁÇπ„ÄÇ
 #include "stdafx.h"
 #ifdef _WINDOWS
 BOOL APIENTRY DllMain( HMODULE hModule,
@@ -9,9 +9,17 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		WSADATA wsaData;
+		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+		{
+			return 0;
+		}
+		break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
+		break;
 	case DLL_PROCESS_DETACH:
+		WSACleanup();
 		break;
 	}
 	return TRUE;

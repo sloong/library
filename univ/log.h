@@ -3,14 +3,10 @@
 
 
 #include "univ.h"
-#ifdef _WINDOWS
-#else
-#include <semaphore.h>
-#endif
+#include <condition_variable>
+
 using namespace Sloong::Universal;
 
-
-#include <condition_variable>
 namespace Sloong
 {
 	namespace Universal
@@ -35,6 +31,13 @@ namespace Sloong
 			Assert = 6,
 			Fatal = 7,
 		}LOGLEVEL;
+
+		typedef enum _emRunStatus
+		{
+			Created,
+			Running,
+			Exit,
+		}RUNSTATUS;
 		
 		class UNIVERSAL_API CLog
 		{
@@ -73,10 +76,13 @@ namespace Sloong
 			virtual std::string GetPathA();
 			virtual bool IsInitialize();
 			virtual void Flush();
+
+			/* Enable network log output */
+			virtual int EnableNetworkLog( int port );
 		protected:
 			bool OpenFile();
 			static LPVOID LogSystemWorkLoop(LPVOID param);
-
+			static LPVOID AcceptNetlogLoop(LPVOID param);
 		protected:
 			LOGLEVEL	m_emLevel;
 			ofstream	m_oFile;
@@ -94,7 +100,9 @@ namespace Sloong
 			int			m_nSleepInterval;
 			condition_variable m_CV;
 			mutex		m_Mutex;
-			bool		m_bRunning;
+			RUNSTATUS	m_stStatus;
+			SOCKET		m_bNetLogListenSocket;
+			vector<SOCKET>	m_vLogSocketList;
 		};
 	}
 }

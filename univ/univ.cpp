@@ -225,12 +225,13 @@ Remarks:
 		2> check new file foder exist and write access.
 		3> run 'mv' system cmd and check result. */
 		/************************************************************************/
-int Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lpNewFileName)
+bool Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lpNewFileName)
 {
 #ifdef _WINDOWS
-	return ::MoveFileA(lpExistingFileName.c_str(), lpNewFileName.c_str());
+	return ::MoveFileA(lpExistingFileName.c_str(), lpNewFileName.c_str()) != FALSE;
 #else
-	if (lpExistingFileName == "" || lpNewFileName == "")
+	return rename(lpExistingFileName.c_str(), lpNewFileName.c_str()) == 0;
+	/*if (lpExistingFileName == "" || lpNewFileName == "")
 	{
 		return 0;
 	}
@@ -248,7 +249,7 @@ int Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string lp
 		if (RunSystemCmd(CUniversal::Format("mv %s %s", lpExistingFileName.c_str(), lpNewFileName.c_str())))
 			return 1;
 	}
-	return 0;
+	return 0;*/
 #endif
 }
 

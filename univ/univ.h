@@ -39,7 +39,10 @@ namespace Sloong
 			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
 			static string CheckFileDirectory(string filepath);
-			static int MoveFile(string lpExistingFileName, string lpNewFileName);
+			/// Move file 
+			/// Return values
+			///   return true if move file succeeded. else return false.
+			static bool MoveFile(string lpExistingFileName, string lpNewFileName);
 			static int splitString(const string& str, vector<string>& res, string sep = ",");
 			static string trim(const string& str);
 			static wstring trim(const wstring& str);

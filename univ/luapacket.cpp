@@ -22,8 +22,6 @@ using namespace Sloong::Universal;
 
 #define PAS(L,n) (lua_gettop(L) >= abs(n) && lua_isstring(L,n) ? luaL_checkstring((L),(n)) : "") // get string param
 
-#define PASL(L,n) (lua_gettop(L) >= abs(n) && lua_isstring(L,n) ? luaL_len(L,n) : 0 ) // get string length
-
 #define PAD(L,n) (double)(lua_gettop(L) >= abs(n) && lua_isnumber(L,n) ? luaL_checknumber((L),(n)) : 0.0f) // get float param
 
 const char CLuaPacket::className[] =  "LuaPacket";
@@ -65,8 +63,6 @@ int CLuaPacket::setdata(lua_State *L)
     }
 
     value = PAS(L,2);
-    if(value.length() != (size_t)PASL(L,2))
-        throw normal_except("The lua string length is diff.");
 
     SetData(key,value);
     lua_pushboolean(L,true);

@@ -22,8 +22,6 @@ using namespace Sloong::Universal;
 
 #define PAS(L,n) (lua_gettop(L) >= abs(n) && lua_isstring(L,n) ? luaL_checkstring((L),(n)) : "") // get string param
 
-#define PASL(L,n) (lua_gettop(L) >= abs(n) && lua_isstring(L,n) ? luaL_len(L,n) : 0 ) // get string length
-
 #define PAD(L,n) (double)(lua_gettop(L) >= abs(n) && lua_isnumber(L,n) ? luaL_checknumber((L),(n)) : 0.0f) // get float param
 
 const char CLuaPacket::className[] =  "LuaPacket";

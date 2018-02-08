@@ -65,8 +65,6 @@ int CLuaPacket::setdata(lua_State *L)
     }
 
     value = PAS(L,2);
-    if(value.length() != (size_t)PASL(L,2))
-        throw normal_except("The lua string length is diff.");
 
     SetData(key,value);
     lua_pushboolean(L,true);

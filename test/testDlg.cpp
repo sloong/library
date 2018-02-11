@@ -14,6 +14,7 @@
 #include "Base64.h"
 #include "MD5.h"
 #include "BlowFish.h"
+#include "log.h"
 #pragma comment(lib,"univ.lib")
 using namespace Sloong::Universal;
 typedef string(*Func)(string orgTxt, string key, BOOL bBase64);
@@ -34,6 +35,8 @@ FuncListItem FuncList[] =
 	{ "BlowFish Ayers Decoding", BlowFishAyersDecoding },
 	{ "BlowFish->Ayers Encoding", BlowFish2AyersEncoding },
 	{ "Base64Ayers->BlowFish", Base64Ayers2Blowfish },
+	{ "Base64Ayers->BlowFish", Base64Ayers2Blowfish },
+	{"logSystem",LogSystemTest},
 };
 
 
@@ -334,4 +337,12 @@ std::string Base64Ayers2Blowfish(string orgTxt, string key, BOOL bBase64)
 	int nEncodeDataLength = CBlowFish::UncompressBlowfish((char*)str.c_str() + 4, strChgBuffer.GetBuffer(nLenMsg), nLenMsg);
 	strChgBuffer.ReleaseBuffer();
 	return strChgBuffer;
+}
+
+string LogSystemTest(string orgTxt, string key, BOOL bBase64)
+{
+	static CLog log;
+	log.Initialize("test.log", true);
+	log.Info(orgTxt);
+	return "Done";
 }

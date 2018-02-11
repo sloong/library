@@ -2,24 +2,24 @@
 #include "univ.h"
 #include "threadpool.h"
 
+#include <chrono>
+
 #ifndef _WINDOWS
 #include <unistd.h>
 #endif
 
+using namespace Sloong;
 using namespace Sloong::Universal;
 
 queue<ThreadParam*> Sloong::Universal::CThreadPool::m_pJobList;
 vector<thread*> Sloong::Universal::CThreadPool::m_pThreadList;
-bool Sloong::Universal::CThreadPool::m_bExit = false;
-bool Sloong::Universal::CThreadPool::m_bStart = false;
-int Sloong::Universal::CThreadPool::m_nSleepInterval = 100;
-
+RUN_STATUS Sloong::Universal::CThreadPool::m_emStatus = Created;
+condition_variable Sloong::Universal::CThreadPool::g_oRunJobCV;
 mutex Sloong::Universal::CThreadPool::g_oJobListMutex;
+mutex Sloong::Universal::CThreadPool::g_oRunJobMutex;
 
-
-void Sloong::Universal::CThreadPool::Initialize(int nThreadNum, int nSleepInterval /* = 100 */)
+void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 {
-	m_nSleepInterval = nSleepInterval;
 	for (int i = 0; i < nThreadNum; i++)
 	{
 		thread* pThread = new thread(ThreadWorkLoop);
@@ -27,45 +27,54 @@ void Sloong::Universal::CThreadPool::Initialize(int nThreadNum, int nSleepInterv
 	}
 }
 
-void Sloong::Universal::CThreadPool::Start()
+void Sloong::Universal::CThreadPool::Run()
 {
-	m_bStart = true;
+	m_emStatus = Running;
 }
 
 void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 {
-	while (true)
+	unique_lock<mutex> lck(g_oRunJobMutex);
+	while (m_emStatus != RUN_STATUS::Exit)
 	{
 		try
 		{
-			if ( m_bExit )
+			if (m_emStatus == RUN_STATUS::Created)
 			{
-				break;
-			}
-			if (m_bStart == false)
-			{
-				SLEEP(m_nSleepInterval);
+				SLEEP(1000);
 				continue;
 			}
+			// each 1 second check the list once.
 			if (m_pJobList.empty())
 			{
-				SLEEP(m_nSleepInterval);
+				g_oRunJobCV.wait(lck);
 				continue;
 			}
 			
 			// Run the job list first. 
 			if (!m_pJobList.empty())
 			{
-				std::unique_lock<mutex> lck(g_oJobListMutex);
+				unique_lock <mutex> list_lock(g_oJobListMutex);
 				if (m_pJobList.empty())
 				{
-					lck.unlock();
+					list_lock.unlock();
 					continue;
 				}
 				auto pJob = m_pJobList.front();
 				m_pJobList.pop();
-				lck.unlock();
-				(*pJob->pJob)(pJob->pParam);
+				list_lock.unlock();
+				switch (pJob->nJobType)
+				{
+				case 1:
+					(*(LPCALLBACKFUNC)pJob->pJob)(pJob->pParam);
+					break;
+				case 2:
+					(*(LPCALLBACK2FUNC)pJob->pJob)(pJob->pParam,pJob->pParam2);
+					break;
+				case 3:
+					(*(LPCALLBACK3FUNC)pJob->pJob)(pJob->pParam,pJob->pParam2,pJob->pParam3);
+					break;
+				}
 				// Just delete the ThreadParam, the pParmam function should be delete in the job. 
 				// because don't know the pararm type. 
 				SAFE_DELETE(pJob);
@@ -78,10 +87,9 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 	}
 }
 
-void Sloong::Universal::CThreadPool::End()
+void Sloong::Universal::CThreadPool::Exit()
 {
-	m_bExit = true;
-	m_bStart = false;
+	m_emStatus = RUN_STATUS::Exit;
 	// clear the job list.
 	while (!m_pJobList.empty())
 	{
@@ -91,13 +99,42 @@ void Sloong::Universal::CThreadPool::End()
 	}
 }
 
-int Sloong::Universal::CThreadPool::EnqueTask(LPCALLBACKFUNC pJob, LPVOID pParam )
+int Sloong::Universal::CThreadPool::EnqueTask(LPCALLBACKFUNC pJob, LPVOID pParam)
 {
 	ThreadParam* pItem = new ThreadParam();
+	pItem->nJobType = 1;
 	pItem->pJob = pJob;
 	pItem->pParam = pParam;
 	std::lock_guard<mutex> lck(g_oJobListMutex);
 	m_pJobList.push(pItem);
+	g_oRunJobCV.notify_one();
+	return m_pJobList.size() - 1;
+}
+
+int Sloong::Universal::CThreadPool::EnqueTask2(LPCALLBACK2FUNC pJob, LPVOID pParam, LPVOID pParam2)
+{
+	ThreadParam* pItem = new ThreadParam();
+	pItem->nJobType = 2;
+	pItem->pJob = pJob;
+	pItem->pParam = pParam;
+	pItem->pParam2 = pParam2;
+	std::lock_guard<mutex> lck(g_oJobListMutex);
+	m_pJobList.push(pItem);
+	g_oRunJobCV.notify_one();
+	return m_pJobList.size() - 1;
+}
+
+int Sloong::Universal::CThreadPool::EnqueTask3(LPCALLBACK3FUNC pJob, LPVOID pParam, LPVOID pParam2, LPVOID pParam3)
+{
+	ThreadParam* pItem = new ThreadParam();
+	pItem->nJobType = 3;
+	pItem->pJob = pJob;
+	pItem->pParam = pParam;
+	pItem->pParam2 = pParam2;
+	pItem->pParam3 = pParam3;
+	std::lock_guard<mutex> lck(g_oJobListMutex);
+	m_pJobList.push(pItem);
+	g_oRunJobCV.notify_one();
 	return m_pJobList.size() - 1;
 }
 

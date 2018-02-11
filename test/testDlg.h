@@ -52,4 +52,4 @@ string BlowFishAyersDecoding(string orgTxt, string key, BOOL bBase64);
 string BlowFish2AyersEncoding(string orgTxt, string key, BOOL bBase64);
 string BlowFishEncoding(string orgTxt, string key, BOOL bBase64);
 string Base64Ayers2Blowfish(string orgTxt, string key, BOOL bBase64);
-
+string LogSystemTest(string orgTxt, string key, BOOL bBase64);

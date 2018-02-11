@@ -181,6 +181,13 @@
 #define ARRAY_SIZE(arr) (sizeof(arr)/sizeof((arr)[0]))
 #endif // ARRAY_SIZE
 
+typedef enum _em_RunStatus_
+{
+	Created,
+	Running,
+	Exit,
+}RUN_STATUS;
+
 #ifdef _UNICODE
 #define _tofstream		wofstream
 #define _tifstream		wifstream

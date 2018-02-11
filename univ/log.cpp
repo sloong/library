@@ -16,7 +16,6 @@
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
 using namespace Sloong;
-mutex g_oLogListMutex;
 queue<string> g_logList;
 const string g_strStart = "---------------------------------Start---------------------------------";
 const string g_strEnd = "----------------------------------End----------------------------------";
@@ -38,6 +37,7 @@ Sloong::Universal::CLog::CLog()
     m_bDebug = true;
 	m_nLastDate = 0;
 	m_bOpenFileFirst = false;
+	m_nNetLogListenSocket = INVALID_SOCKET;
 }
 
 
@@ -88,8 +88,7 @@ void Sloong::Universal::CLog::WriteLine(std::string szLog)
 
 void Sloong::Universal::CLog::Write(std::string szMessage)
 {
-	//lock_guard<mutex> lck(g_oLogListMutex);
-	unique_lock <mutex> lck(m_Mutex);
+	unique_lock <mutex> list_lock(m_oLogListMutex);
 	g_logList.push(szMessage);
 	m_CV.notify_all();
 }
@@ -98,49 +97,59 @@ void Sloong::Universal::CLog::Write(std::string szMessage)
 LPVOID Sloong::Universal::CLog::LogSystemWorkLoop(LPVOID param)
 {
 	CLog* pThis = (CLog*)param;
-	while (pThis->m_stStatus != RUNSTATUS::Exit)
+	unique_lock <mutex> lck(pThis->m_Mutex);
+	while (pThis->m_emStatus != RUN_STATUS::Exit)
 	{
+		if (pThis->m_emStatus == RUN_STATUS::Created)
+		{
+			SLEEP(1000);
+			continue;
+		}
+		if (g_logList.empty())
+		{
+			pThis->m_CV.wait(lck);
+			continue;
+		}
+
 		if (!g_logList.empty())
 		{
-			unique_lock<mutex> lck(g_oLogListMutex);
+			unique_lock <mutex> list_lock(pThis->m_oLogListMutex);
 			if (g_logList.empty())
 			{
-				lck.unlock();
+				list_lock.unlock();
 				continue;
 			}
 			// get log message from queue.
 			string str = g_logList.front();
 			g_logList.pop();
-			lck.unlock();
+			list_lock.unlock();
 
 			pThis->IsOpen();
 
 			// write log message to file
 			pThis->m_oFile << str;
 
-			char pBufLen[8] = { 0 };
-			auto len = str.length() + 1;
-			CUniversal::LongToBytes(len, pBufLen);
-
-			// send log message to socket
-			BOOST_FOREACH(SOCKET sock, pThis->m_vLogSocketList)
+			if (pThis->m_nNetLogListenSocket != INVALID_SOCKET )
 			{
-				CUniversal::SendEx(sock, pBufLen, 8);
-				CUniversal::SendEx(sock, str.c_str(), len);
-			}
+				char pBufLen[8] = { 0 };
+				auto len = str.length() + 1;
+				CUniversal::LongToBytes(len, pBufLen);
 
+				// send log message to socket
+				BOOST_FOREACH(SOCKET sock, pThis->m_vLogSocketList)
+				{
+					CUniversal::SendEx(sock, pBufLen, 8);
+					CUniversal::SendEx(sock, str.c_str(), len);
+				}
+			}
+			
 			// in debug mode, flush the message when write down. 
 			// for issue #8 [https://git.sloong.com/public/library/issues/8]
 			if (pThis->m_bDebug)
 			{
-				cout << str;
+				cerr << str;
 				pThis->m_oFile.flush();
 			}
-		}
-		else
-		{
-			unique_lock <mutex> lck(pThis->m_Mutex);
-			pThis->m_CV.wait(lck);
 		}
 	}
 	return NULL;
@@ -158,10 +167,10 @@ LPVOID Sloong::Universal::CLog::LogSystemWorkLoop(LPVOID param)
 *************************************************************************/
 int Sloong::Universal::CLog::EnableNetworkLog(int port)
 {
-	m_bNetLogListenSocket = socket(AF_INET, SOCK_STREAM, 0);
+	m_nNetLogListenSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 #ifdef _WINDOWS
-    if (m_bNetLogListenSocket == INVALID_SOCKET)
+    if (m_nNetLogListenSocket == INVALID_SOCKET)
     {
         return GetLastError();
     }
@@ -169,12 +178,12 @@ int Sloong::Universal::CLog::EnableNetworkLog(int port)
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(port);
 	sin.sin_addr.S_un.S_addr = INADDR_ANY; 
-	if(SOCKET_ERROR == ::bind(m_bNetLogListenSocket, (LPSOCKADDR)&sin, sizeof(sin)))
+	if(SOCKET_ERROR == ::bind(m_nNetLogListenSocket, (LPSOCKADDR)&sin, sizeof(sin)))
 	{
 		return GetLastError();
 	}
 
-    if (listen(m_bNetLogListenSocket, 10) == SOCKET_ERROR)
+    if (listen(m_nNetLogListenSocket, 10) == SOCKET_ERROR)
 	{
 		return GetLastError();
 	}
@@ -185,8 +194,8 @@ int Sloong::Universal::CLog::EnableNetworkLog(int port)
     address.sin_port=htons(port);
 
     // 绑定端口
-    errno = bind(m_bNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
-    errno = listen(m_bNetLogListenSocket,10);
+    errno = bind(m_nNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
+    errno = listen(m_nNetLogListenSocket,10);
 #endif
 	CThreadPool::AddWorkThread(AcceptNetlogLoop, this, 1);
     return 0;
@@ -226,9 +235,9 @@ LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
 	SOCKET sClient;
     const char* pData = g_strConnect.c_str();
     int nLen = g_strConnect.length()+1;
-	while (pThis->m_stStatus != RUNSTATUS::Exit)
+	while (pThis->m_emStatus != RUN_STATUS::Exit)
 	{
-        sClient = accept(pThis->m_bNetLogListenSocket, NULL,NULL);
+        sClient = accept(pThis->m_nNetLogListenSocket, NULL,NULL);
 		if (sClient == INVALID_SOCKET)
 		{
 			continue;
@@ -291,15 +300,15 @@ void Sloong::Universal::CLog::End()
 {
 	WriteLine(g_strEnd);
 	Close();
-	m_stStatus = RUNSTATUS::Exit;
+	m_emStatus = RUN_STATUS::Exit;
 	m_CV.notify_all();
 	BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
 	{
 		closesocket(sock);
 	}
 	m_vLogSocketList.clear();
-	closesocket(m_bNetLogListenSocket);
-	m_bNetLogListenSocket = INVALID_SOCKET;
+	closesocket(m_nNetLogListenSocket);
+	m_nNetLogListenSocket = INVALID_SOCKET;
 }
 
 
@@ -406,10 +415,10 @@ void Sloong::Universal::CLog::SetWorkInterval(int nInterval /*= 100*/)
 
 void Sloong::Universal::CLog::Start()
 {
-	if (m_stStatus == RUNSTATUS::Running)
+	if (m_emStatus == RUN_STATUS::Running)
 		return;
 
-	m_stStatus = RUNSTATUS::Running;
+	m_emStatus = RUN_STATUS::Running;
 	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop, this, 1);
 	SetWorkInterval();
 	WriteLine(g_strStart);

@@ -31,13 +31,6 @@ namespace Sloong
 			Assert = 6,
 			Fatal = 7,
 		}LOGLEVEL;
-
-		typedef enum _emRunStatus
-		{
-			Created,
-			Running,
-			Exit,
-		}RUNSTATUS;
 		
 		class UNIVERSAL_API CLog
 		{
@@ -46,8 +39,8 @@ namespace Sloong
 			~CLog();
 
 			virtual void Initialize();
-            virtual void Initialize(wstring szPathName, bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
-			virtual void Initialize(string szPathName, bool bDebug = true, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+            virtual void Initialize(wstring szPathName, bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize(string szPathName, bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 			virtual void Start();
 			virtual void End();
 			/************************************************************************/
@@ -100,8 +93,9 @@ namespace Sloong
 			int			m_nSleepInterval;
 			condition_variable m_CV;
 			mutex		m_Mutex;
-			RUNSTATUS	m_stStatus;
-			SOCKET		m_bNetLogListenSocket;
+			mutex		m_oLogListMutex;
+			RUN_STATUS	m_emStatus;
+			SOCKET		m_nNetLogListenSocket;
 			vector<SOCKET>	m_vLogSocketList;
 		};
 	}

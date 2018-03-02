@@ -45,6 +45,7 @@ namespace Sloong
 		{
 		public:
 			CLua();
+			CLua(lua_State* l);
 			virtual ~CLua();
 
             bool    LoadScript(std::string strFileName);
@@ -59,12 +60,16 @@ namespace Sloong
 			void	HandlerError(std::string strErrorType, std::string strCmd);
 			bool	AddFunction(std::string strFunctionName, LuaFunctionType pFunction);
             void    AddFunctions(vector<LuaFunctionRegistr>* pFuncList);
-			string	GetStringArgument(int nNum, std::string strDefault = "");
-			double	GetNumberArgument(int nNum, double dDefault = -1.0f);
+			string	GetString(int nNum, std::string strDefault = "");
+			double	GetDouble(int nNum, double dDefault = -1.0f);
+			int		GetInteger(int nNum, int nDef = -1);
+			bool	GetBoolen(int nNum);
+			void*	GetPointer( int nNum);
 			void	PushString(std::string strString);
-			void	PushNumber(double dValue);
+			void	PushDouble(double dValue);
 			void	PushInteger(int nValue);
             void    PushPacket( CLuaPacket* pData );
+			void    PushPointer(void* pPointer);
             bool    PushFunction( int nFuncRef );
             bool    PushFunction( const string& strFuncName );
             bool    GetLuaFuncRef( int& nFunc, const string& strFuncName );
@@ -75,12 +80,16 @@ namespace Sloong
 			void	SetScriptFolder(string folder);
 
 		public:
-			static std::string	GetStringArgument(lua_State* l, int nNum, std::string strDefault = "");
-			static double GetNumberArgument(lua_State* l, int nNum, double dDefault = -1.0f);
-			static int GetIntegerArgument(lua_State*l, int nNum, int nDev = -1);
+			static std::string	GetString(lua_State* l, int nNum, std::string strDefault = "");
+			static double GetDouble(lua_State* l, int nNum, double dDefault = -1.0f);
+			static int GetInteger(lua_State*l, int nNum, int nDef = -1);
+			static bool GetBoolen(lua_State* l, int nNum);
+			static void* GetPointer(lua_State* l, int nNum);
 			static void	PushString(lua_State* l, std::string strString);
-			static void	PushNumber(lua_State* l, double dValue);
+			static void	PushDouble(lua_State* l, double dValue);
 			static void PushInteger(lua_State*l, int nValue);
+			static void PushBoolen(lua_State* l, bool b);
+			static void PushPointer(lua_State* l, void* pPointer);
 			static map<string, string> GetTableParam(lua_State*l, int index);
 		protected:
 			string findScript(std::string strFullName);

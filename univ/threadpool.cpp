@@ -103,7 +103,7 @@ int Sloong::Universal::CThreadPool::EnqueTask(LPCALLBACKFUNC pJob, LPVOID pParam
 {
 	ThreadParam* pItem = new ThreadParam();
 	pItem->nJobType = 1;
-	pItem->pJob = pJob;
+	pItem->pJob = (LPVOID)pJob;
 	pItem->pParam = pParam;
 	std::lock_guard<mutex> lck(g_oJobListMutex);
 	m_pJobList.push(pItem);
@@ -115,7 +115,7 @@ int Sloong::Universal::CThreadPool::EnqueTask2(LPCALLBACK2FUNC pJob, LPVOID pPar
 {
 	ThreadParam* pItem = new ThreadParam();
 	pItem->nJobType = 2;
-	pItem->pJob = pJob;
+	pItem->pJob = (LPVOID)pJob;
 	pItem->pParam = pParam;
 	pItem->pParam2 = pParam2;
 	std::lock_guard<mutex> lck(g_oJobListMutex);
@@ -128,7 +128,7 @@ int Sloong::Universal::CThreadPool::EnqueTask3(LPCALLBACK3FUNC pJob, LPVOID pPar
 {
 	ThreadParam* pItem = new ThreadParam();
 	pItem->nJobType = 3;
-	pItem->pJob = pJob;
+	pItem->pJob = (LPVOID)pJob;
 	pItem->pParam = pParam;
 	pItem->pParam2 = pParam2;
 	pItem->pParam3 = pParam3;

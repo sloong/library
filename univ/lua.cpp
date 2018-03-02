@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "lua.h"
 #include "exception.h"
 #include <boost/algorithm/string.hpp>
@@ -29,17 +29,14 @@ Lunar<CLuaPacket>::RegType g_methods[] =
     {0,0}
 };
 
-
-string g_SearchList[] =
-{
-    "%pathdir%scripts/%filename%.lua",
-    "%pathdir%scripts/%filename%",
-    "%pathdir%scripts/%filename%.lub",
-    "%pathdir%%filename%.lua",
-    "%pathdir%%filename%",
-    "%pathdir%%filename%.lub",
+vector<string> g_SearchList = {
+	"%pathdir%scripts/%filename%.lua",
+	"%pathdir%scripts/%filename%",
+	"%pathdir%scripts/%filename%.lub",
+	"%pathdir%%filename%.lua",
+	"%pathdir%%filename%",
+	"%pathdir%%filename%.lub",
 };
-
 
 CLua::CLua()
 {
@@ -51,6 +48,13 @@ CLua::CLua()
 	m_strScriptFolder = "./";
 }
 
+Sloong::Universal::CLua::CLua(lua_State* l)
+{
+	m_pErrorHandler = NULL;
+	m_pScriptContext = l;
+}
+
+
 CLua::~CLua()
 {
 	if (m_pScriptContext)
@@ -60,7 +64,8 @@ CLua::~CLua()
 std::string CLua::findScript(std::string strFullName)
 {
 	string testFile(""),res("");
-    for (int i = 0; i< ARRAY_SIZE(g_SearchList); i++)
+	int len = g_SearchList.size();
+    for (int i = 0; i< len; i++)
 	{
         testFile = CUniversal::Replace(CUniversal::Replace(g_SearchList[i], "%pathdir%", m_strScriptFolder), "%filename%", strFullName);;
 		if (0 == access(testFile.c_str(), ACC_R))
@@ -217,25 +222,40 @@ void CLua::AddFunctions(vector<LuaFunctionRegistr> *pFuncList)
 }
 
 
-string CLua::GetStringArgument(lua_State* l, int nNum, std::string pDefault /* = "" */)
+string CLua::GetString(lua_State* l, int nNum, std::string pDefault /* = "" */)
 {
 	auto str = luaL_optstring(l, nNum, pDefault.c_str());
 	return str;
 }
 
-std::string CLua::GetStringArgument(int num, std::string pDefault)
+std::string CLua::GetString(int num, std::string pDefault)
 {
-	return GetStringArgument(m_pScriptContext, num, pDefault);
+	return GetString(m_pScriptContext, num, pDefault);
 }
 
-double CLua::GetNumberArgument(lua_State* l, int nNum, double dDefault /* = -1.0f */)
+double CLua::GetDouble(lua_State* l, int nNum, double dDefault /* = -1.0f */)
 {
 	return luaL_optnumber(l, nNum, dDefault);
 }
 
-double CLua::GetNumberArgument(int num, double dDefault)
+double CLua::GetDouble(int num, double dDefault)
 {
-	return GetNumberArgument(m_pScriptContext, num, dDefault);
+	return GetDouble(m_pScriptContext, num, dDefault);
+}
+
+int Sloong::Universal::CLua::GetInteger(int nNum, int nDef)
+{
+	return GetInteger(m_pScriptContext, nNum, nDef);
+}
+
+bool Sloong::Universal::CLua::GetBoolen(int nNum)
+{
+	return GetBoolen(m_pScriptContext, nNum);
+}
+
+void * Sloong::Universal::CLua::GetPointer(int nNum)
+{
+	return GetPointer(m_pScriptContext,nNum);
 }
 
 void CLua::PushString(lua_State* l, std::string strString)
@@ -248,14 +268,14 @@ void CLua::PushString(std::string pString)
 	CLua::PushString(m_pScriptContext, pString);
 }
 
-void CLua::PushNumber(lua_State* l, double dValue)
+void CLua::PushDouble(lua_State* l, double dValue)
 {
 	lua_pushnumber(l, dValue);
 }
 
-void CLua::PushNumber(double value)
+void CLua::PushDouble(double value)
 {
-	CLua::PushNumber(m_pScriptContext,value);
+	CLua::PushDouble(m_pScriptContext,value);
 }
 
 bool CLua::RunFunction(std::string strFunctionName, std::string args)
@@ -305,6 +325,11 @@ void CLua::PushPacket( CLuaPacket* pData )
     {
         lua_pushnil(m_pScriptContext);
     }
+}
+
+void Sloong::Universal::CLua::PushPointer(void * pPointer)
+{
+	return CLua::PushPointer(m_pScriptContext, pPointer);
 }
 
 bool CLua::GetLuaFuncRef( int& nFunc, const string& strFuncName )
@@ -393,7 +418,7 @@ int Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pUs
 		return -2;
 	}
 	strResponse = lua_tostring(m_pScriptContext, -2);
-	int nRes = lua_tonumber(m_pScriptContext, -1);
+	int nRes = (int)lua_tonumber(m_pScriptContext, -1);
 
 	lua_settop(m_pScriptContext, nTop);
 	return nRes;
@@ -418,14 +443,34 @@ void Sloong::Universal::CLua::RunFunction(string strFunctionName, CLuaPacket* pU
 	lua_settop(m_pScriptContext, nTop);
 }
 
-int Sloong::Universal::CLua::GetIntegerArgument(lua_State*l, int nNum, int nDev /*= -1*/)
+int Sloong::Universal::CLua::GetInteger(lua_State*l, int nNum, int nDef /*= -1*/)
 {
-	return luaL_optinteger(l, nNum, nDev);
+	return (int)luaL_optinteger(l, nNum, nDef);
+}
+
+bool Sloong::Universal::CLua::GetBoolen(lua_State* l, int nNum)
+{
+	return lua_toboolean(l, nNum);
+}
+
+void * Sloong::Universal::CLua::GetPointer(lua_State * l, int nNum)
+{
+	return (void*)lua_topointer(l, nNum);
 }
 
 void Sloong::Universal::CLua::PushInteger(lua_State*l, int nValue)
 {
 	lua_pushinteger(l, nValue);
+}
+
+void Sloong::Universal::CLua::PushBoolen(lua_State * l, bool b)
+{
+	lua_pushboolean(l, b);
+}
+
+void Sloong::Universal::CLua::PushPointer(lua_State* l, void* pPointer)
+{
+	lua_pushlightuserdata(l, pPointer);
 }
 
 map<std::string, std::string> Sloong::Universal::CLua::GetTableParam(lua_State*l, int index)

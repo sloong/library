@@ -12,8 +12,8 @@ namespace Sloong
 			CMD5() {}
 			~CMD5() {}
 
-			static void Binary_Encoding(string str, unsigned char(&md)[Sloong::Universal::MD5_LENGTH], bool bFile = false);
-			static string Encoding(string str, bool bFile = false);
+			static void Binary_Encode(string str, unsigned char(&md)[Sloong::Universal::MD5_LENGTH], bool bFile = false);
+			static string Encode(string str, bool bFile = false);
 		};
 	}
 }

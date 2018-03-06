@@ -237,30 +237,31 @@ void CtestDlg::OnBnClickedCancel()
 
 string Base64Encoding(string orgTxt, string key, BOOL bBase64)
 {
-	return CBase64::Encoding((const unsigned char*)orgTxt.c_str(), orgTxt.length());
+	return CBase64::Encode(orgTxt);
 }
 
 
 std::string MD5Encoding(string orgTxt, string key, BOOL bBase64)
 {
-	auto res = CMD5::Encoding(orgTxt,FALSE);
+	auto res = CMD5::Encode(orgTxt,FALSE);
 	if ( bBase64 )
 	{
-		return CBase64::Encoding((unsigned char*)res.c_str(), res.length());
+		return CBase64::Encode(res);
 	}
 	return res;
 }
 
 string Base64Decoding(string orgTxt, string key, BOOL bBase64)
 {
-	return CBase64::Decoding(orgTxt);
+	return CBase64::Decode(orgTxt);
 }
 
 string BinaryMD5Base64Encoding(string orgTxt, string key, BOOL bBase64)
 {
 	unsigned char md[16] = { 0 };
-	CMD5::Binary_Encoding(orgTxt, md);
-	return CBase64::Encoding(md, 16);
+	CMD5::Binary_Encode(orgTxt, md);
+	
+	return CBase64::Encode(string((char*)md, 16));
 }
 
 
@@ -273,19 +274,20 @@ string BlowFishAyersEncoding(string orgTxt, string key, BOOL bBase64)
 	CString strAyersData("");
 	int nAyersData = CBlowFish::CompressBlowfish(strEncodeData, strAyersData.GetBuffer(strEncodeData.GetLength()));
 	strAyersData.ReleaseBuffer();
-	return CBase64::Encoding((const unsigned char*)strAyersData.GetBuffer(nAyersData + 4), nAyersData + 4);
+	
+	return CBase64::Encode(string(strAyersData.GetBuffer(nAyersData + 4), nAyersData + 4));
 }
 
 
 string BlowFishAyersDecoding(string orgTxt, string key, BOOL bBase64)
 {
 	CString strBase64;
-	unsigned char* pBuf = (unsigned char*)strBase64.GetBuffer(2046);
-	int nLen = CBase64::Binary_Decoding(orgTxt.c_str(), pBuf);
+	string res = CBase64::Decode(orgTxt);
+	const char* pBuf = res.c_str();
 	int nLenMsg = 0;
 	memcpy(&nLenMsg, (LPCTSTR)pBuf, 4);
 	CString strChgBuffer("");
-	int nEncodeDataLength = CBlowFish::UncompressBlowfish((char*)pBuf + 4, strChgBuffer.GetBuffer(nLenMsg), nLenMsg);
+	int nEncodeDataLength = CBlowFish::UncompressBlowfish(pBuf + 4, strChgBuffer.GetBuffer(nLenMsg), nLenMsg);
 	strChgBuffer.ReleaseBuffer();
 	CBlowFish blowfish((unsigned char*)key.c_str(), key.length());
 	CString strDecDataBuffer;
@@ -311,7 +313,7 @@ std::string BlowFish2AyersEncoding(string orgTxt, string key, BOOL bBase64)
 		MessageBox(NULL, "Error", "Error", MB_OK);
 	}
 	SAFE_DELETE_ARR(pBlowfish);
-	return CBase64::Encoding((const unsigned char*)strAyersData.GetBuffer(nAyersData + 4), nAyersData + 4);
+	return CBase64::Encode(string(strAyersData.GetBuffer(nAyersData + 4), nAyersData + 4));
 }
 
 string BlowFishEncoding(string orgTxt, string key, BOOL bBase64)
@@ -322,7 +324,7 @@ string BlowFishEncoding(string orgTxt, string key, BOOL bBase64)
 	strEncodeData.ReleaseBuffer();
 	if (bBase64 == TRUE)
 	{
-		return CBase64::Encoding((const unsigned char*)strEncodeData.GetBuffer(strEncodeData.GetLength()), strEncodeData.GetLength());
+		return CBase64::Encode(string(strEncodeData.GetBuffer(strEncodeData.GetLength()), strEncodeData.GetLength()));
 	}
 	return strEncodeData.GetBuffer(strEncodeData.GetLength());
 }
@@ -330,7 +332,7 @@ string BlowFishEncoding(string orgTxt, string key, BOOL bBase64)
 
 std::string Base64Ayers2Blowfish(string orgTxt, string key, BOOL bBase64)
 {
-	string str = CBase64::Decoding(orgTxt);
+	string str = CBase64::Decode(orgTxt);
 	CString strChgBuffer("");
 	int nLenMsg = 0;
 	memcpy(&nLenMsg, (LPCTSTR)str.c_str(), 4);

@@ -6,12 +6,12 @@ using namespace Sloong::Universal;
 
 string Sloong::Universal::CSHA256::Encode(string str_src, bool file )
 {
-	unsigned char mdStr[SHA256_DIGEST_LENGTH] = { 0 };
+	unsigned char mdStr[SHA256_LENGTH] = { 0 };
 	Binary_Encoding(str_src, mdStr);
-	return CUniversal::BinaryToHex(mdStr, SHA256_DIGEST_LENGTH);
+	return CUniversal::BinaryToHex(mdStr, SHA256_LENGTH);
 }
 
-void Sloong::Universal::CSHA256::Binary_Encoding(const string& str_src, unsigned char(&md)[SHA256_DIGEST_LENGTH], bool bFile )
+void Sloong::Universal::CSHA256::Binary_Encoding(const string& str_src, unsigned char(&md)[SHA256_LENGTH], bool bFile )
 {
 	if (bFile)
 	{
@@ -37,12 +37,12 @@ void Sloong::Universal::CSHA256::Binary_Encoding(const string& str_src, unsigned
 
 string Sloong::Universal::CSHA512::Encode(string str_src, bool file)
 {
-	unsigned char mdStr[SHA512_DIGEST_LENGTH] = { 0 };
+	unsigned char mdStr[SHA512_LENGTH] = { 0 };
 	Binary_Encoding(str_src, mdStr);
-	return CUniversal::BinaryToHex(mdStr, SHA512_DIGEST_LENGTH);
+	return CUniversal::BinaryToHex(mdStr, SHA512_LENGTH);
 }
 
-void Sloong::Universal::CSHA512::Binary_Encoding(const string & str_src, unsigned char(&md)[SHA512_DIGEST_LENGTH], bool bFile)
+void Sloong::Universal::CSHA512::Binary_Encoding(const string & str_src, unsigned char(&md)[SHA512_LENGTH], bool bFile)
 {
 	if (bFile)
 	{

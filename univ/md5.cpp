@@ -6,7 +6,7 @@
 
 using namespace Sloong::Universal;
 
-void CMD5::Binary_Encoding(string str, unsigned char(&md)[MD5_DIGEST_LENGTH], bool bFile)
+void CMD5::Binary_Encoding(string str, unsigned char(&md)[MD5_LENGTH], bool bFile)
 {
 	if (bFile)
 	{
@@ -32,8 +32,8 @@ void CMD5::Binary_Encoding(string str, unsigned char(&md)[MD5_DIGEST_LENGTH], bo
 
 string CMD5::Encoding(string str, bool bFile /*= false*/)
 {
-	unsigned char md5[MD5_DIGEST_LENGTH] = { 0 };
+	unsigned char md5[MD5_LENGTH] = { 0 };
 
 	Binary_Encoding(str, md5, bFile);
-	return CUniversal::BinaryToHex(md5, MD5_DIGEST_LENGTH);
+	return CUniversal::BinaryToHex(md5, MD5_LENGTH);
 }

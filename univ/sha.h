@@ -5,8 +5,8 @@ namespace Sloong
 {
 	namespace Universal
 	{
-		const int SHA256_DIGEST_LENGTH = 32;
-		const int SHA512_DIGEST_LENGTH = 64;
+		const int SHA256_LENGTH = 32;
+		const int SHA512_LENGTH = 64;
 		class UNIVERSAL_API CSHA256
 		{
 		public:
@@ -15,7 +15,7 @@ namespace Sloong
 
 			// compare string or file hash value.
 			static string Encode(string str_src, bool file = false);
-			static void Binary_Encoding( const string& str_src, unsigned char (&md)[Sloong::Universal::SHA256_DIGEST_LENGTH], bool bFile = false);
+			static void Binary_Encoding( const string& str_src, unsigned char (&md)[Sloong::Universal::SHA256_LENGTH], bool bFile = false);
 		};
 
 		class UNIVERSAL_API CSHA512
@@ -26,7 +26,7 @@ namespace Sloong
 
 			// compare string or file hash value.
 			static string Encode(string str_src, bool file = false);
-			static void Binary_Encoding(const string& str_src, unsigned char(&md)[Sloong::Universal::SHA512_DIGEST_LENGTH], bool bFile = false);
+			static void Binary_Encoding(const string& str_src, unsigned char(&md)[Sloong::Universal::SHA512_LENGTH], bool bFile = false);
 		};
 	}
 }

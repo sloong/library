@@ -70,6 +70,7 @@ namespace Sloong
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
 			static bool RunSystemCmd(string cmd);
+			static string BinaryToHex(const unsigned char* buf,int len);
 
 			static inline void LongToBytes(long long l, char* pBuf)
 			{

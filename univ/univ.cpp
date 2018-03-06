@@ -320,6 +320,18 @@ bool Sloong::Universal::CUniversal::RunSystemCmd(string cmd)
 #endif
 }
 
+std::string Sloong::Universal::CUniversal::BinaryToHex(const unsigned char* buf, int len)
+{
+	std::string NewString = "";
+	char tmp[2];
+	for (int i = 0; i < len; i++)
+	{
+		sprintf(tmp, "%02x", buf[i]);
+		NewString = NewString + tmp;
+	}
+	return NewString;
+}
+
 int Sloong::Universal::CUniversal::SendEx(SOCKET sock, const char * buf, int nSize, int nStart, bool eagain)
 {
 	int nAllSent = nStart;

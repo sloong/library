@@ -166,6 +166,7 @@ copy $(ProjectDir)openssl\lib32\libeay32.dll $(Outdir)</Command>
     <ClInclude Include="resource.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="lua.h" />
+    <ClInclude Include="sha.h" />
     <ClInclude Include="threadpool.h" />
     <ClInclude Include="univ.h" />
     <ClInclude Include="stdafx.h" />
@@ -195,6 +196,7 @@ copy $(ProjectDir)openssl\lib32\libeay32.dll $(Outdir)</Command>
     <ClCompile Include="lua.cpp" />
     <ClCompile Include="luapacket.cpp" />
     <ClCompile Include="MD5.cpp" />
+    <ClCompile Include="sha.cpp" />
     <ClCompile Include="threadpool.cpp" />
     <ClCompile Include="univ.cpp" />
     <ClCompile Include="stdafx.cpp">

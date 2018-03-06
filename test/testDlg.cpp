@@ -12,7 +12,7 @@
 #endif
 
 #include "Base64.h"
-#include "MD5.h"
+#include "md5.h"
 #include "BlowFish.h"
 #include "log.h"
 #pragma comment(lib,"univ.lib")

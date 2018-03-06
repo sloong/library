@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "MD5.h"
+#include "md5.h"
 #include <assert.h>
 #include <openssl/md5.h>
 #include "exception.h"

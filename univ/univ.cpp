@@ -326,7 +326,7 @@ std::string Sloong::Universal::CUniversal::BinaryToHex(const unsigned char* buf,
 	char tmp[3] = {0};
 	for (int i = 0; i < len; i++)
 	{
-		snprintf(tmp, 2, "%02x", buf[i]);
+		snprintf(tmp, 3, "%02x", buf[i]);
 		NewString = NewString + tmp;
 	}
 	return NewString;

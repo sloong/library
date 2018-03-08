@@ -408,11 +408,6 @@ bool Sloong::Universal::CLog::IsInitialize()
 	return m_bInit;
 }
 
-void Sloong::Universal::CLog::SetWorkInterval(int nInterval /*= 100*/)
-{
-	m_nSleepInterval = nInterval;
-}
-
 void Sloong::Universal::CLog::Start()
 {
 	if (m_emStatus == RUN_STATUS::Running)

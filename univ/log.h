@@ -43,12 +43,6 @@ namespace Sloong
 			virtual void Initialize(string szPathName, bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 			virtual void Start();
 			virtual void End();
-			/************************************************************************/
-			/* SetWorkInterval function                                             */
-			/* Set the log system work loop sleep time when the log list is empty   */
-			/* in default, it is 100. you can change it by your need.               */
-			/************************************************************************/
-			virtual void SetWorkInterval(int nInterval = 100);
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
 			virtual void Log(std::string strErrorText, std::string strTitle , DWORD dwCode = 0 , bool bFormatSysMsg = false);
@@ -90,7 +84,6 @@ namespace Sloong
 			// if true, the text will write to hard disk in every call.
 			// if false, it just write to the cache. and the system to control to write to disk.
             bool        m_bDebug;
-			int			m_nSleepInterval;
 			condition_variable m_CV;
 			mutex		m_Mutex;
 			mutex		m_oLogListMutex;

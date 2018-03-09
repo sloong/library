@@ -35,10 +35,10 @@ RELEASEFLAGS = -DNODEBUG -DRELASE -O3
 LIBS   = -llua
 
 # include directory
-INCLUDE_DIR = 
+INCLUDE_DIR = -I../
 
 # The options used in linking as well as in any direct use of ld.
-LDFLAGS   = -I../
+LDFLAGS   = 
 
 # The directories in which source files reside.
 # If not specified, only the current directory will be serached.

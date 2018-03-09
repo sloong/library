@@ -415,7 +415,6 @@ void Sloong::Universal::CLog::Start()
 
 	m_emStatus = RUN_STATUS::Running;
 	CThreadPool::AddWorkThread(CLog::LogSystemWorkLoop, this, 1);
-	SetWorkInterval();
 	WriteLine(g_strStart);
 }
 

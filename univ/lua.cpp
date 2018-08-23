@@ -30,12 +30,8 @@ Lunar<CLuaPacket>::RegType g_methods[] =
 };
 
 vector<string> g_SearchList = {
-	"%pathdir%scripts/%filename%.lua",
-	"%pathdir%scripts/%filename%",
-	"%pathdir%scripts/%filename%.lub",
 	"%pathdir%%filename%.lua",
 	"%pathdir%%filename%",
-	"%pathdir%%filename%.lub",
 };
 
 CLua::CLua()

@@ -32,10 +32,10 @@ DEBUGFLAGS = -DDEBUG -g -pg
 RELEASEFLAGS = -DNODEBUG -DRELASE -O3
 
 # The linker options.
-LIBS   = -llua
+LIBS   = -llua5.3 -lcrypto
 
 # include directory
-INCLUDE_DIR = -I../
+INCLUDE_DIR = -I../ -I/usr/include/lua5.3/
 
 # The options used in linking as well as in any direct use of ld.
 LDFLAGS   = 

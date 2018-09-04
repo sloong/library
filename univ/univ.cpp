@@ -169,48 +169,24 @@ wstring CUniversal::replace(const wstring& str, const wstring& src, const wstrin
 	return ret;
 }
 
-std::string Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
+int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 {
 	if (filePath == "")
-	{
-		return "";
-	}
+		return 0;
 
-	int iLen = filePath.size();
-	char* pszDir = new char[iLen + 1];
-	memset(pszDir, 0, iLen + 1);
-	memcpy(pszDir, filePath.c_str(), iLen);
-	string strDir;
-	// 创建中间目录  
-	for (int i = 1; i < iLen; i++)
-	{
-		if (pszDir[i] == '\\' || pszDir[i] == '/')
-		{
-			pszDir[i] = '\0';
-			strDir = pszDir;
-
-			//如果不存在,创建  
-			if (0 != ACCESS(pszDir, F_OK))
-			{
-				if (0 != MKDIR(pszDir))
-				{
-					return "";
-				}
-			}
-
-			//支持linux,将所有\换成/  
-			pszDir[i] = '/';
-		}
-	}
+	string path = filePath.substr(0,filePath.find_last_of('/'));
+	#ifndef _WINDOWS 
+		RunSystemCmd(CUniversal::Format("mkdir -p %s",path));
+	#else
+		RunSystemCmd(CUniversal::Format("mkdir %s",path));
+	#endif
 
 	// 没有写权限
-	if (0 != ACCESS(pszDir, W_OK))
+	if (0 != ACCESS(path.c_str(), W_OK))
 	{
-		return "";
+		return -1;
 	}
-
-	SAFE_DELETE_ARR(pszDir);
-	return strDir;
+	return 1;
 }
 
 
@@ -357,6 +333,11 @@ int Sloong::Universal::CUniversal::SendEx(SOCKET sock, const char * buf, int nSi
 				return nAllSent;
 #endif // _WINDOWS
 		}
+		// socket 已经关闭
+		else if ( nSentSize == 0 )
+		{
+			return -1;
+		}
 
 		nNosendSize -= nSentSize;
 		nAllSent += nSentSize;
@@ -415,6 +396,11 @@ int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int n
 					return -1;
 				}
 #endif // _WINDOWS
+			}
+			// socket 已经关闭
+			else if ( nRecv == 0 )
+			{
+				return -1;
 			}
 		}
 		else

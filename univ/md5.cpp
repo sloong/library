@@ -10,7 +10,7 @@ void CMD5::Binary_Encode(string str, unsigned char(&md)[MD5_LENGTH], bool bFile)
 {
 	if (bFile)
 	{
-		FILE *fd = fopen(str.c_str(), "r");
+		FILE *fd = fopen(str.c_str(), "rb");
 		MD5_CTX c;
 		int len;
 		unsigned char buffer[1024] = { '\0' };

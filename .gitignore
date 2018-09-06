@@ -32,3 +32,5 @@ tlog
 *.o
 *.db
 /.vs/library/v15
+libuniv_debug
+univ/libuniv.so

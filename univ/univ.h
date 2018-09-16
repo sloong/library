@@ -111,9 +111,11 @@ namespace Sloong
 				eagain	-> continue when the EINTR,EAGAIN error if value is true.
 							else return direct. in default is false.    *Only LinuxOS
 			Return:
-				如果请求成功，返回大于0的接收数据长度。
-				如果接收超时，返回0。
-				如果发生EINTR,EAGAIN错误且eagain为true，返回0。 *Only LinuxOS
+				如果请求成功，返回等于nSize的数据长度。
+				如果接收超时，返回0或者小于nSize的已接收长度。
+				如果发生EINTR,EAGAIN错误且eagain为false，返回-1。 *Only LinuxOS
+				如果发生EINTR,EAGAIN错误且已接收数据为0，返回-1
+				如果发生EINTR,EAGAIN错误且eagain为true且已接收数据大于0，持续接收数据。
 				如果发生其他错误，返回-1。			*/
 			/************************************************************************/
 			static int RecvEx(int sock, char* buf, int nSize, int nTimeout, bool bAgain = false );

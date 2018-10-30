@@ -30,7 +30,9 @@ Release
 tlog
 *.user
 *.o
+*.log
 *.db
 /.vs/library/v15
 libuniv_debug
 univ/libuniv.so
+/.vs/config

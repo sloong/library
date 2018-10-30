@@ -69,7 +69,8 @@ namespace Sloong
 			static wstring replace(const wstring& str, const wstring& src, const wstring& dest);
 			static string toansi(const wstring& str);
 			static wstring toutf(const string& str);	
-			static bool RunSystemCmd(string cmd);
+			static string RunSystemCmdAndGetResult(const string& cmd);
+			static bool RunSystemCmd(const string& cmd);
 			static string BinaryToHex(const unsigned char* buf,int len);
 
 			static inline void LongToBytes(long long l, char* pBuf)

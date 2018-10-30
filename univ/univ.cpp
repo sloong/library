@@ -219,7 +219,6 @@ bool Sloong::Universal::CUniversal::MoveFile(string lpExistingFileName, string l
 		string strDir = CheckFileDirectory(lpNewFileName);
 		if (strDir == "")
 		{
-			// 妫€鏌ョ洰鏍囪矾寰勫け璐�
 			return 0;
 		}
 
@@ -257,12 +256,45 @@ wstring Sloong::Universal::CUniversal::toutf(const string& str)
 	return strResult;
 }
 
+
+string Sloong::Universal::CUniversal::RunSystemCmdAndGetResult(const string &strCmd)
+{
+#ifdef _WINDOWS
+	return "No support windows.";
+#else
+	char buf[10240] = {0};
+	FILE *pf = NULL;
+	
+	if( (pf = popen(strCmd.c_str(), "r")) == NULL )
+	{
+		return "";
+	}
+ 
+	string strResult;
+	while(fgets(buf, sizeof buf, pf))
+	{
+		strResult += buf;
+	}
+	
+	pclose(pf);
+ 
+	unsigned int iSize =  strResult.size();
+	if(iSize > 0 && strResult[iSize - 1] == '\n')  // linux
+	{
+		strResult = strResult.substr(0, iSize - 1);
+	}
+ 
+	return strResult;
+#endif
+}
+
+
 /************************************************************************/
 /*			Run System Cmd Function
 Returns:
 	return true if run succeed. else return false.						*/
-	/************************************************************************/
-bool Sloong::Universal::CUniversal::RunSystemCmd(string cmd)
+/************************************************************************/
+bool Sloong::Universal::CUniversal::RunSystemCmd(const string& cmd)
 {
 #ifdef _WINDOWS
 	return system(cmd.c_str()) == 0;

@@ -57,6 +57,12 @@ namespace Sloong
 			static void CopyStringToPoint(LPSTR& lpTarget, LPCSTR lpFrom);
 			static void CopyStringToPoint(LPWSTR& lpTarget, LPCWSTR lpFrom);
 			static wstring FormatWindowsErrorMessage(DWORD dwErrCode);
+			/*
+			Returns:
+				1 : succeed.
+				0 : path error
+				-1 : No write access.
+			*/
 			static int CheckFileDirectory(string filepath);
 			/// Move file 
 			/// Return values

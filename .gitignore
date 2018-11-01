@@ -36,3 +36,4 @@ tlog
 libuniv_debug
 univ/libuniv.so
 /.vs/config
+libuniv_*

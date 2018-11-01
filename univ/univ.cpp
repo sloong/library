@@ -169,6 +169,12 @@ wstring CUniversal::replace(const wstring& str, const wstring& src, const wstrin
 	return ret;
 }
 
+/*
+ Returns:
+	1 : succeed.
+	0 : path error
+	-1 : No write access.
+*/
 int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 {
 	if (filePath == "")
@@ -299,7 +305,11 @@ bool Sloong::Universal::CUniversal::RunSystemCmd(const string& cmd)
 #ifdef _WINDOWS
 	return system(cmd.c_str()) == 0;
 #else
+	sighandler_t old_handler;  
+  
+	old_handler = signal(SIGCHLD, SIG_DFL);  
 	int res = system(cmd.c_str());
+	signal(SIGCHLD, old_handler);  
 	if (-1 == res)
 	{
 		printf("system error!");

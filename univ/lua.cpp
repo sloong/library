@@ -148,7 +148,7 @@ std::string CLua::GetErrorString()
     lua_pushliteral(m_pScriptContext,"Call Stack:\r\n");
     while (lua_getstack(m_pScriptContext,level++,&ar))
     {
-        char buff[10];
+        char buff[10]={0};
         if(level > LEVELS1 && firstpart )
         {
             if(!lua_getstack(m_pScriptContext,level+LEVELS2,&ar))

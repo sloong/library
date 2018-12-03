@@ -60,13 +60,10 @@
     <ClInclude Include="DES.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MD5.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Lunar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sha.h">
+    <ClInclude Include="hash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,10 +101,7 @@
     <ClCompile Include="DES.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MD5.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sha.cpp">
+    <ClCompile Include="hash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

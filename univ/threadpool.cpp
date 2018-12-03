@@ -11,7 +11,7 @@
 using namespace Sloong;
 using namespace Sloong::Universal;
 
-queue<ThreadParam*> Sloong::Universal::CThreadPool::m_pJobList;
+queue<shared_ptr<ThreadParam>> Sloong::Universal::CThreadPool::m_pJobList;
 vector<thread*> Sloong::Universal::CThreadPool::m_pThreadList;
 RUN_STATUS Sloong::Universal::CThreadPool::m_emStatus = Created;
 condition_variable Sloong::Universal::CThreadPool::g_oRunJobCV;
@@ -60,24 +60,15 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 					list_lock.unlock();
 					continue;
 				}
-				auto pJob = m_pJobList.front();
+				auto pJobInfo = m_pJobList.front();
 				m_pJobList.pop();
 				list_lock.unlock();
-				switch (pJob->nJobType)
-				{
-				case 1:
-					(*(LPCALLBACKFUNC)pJob->pJob)(pJob->pParam);
-					break;
-				case 2:
-					(*(LPCALLBACK2FUNC)pJob->pJob)(pJob->pParam,pJob->pParam2);
-					break;
-				case 3:
-					(*(LPCALLBACK3FUNC)pJob->pJob)(pJob->pParam,pJob->pParam2,pJob->pParam3);
-					break;
-				}
-				// Just delete the ThreadParam, the pParmam function should be delete in the job. 
-				// because don't know the pararm type. 
-				SAFE_DELETE(pJob);
+
+				LPVOID pRes = nullptr;
+				if ( pJobInfo->pJob != nullptr )
+					pRes = (*pJobInfo->pJob)(pJobInfo->pParam);
+				if ( pJobInfo->pCallBack != nullptr )
+					(*pJobInfo->pCallBack)(pRes);
 			}
 		}
 		catch (...)
@@ -95,47 +86,21 @@ void Sloong::Universal::CThreadPool::Exit()
 	{
 		auto pJob = m_pJobList.front();
 		m_pJobList.pop();
-		SAFE_DELETE(pJob);
 	}
 }
 
-int Sloong::Universal::CThreadPool::EnqueTask(LPCALLBACKFUNC pJob, LPVOID pParam)
-{
-	ThreadParam* pItem = new ThreadParam();
-	pItem->nJobType = 1;
-	pItem->pJob = (LPVOID)pJob;
-	pItem->pParam = pParam;
-	std::lock_guard<mutex> lck(g_oJobListMutex);
-	m_pJobList.push(pItem);
-	g_oRunJobCV.notify_one();
-	return m_pJobList.size() - 1;
-}
 
-int Sloong::Universal::CThreadPool::EnqueTask2(LPCALLBACK2FUNC pJob, LPVOID pParam, LPVOID pParam2)
+int Sloong::Universal::CThreadPool::EnqueTask(LPCALLBACKFUNC pJob, LPCALLBACKFUNC pCallBack, LPVOID pParam)
 {
-	ThreadParam* pItem = new ThreadParam();
-	pItem->nJobType = 2;
-	pItem->pJob = (LPVOID)pJob;
+	auto pItem = make_shared<ThreadParam>();
+	pItem->pJob = pJob;
+	pItem->pCallBack = pCallBack;
 	pItem->pParam = pParam;
-	pItem->pParam2 = pParam2;
-	std::lock_guard<mutex> lck(g_oJobListMutex);
-	m_pJobList.push(pItem);
-	g_oRunJobCV.notify_one();
-	return m_pJobList.size() - 1;
-}
 
-int Sloong::Universal::CThreadPool::EnqueTask3(LPCALLBACK3FUNC pJob, LPVOID pParam, LPVOID pParam2, LPVOID pParam3)
-{
-	ThreadParam* pItem = new ThreadParam();
-	pItem->nJobType = 3;
-	pItem->pJob = (LPVOID)pJob;
-	pItem->pParam = pParam;
-	pItem->pParam2 = pParam2;
-	pItem->pParam3 = pParam3;
 	std::lock_guard<mutex> lck(g_oJobListMutex);
 	m_pJobList.push(pItem);
 	g_oRunJobCV.notify_one();
-	return m_pJobList.size() - 1;
+	return m_pJobList.size();
 }
 
 int Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nNum /* = 1*/ )

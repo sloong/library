@@ -11,12 +11,14 @@
 using namespace Sloong;
 using namespace Sloong::Universal;
 
-queue<shared_ptr<ThreadParam>> Sloong::Universal::CThreadPool::m_pJobList;
+map<ULONG, shared_ptr<TaskParam>> Sloong::Universal::CThreadPool::m_oJobList;
+queue<ULONG> Sloong::Universal::CThreadPool::m_oWaitList;
 vector<thread*> Sloong::Universal::CThreadPool::m_pThreadList;
 RUN_STATUS Sloong::Universal::CThreadPool::m_emStatus = Created;
 condition_variable Sloong::Universal::CThreadPool::g_oRunJobCV;
 mutex Sloong::Universal::CThreadPool::g_oJobListMutex;
 mutex Sloong::Universal::CThreadPool::g_oRunJobMutex;
+ULONG Sloong::Universal::CThreadPool::m_nIDCursor;
 
 void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 {
@@ -25,6 +27,7 @@ void Sloong::Universal::CThreadPool::Initialize(int nThreadNum)
 		thread* pThread = new thread(ThreadWorkLoop);
 		m_pThreadList.push_back(pThread);
 	}
+	m_nIDCursor = 0;
 }
 
 void Sloong::Universal::CThreadPool::Run()
@@ -45,30 +48,32 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 				continue;
 			}
 			// each 1 second check the list once.
-			if (m_pJobList.empty())
+			if (m_oWaitList.empty())
 			{
 				g_oRunJobCV.wait(lck);
 				continue;
 			}
 			
 			// Run the job list first. 
-			if (!m_pJobList.empty())
+			if (!m_oWaitList.empty())
 			{
 				unique_lock <mutex> list_lock(g_oJobListMutex);
-				if (m_pJobList.empty())
+				if (m_oWaitList.empty())
 				{
 					list_lock.unlock();
 					continue;
 				}
-				auto pJobInfo = m_pJobList.front();
-				m_pJobList.pop();
+				int nJobID = m_oWaitList.front();
+				m_oWaitList.pop();
+				auto pJobInfo = m_oJobList[nJobID];
+				m_oJobList.erase(nJobID);
 				list_lock.unlock();
 
 				LPVOID pRes = nullptr;
 				if ( pJobInfo->pJob != nullptr )
 					pRes = (*pJobInfo->pJob)(pJobInfo->pParam);
 				if ( pJobInfo->pCallBack != nullptr )
-					(*pJobInfo->pCallBack)(pRes);
+					(*pJobInfo->pCallBack)(pJobInfo->nTaskID, pRes);
 			}
 		}
 		catch (...)
@@ -82,28 +87,28 @@ void Sloong::Universal::CThreadPool::Exit()
 {
 	m_emStatus = RUN_STATUS::Exit;
 	// clear the job list.
-	while (!m_pJobList.empty())
-	{
-		auto pJob = m_pJobList.front();
-		m_pJobList.pop();
-	}
+	m_oJobList.clear();
+	m_nIDCursor = 0;
 }
 
 
-int Sloong::Universal::CThreadPool::EnqueTask(LPCALLBACKFUNC pJob, LPCALLBACKFUNC pCallBack, LPVOID pParam)
+ULONG Sloong::Universal::CThreadPool::EnqueTask(LPTASKFUNC pJob, LPTASKCALLBACK pCallBack, LPVOID pParam)
 {
-	auto pItem = make_shared<ThreadParam>();
+	auto pItem = make_shared<TaskParam>();
 	pItem->pJob = pJob;
 	pItem->pCallBack = pCallBack;
 	pItem->pParam = pParam;
 
 	std::lock_guard<mutex> lck(g_oJobListMutex);
-	m_pJobList.push(pItem);
+	m_nIDCursor++;
+	pItem->nTaskID = m_nIDCursor;
+	m_oJobList[m_nIDCursor] = pItem;
+	m_oWaitList.push(m_nIDCursor);
 	g_oRunJobCV.notify_one();
-	return m_pJobList.size();
+	return m_nIDCursor;
 }
 
-int Sloong::Universal::CThreadPool::AddWorkThread(LPCALLBACKFUNC pJob, LPVOID pParam, int nNum /* = 1*/ )
+int Sloong::Universal::CThreadPool::AddWorkThread(LPTASKFUNC pJob, LPVOID pParam, int nNum /* = 1*/ )
 {
     int nIndex = CThreadPool::m_pThreadList.size();
     for( int i = 0; i < nNum; i++ )

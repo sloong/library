@@ -69,7 +69,17 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 				m_oJobList.erase(nJobID);
 				list_lock.unlock();
 
-				if (pJobInfo->bSmart)
+				switch (pJobInfo->emTaskType)
+				{
+				case TaskType::SmartFunc: {
+					SMARTER pRes = nullptr;
+					if (pJobInfo->pSmartFuncJob != nullptr)
+						pRes = pJobInfo->pSmartFuncJob(pJobInfo->pSmartParam);
+					if (pJobInfo->pSmartFuncCallback != nullptr)
+						pJobInfo->pSmartFuncCallback(pJobInfo->nTaskID, pRes);
+				}
+					break;
+				case TaskType::SmartParam:
 				{
 					SMARTER pRes = nullptr;
 					if (pJobInfo->pSmartJob != nullptr)
@@ -77,13 +87,17 @@ void Sloong::Universal::CThreadPool::ThreadWorkLoop()
 					if (pJobInfo->pSmartCallBack != nullptr)
 						(*pJobInfo->pSmartCallBack)(pJobInfo->nTaskID, pRes);
 				}
-				else
+					break;
+				case TaskType::Normal:
+				default:
 				{
 					LPVOID pRes = nullptr;
 					if (pJobInfo->pJob != nullptr)
 						pRes = (*pJobInfo->pJob)(pJobInfo->pParam);
 					if (pJobInfo->pCallBack != nullptr)
 						(*pJobInfo->pCallBack)(pJobInfo->nTaskID, pRes);
+				}
+					break;
 				}
 			}
 		}
@@ -103,13 +117,13 @@ void Sloong::Universal::CThreadPool::Exit()
 }
 
 
-ULONG Sloong::Universal::CThreadPool::EnqueTask(LPTASKFUNC pJob, LPTASKCALLBACK pCallBack, LPVOID pParam)
+ULONG Sloong::Universal::CThreadPool::EnqueTask(LPTASKFUNC pJob, LPVOID pParam, LPTASKCALLBACK pCallBack)
 {
 	auto pItem = make_shared<TaskParam>();
 	pItem->pJob = pJob;
 	pItem->pCallBack = pCallBack;
 	pItem->pParam = pParam;
-	pItem->bSmart = false;
+	pItem->emTaskType = TaskType::Normal;
 	std::lock_guard<mutex> lck(g_oJobListMutex);
 	m_nIDCursor++;
 	pItem->nTaskID = m_nIDCursor;
@@ -119,13 +133,13 @@ ULONG Sloong::Universal::CThreadPool::EnqueTask(LPTASKFUNC pJob, LPTASKCALLBACK 
 	return m_nIDCursor;
 }
 
-ULONG Sloong::Universal::CThreadPool::EnqueTask(LPSMARTFUNC pJob, LPSMARTCALLBACK pCallBack, SMARTER pParam)
+ULONG Sloong::Universal::CThreadPool::EnqueTask(LPSMARTFUNC pJob, SMARTER pParam, LPSMARTCALLBACK pCallBack)
 {
 	auto pItem = make_shared<TaskParam>();
 	pItem->pSmartJob = pJob;
 	pItem->pSmartCallBack = pCallBack;
 	pItem->pSmartParam = pParam;
-	pItem->bSmart = true;
+	pItem->emTaskType = TaskType::SmartParam;
 	std::lock_guard<mutex> lck(g_oJobListMutex);
 	m_nIDCursor++;
 	pItem->nTaskID = m_nIDCursor;
@@ -135,6 +149,22 @@ ULONG Sloong::Universal::CThreadPool::EnqueTask(LPSMARTFUNC pJob, LPSMARTCALLBAC
 	return m_nIDCursor;
 }
 
+
+ULONG Sloong::Universal::CThreadPool::EnqueTask(SmartFunction pJob, SMARTER pParam /* = nullptr */, SmartCallbackFunction pCallBack /* = nullptr */)
+{
+	auto pItem = make_shared<TaskParam>();
+	pItem->pSmartFuncJob = pJob;
+	pItem->pSmartFuncCallback = pCallBack;
+	pItem->pSmartParam = pParam;
+	pItem->emTaskType = TaskType::SmartFunc;
+	std::lock_guard<mutex> lck(g_oJobListMutex);
+	m_nIDCursor++;
+	pItem->nTaskID = m_nIDCursor;
+	m_oJobList[m_nIDCursor] = pItem;
+	m_oWaitList.push(m_nIDCursor);
+	g_oRunJobCV.notify_one();
+	return m_nIDCursor;
+}
 
 
 int Sloong::Universal::CThreadPool::AddWorkThread(LPTASKFUNC pJob, LPVOID pParam, int nNum /* = 1*/ )
@@ -148,4 +178,18 @@ int Sloong::Universal::CThreadPool::AddWorkThread(LPTASKFUNC pJob, LPVOID pParam
 
     return nIndex;
 }
+
+
+int Sloong::Universal::CThreadPool::AddWorkThread(std::function<void(SMARTER)> pJob, SMARTER pParam, int nNum/* = 1*/)
+{
+	int nIndex = CThreadPool::m_pThreadList.size();
+	for (int i = 0; i < nNum; i++)
+	{
+		thread* pThread = new thread(pJob, pParam);
+		CThreadPool::m_pThreadList.push_back(pThread);
+	}
+
+	return nIndex;
+}
+
 

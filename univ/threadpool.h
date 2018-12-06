@@ -1,3 +1,4 @@
+
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
@@ -26,9 +27,16 @@ namespace Sloong
 		typedef void(*pSmartCallBack)(long long, SMARTER);
 		typedef pSmartJobFunc LPSMARTFUNC;
 		typedef pSmartCallBack LPSMARTCALLBACK;
+		typedef std::function<SMARTER(SMARTER)> SmartFunction;
+		typedef std::function<SMARTER(long long,SMARTER)> SmartCallbackFunction;
+		enum TaskType {
+			Normal,
+			SmartParam,
+			SmartFunc,
+		};
 		struct TaskParam
 		{
-			bool bSmart;
+			TaskType emTaskType;
 			ULONG nTaskID;
 			// Only C Style
 			LPTASKFUNC		pJob = nullptr;
@@ -38,6 +46,9 @@ namespace Sloong
 			LPSMARTFUNC		pSmartJob;
 			LPSMARTCALLBACK pSmartCallBack;
 			SMARTER pSmartParam;
+			// std::function style
+			SmartFunction		pSmartFuncJob;
+			SmartCallbackFunction		pSmartFuncCallback;
 		};
 		
 		
@@ -54,14 +65,18 @@ namespace Sloong
 			// the bStatic is the job is not doing once. if ture, the job will always run it in the threadpool. 
 			// and the function return the job index in job list. for once job, it can not do anything, for static job
 			// it can used in RemoveTask function.
-			static ULONG EnqueTask(LPTASKFUNC pJob, LPTASKCALLBACK pCallBack, LPVOID pParam);
+			static ULONG EnqueTask(SmartFunction pJob, SMARTER pParam = nullptr, SmartCallbackFunction pCallBack = nullptr);
 
-			static ULONG EnqueTask(LPSMARTFUNC pJob, LPSMARTCALLBACK pCallBack, SMARTER pParam);
+			static ULONG EnqueTask(LPTASKFUNC pJob, LPVOID pParam = nullptr, LPTASKCALLBACK pCallBack = nullptr);
+
+			static ULONG EnqueTask(LPSMARTFUNC pJob, SMARTER pParam = nullptr, LPSMARTCALLBACK pCallBack = nullptr);
 
             // Add a work thread to the threadlist.
             // return the thread index in threadlist. if the nNum param is not 1, the other
             // thread index is base on return value.
-            static int AddWorkThread(LPTASKFUNC pJob, LPVOID pParam, int nNum = 1);
+            static int AddWorkThread(LPTASKFUNC pJob, LPVOID pParam = nullptr, int nNum = 1);
+
+			static int AddWorkThread(std::function<void(SMARTER)> pJob, SMARTER pParam = nullptr, int nNum = 1);
 
 		protected:
 			static map<ULONG, shared_ptr<TaskParam>>	m_oJobList;

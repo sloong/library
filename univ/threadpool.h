@@ -14,17 +14,32 @@ namespace Sloong
 {
 	namespace Universal
 	{
+		/// C style define
 		typedef LPVOID(*pTaskJobFunc)(LPVOID);
 		typedef void(*pTaskCallBack)(long long, LPVOID);
 		typedef pTaskJobFunc LPTASKFUNC;
 		typedef pTaskCallBack LPTASKCALLBACK;
+
+		/// C++ std style define 
+		typedef shared_ptr<void> SMARTER;
+		typedef SMARTER(*pSmartJobFunc)(SMARTER);
+		typedef void(*pSmartCallBack)(long long, SMARTER);
+		typedef pSmartJobFunc LPSMARTFUNC;
+		typedef pSmartCallBack LPSMARTCALLBACK;
 		struct TaskParam
 		{
+			bool bSmart;
+			ULONG nTaskID;
+			// Only C Style
 			LPTASKFUNC		pJob = nullptr;
-			LPTASKCALLBACK	pCallBack= nullptr;
-			LPVOID			pParam= nullptr;
-			ULONG			nTaskID = 0;
+			LPTASKCALLBACK	pCallBack = nullptr;
+			LPVOID			pParam = nullptr;
+			// Only C++ style
+			LPSMARTFUNC		pSmartJob;
+			LPSMARTCALLBACK pSmartCallBack;
+			SMARTER pSmartParam;
 		};
+		
 		
 		class UNIVERSAL_API CThreadPool
 		{
@@ -40,6 +55,8 @@ namespace Sloong
 			// and the function return the job index in job list. for once job, it can not do anything, for static job
 			// it can used in RemoveTask function.
 			static ULONG EnqueTask(LPTASKFUNC pJob, LPTASKCALLBACK pCallBack, LPVOID pParam);
+
+			static ULONG EnqueTask(LPSMARTFUNC pJob, LPSMARTCALLBACK pCallBack, SMARTER pParam);
 
             // Add a work thread to the threadlist.
             // return the thread index in threadlist. if the nNum param is not 1, the other

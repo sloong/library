@@ -8,14 +8,14 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/dev/projects/sloongnet/sloongnet/sloongnet",
+            "program": "/home/dev/projects/sloongnet/build/debug/sloongnet",
             "args": [
                     "-r",
-                    "/home/dev/projects/walls-service/walls.conf",
-                    "ex-walls.conf"
+                    "default.conf",
+                    "/home/dev/projects/walls-service/ex-develop.conf"
             ],
             "stopAtEntry": false,
-            "cwd": "/home/dev/projects/sloongnet/sloongnet",
+            "cwd": "/home/dev/projects/sloongnet",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",

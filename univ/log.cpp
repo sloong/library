@@ -6,15 +6,6 @@
 #include "log.h"
 #include "exception.h"
 #include "threadpool.h"
-#include <assert.h>
-#include <thread>
-#include <queue>
-#include <mutex>
-#include <iostream>
-#include <fstream>
-#include <stdarg.h> // for va_list,va_start and va_end
-#include <boost/format.hpp>
-#include <boost/foreach.hpp>
 using namespace Sloong;
 
 const string g_strStart = "---------------------------------Start---------------------------------";
@@ -111,8 +102,8 @@ void Sloong::Universal::CLog::WriteLine(std::string szLog)
 	time_t st;
     time(&st);
 	struct tm* lt = localtime(&st);
-	Write(CUniversal::Format("[%d/%d/%d - %.2d:%.2d:%.2d]:%s%s",(lt->tm_year + 1900) , lt->tm_mon , lt->tm_mday ,
-		lt->tm_hour, lt->tm_min, lt->tm_sec,szLog,g_szNewLine));
+	Write(CUniversal::Format("[%d/%d/%d-%.2d:%.2d:%.2d]:%s\n",(lt->tm_year + 1900) , lt->tm_mon , lt->tm_mday ,
+		lt->tm_hour, lt->tm_min, lt->tm_sec,szLog));
 }
 
 void Sloong::Universal::CLog::Write(std::string szMessage)
@@ -152,14 +143,14 @@ void CLog::LogSystemWorkLoop()
 			// write log message to file
 			fputs(str.c_str(), m_pFile);
 
-			if (pThis->m_nNetLogListenSocket != INVALID_SOCKET )
+			if (m_nNetLogListenSocket != INVALID_SOCKET )
 			{
 				char pBufLen[8] = { 0 };
 				auto len = str.length() + 1;
 				CUniversal::LongToBytes(len, pBufLen);
 
 				// send log message to socket
-				BOOST_FOREACH(SOCKET sock, pThis->m_vLogSocketList)
+				BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
 				{
 					CUniversal::SendEx(sock, pBufLen, 8);
 					CUniversal::SendEx(sock, str.c_str(), len);
@@ -255,9 +246,9 @@ bool Sloong::Universal::CLog::OpenFile()
 		cout << "File no open , try open file. file path is :" << m_szFileName << endl;
 	}
 	CUniversal::CheckFileDirectory(m_szFileName);
-	auto flag = "a+";
+	auto flag = "w+";
 	if (m_bIsCoverPrev == true)
-		flag = "w+";
+		flag = "a+";
 
 	m_pFile = fopen(m_szFileName.c_str(), flag);
 
@@ -308,7 +299,7 @@ bool Sloong::Universal::CLog::IsOpen()
 			char szCurrentDate[10];
 			static const char format[3][10] = { ("%Y"), ("%Y-%m"), ("%Y%m%d") };
 			strftime(szCurrentDate, 9, format[m_emType], tmNow);
-			m_szFileName = Format("%s%s%s.log", m_szFilePath, szCurrentDate, m_strExtendName);
+			m_szFileName = CUniversal::Format("%s%s%s.log", m_szFilePath, szCurrentDate, m_strExtendName);
 			m_nLastDate = tmNow->tm_mday;
 			Close();
 		}
@@ -382,7 +373,7 @@ void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pL
 	{
 		if ( m_emType != LOGTYPE::ONEFILE)
 		{
-			szFileName = replace(szFileName, "/", "\\");
+			szFileName = CUniversal::replace(szFileName, "/", "\\");
 			char pLast = szFileName.c_str()[szFileName.length() - 1];
 			if (pLast != '\\')
 			{
@@ -419,8 +410,6 @@ void Sloong::Universal::CLog::Initialize(string szPathName, string strExtendName
 	m_bInit = true;
 	m_szFilePath.clear();
 	m_szFileName.clear();
-	m_nLastDate = 0;
-	m_bIsCoverPrev = false;
 
 	// Set value
 	m_bIsCoverPrev = bIsCoverPrev;

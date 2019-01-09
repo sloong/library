@@ -39,7 +39,7 @@ namespace Sloong
 			~CLog();
 
 			virtual void Initialize();
-			virtual void Initialize(string szPathName,  string strExtendName = "", bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize(string szPathName,  string strExtendName = "", bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = true);
 			virtual void Start();
 			virtual void End();
 			virtual void Write(std::string szMessage);
@@ -64,6 +64,7 @@ namespace Sloong
 			/* Enable network log output */
 			virtual int EnableNetworkLog( int port );
 		protected:
+			void ProcessWaitList();
 			bool OpenFile();
 			void LogSystemWorkLoop();
 			static LPVOID AcceptNetlogLoop(LPVOID param);
@@ -73,7 +74,7 @@ namespace Sloong
 			std::string		m_szFilePath;
 			std::string		m_szFileName;
 			string			m_strExtendName;
-			int		m_nLastDate;
+			int		m_nLastDate=0;
 			LOGTYPE		m_emType;
 			bool		m_bOpenFileFirst = false;
 			bool		m_bIsCoverPrev = true;

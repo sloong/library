@@ -14,13 +14,21 @@
 
 #include <map>
 #include <vector>
+#include <queue>
 #include <list>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iostream>
+#include <assert.h>
+#include <thread>
+#include <queue>
+#include <mutex>
 using namespace std;
-#include "defines.h"
+#include <stdarg.h> // for va_list,va_start and va_end
 #include <boost/format.hpp>
+#include <boost/foreach.hpp>
+#include "defines.h"
 #define	ACC_R	4		/* Test for read permission.  */
 #define	ACC_W	2		/* Test for write permission.  */
 #define	ACC_RUN	1		/* Test for execute permission.  */

@@ -39,13 +39,13 @@ namespace Sloong
 			~CLog();
 
 			virtual void Initialize();
-            virtual void Initialize(wstring szPathName, bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
-			virtual void Initialize(string szPathName, bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
+			virtual void Initialize(string szPathName,  string strExtendName = "", bool bDebug = false, LOGLEVEL emLevel = LOGLEVEL::All, LOGTYPE emType = LOGTYPE::ONEFILE, bool bIsCoverPrev = false);
 			virtual void Start();
 			virtual void End();
 			virtual void Write(std::string szMessage);
 			virtual void WriteLine(std::string szLog);
 			virtual void Log(std::string strErrorText, std::string strTitle , DWORD dwCode = 0 , bool bFormatSysMsg = false);
+			virtual void Log(std::string strErrorText, LOGLEVEL level);
 			virtual void Verbos(std::string strMsg);
 			virtual void Debug(std::string strMsg);
 			virtual void Info(std::string strInfo);
@@ -53,14 +53,11 @@ namespace Sloong
 			virtual void Error(std::string strMsg);
 			virtual void Assert(std::string strMsg);
 			virtual void Fatal(std::string strMsg);
-            virtual void SetConfiguration(std::wstring szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
-			virtual void SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg = true);
+			virtual void SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDeubg, string strExtendName );
 			virtual bool IsOpen();
 			virtual void Close();
-			virtual std::wstring GetFileName();
-			virtual std::string GetFileNameA();
-			virtual std::wstring GetPath();
-			virtual std::string GetPathA();
+			virtual std::string GetFileName();
+			virtual std::string GetPath();
 			virtual bool IsInitialize();
 			virtual void Flush();
 
@@ -68,18 +65,19 @@ namespace Sloong
 			virtual int EnableNetworkLog( int port );
 		protected:
 			bool OpenFile();
-			static LPVOID LogSystemWorkLoop(LPVOID param);
+			void LogSystemWorkLoop();
 			static LPVOID AcceptNetlogLoop(LPVOID param);
 		protected:
 			LOGLEVEL	m_emLevel;
-			ofstream	m_oFile;
-			std::wstring		m_szFilePath;
-			std::wstring		m_szFileName;
+			FILE*		m_pFile = nullptr;
+			std::string		m_szFilePath;
+			std::string		m_szFileName;
+			string			m_strExtendName;
 			int		m_nLastDate;
-			int		m_emType;
-			bool		m_bOpenFileFirst;
-			bool		m_bIsCoverPrev;
-			bool		m_bInit;
+			LOGTYPE		m_emType;
+			bool		m_bOpenFileFirst = false;
+			bool		m_bIsCoverPrev = true;
+			bool		m_bInit = false;
 			// Debug mode
 			// if true, the text will write to hard disk in every call.
 			// if false, it just write to the cache. and the system to control to write to disk.
@@ -90,6 +88,9 @@ namespace Sloong
 			RUN_STATUS	m_emStatus;
 			SOCKET		m_nNetLogListenSocket;
 			vector<SOCKET>	m_vLogSocketList;
+			queue<string>	m_logList;
+			queue<string>	m_waitWriteList;
+			unique_ptr<thread>		m_pThread = nullptr;
 		};
 	}
 }

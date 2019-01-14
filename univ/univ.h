@@ -71,7 +71,7 @@ namespace Sloong
 				0 : path error
 				-1 : No write access.
 			*/
-			static int CheckFileDirectory(string filepath);
+			static int CheckFileDirectory(string filepath, char spliter = '\\');
 			/// Move file 
 			/// Return values
 			///   return true if move file succeeded. else return false.

@@ -114,6 +114,39 @@ void Sloong::Universal::CLog::Write(std::string szMessage)
 }
 
 
+void CLog::ProcessLogList()
+{
+	unique_lock <mutex> list_lock(m_oWriteMutex);
+	while (!m_logList.empty())
+	{
+		// get log message from queue.
+		string str = m_logList.front();
+		m_logList.pop();
+		// write log message to file
+		fputs(str.c_str(), m_pFile);
+		if (m_nNetLogListenSocket != INVALID_SOCKET )
+		{
+			char pBufLen[8] = { 0 };
+			auto len = str.length() + 1;
+			CUniversal::LongToBytes(len, pBufLen);
+			// send log message to socket
+			BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
+			{
+				CUniversal::SendEx(sock, pBufLen, 8);
+				CUniversal::SendEx(sock, str.c_str(), len);
+			}
+		}
+		
+		// in debug mode, flush the message when write down. 
+		// for issue #8 [https://git.sloong.com/public/library/issues/8]
+		if (m_bDebug)
+		{
+			cout << str;
+			fflush(m_pFile);
+		}
+	}
+}
+
 void CLog::LogSystemWorkLoop()
 {
 	unique_lock <mutex> lck(m_Mutex);
@@ -133,38 +166,7 @@ void CLog::LogSystemWorkLoop()
 		}
 
 		ProcessWaitList();	
-
-		while (!m_logList.empty())
-		{
-			// get log message from queue.
-			string str = m_logList.front();
-			m_logList.pop();
-
-			// write log message to file
-			fputs(str.c_str(), m_pFile);
-
-			if (m_nNetLogListenSocket != INVALID_SOCKET )
-			{
-				char pBufLen[8] = { 0 };
-				auto len = str.length() + 1;
-				CUniversal::LongToBytes(len, pBufLen);
-
-				// send log message to socket
-				BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
-				{
-					CUniversal::SendEx(sock, pBufLen, 8);
-					CUniversal::SendEx(sock, str.c_str(), len);
-				}
-			}
-			
-			// in debug mode, flush the message when write down. 
-			// for issue #8 [https://git.sloong.com/public/library/issues/8]
-			if (m_bDebug)
-			{
-				cout << str;
-				fflush(m_pFile);
-			}
-		}
+		ProcessLogList();
 	}
 }
 
@@ -246,11 +248,15 @@ bool Sloong::Universal::CLog::OpenFile()
 		cout << "File no open , try open file. file path is :" << m_szFileName << endl;
 	}
 	CUniversal::CheckFileDirectory(m_szFileName);
-	auto flag = "w+";
-	if (m_bIsCoverPrev == true)
-		flag = "a+";
+	auto flag = "a+";
+	if (!m_bIsCoverPrev)
+		flag = "w+";
 
-	m_pFile = fopen(m_szFileName.c_str(), flag);
+	auto err_no = fopen_s(&m_pFile, m_szFileName.c_str(), flag);
+	if ( err_no != 0 || m_pFile == nullptr)
+	{
+		cerr << "Open file error. error no " << err_no << endl;
+	}
 
 	return m_pFile != nullptr;
 }
@@ -327,14 +333,7 @@ void Sloong::Universal::CLog::End()
 	WriteLine(g_strEnd);
 	IsOpen();
 	ProcessWaitList();
-	while ( !m_logList.empty())
-	{
-		if (m_pFile)
-		{
-			fputs(m_logList.front().c_str(), m_pFile);
-			m_logList.pop();
-		}
-	}
+	ProcessLogList();
 	Flush();
 	Close();
 	BOOST_FOREACH(SOCKET sock, m_vLogSocketList)

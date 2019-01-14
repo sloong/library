@@ -175,19 +175,23 @@ wstring CUniversal::replace(const wstring& str, const wstring& src, const wstrin
 	0 : path error
 	-1 : No write access.
 */
-int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
+int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath, char spliter)
 {
 	if (filePath == "")
 		return 0;
 
-	string path = filePath.substr(0,filePath.find_last_of('/'));
+	auto find_index = filePath.find_last_of(spliter);
+	if( string::npos == find_index )
+		return 0;
+	
+	string path = filePath.substr(0,find_index);
 	#ifndef _WINDOWS 
 		RunSystemCmd(CUniversal::Format("mkdir -p %s",path));
 	#else
 		RunSystemCmd(CUniversal::Format("mkdir %s",path));
 	#endif
 
-	// 没有写权限
+	// 没有写权�?
 	if (0 != ACCESS(path.c_str(), W_OK))
 	{
 		return -1;
@@ -419,10 +423,10 @@ int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int n
 				return -1;
 #else
 				// 在非阻塞模式下，socket可能会收到EAGAIN和EINTR这两个错误，
-				// 不过这两个错误不应该直接返回。
+				// 不过这两个错误不应该直接返回�?
 				if (errno == EAGAIN || errno == EINTR)
 				{
-					// 如果bAgain为true，并且已经在接收数据，那么开始重试
+					// 如果bAgain为true，并且已经在接收数据，那么开始重�?
 					if (bAgain == true && nIsRecv != 0)
 					{
 						continue;
@@ -432,7 +436,7 @@ int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int n
 						return -1;
 					}
 				}
-				// 如果是其他错误，则直接返回
+				// 如果是其他错误，则直接返�?
 				else
 				{
 					return -1;

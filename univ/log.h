@@ -65,6 +65,7 @@ namespace Sloong
 			virtual int EnableNetworkLog( int port );
 		protected:
 			void ProcessWaitList();
+			void ProcessLogList();
 			bool OpenFile();
 			void LogSystemWorkLoop();
 			static LPVOID AcceptNetlogLoop(LPVOID param);
@@ -86,6 +87,7 @@ namespace Sloong
 			condition_variable m_CV;
 			mutex		m_Mutex;
 			mutex		m_oLogListMutex;
+			mutex		m_oWriteMutex;
 			RUN_STATUS	m_emStatus;
 			SOCKET		m_nNetLogListenSocket;
 			vector<SOCKET>	m_vLogSocketList;

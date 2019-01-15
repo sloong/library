@@ -252,10 +252,14 @@ bool Sloong::Universal::CLog::OpenFile()
 	if (!m_bIsCoverPrev)
 		flag = "w+";
 
-	auto err_no = fopen_s(&m_pFile, m_szFileName.c_str(), flag);
-	if ( err_no != 0 || m_pFile == nullptr)
+#ifdef _WINDOWS
+	auto errno = fopen_s(&m_pFile, m_szFileName.c_str(), flag);
+#else
+	m_pFile = fopen(m_szFileName.c_str(),flag);
+#endif
+	if ( m_pFile == nullptr)
 	{
-		cerr << "Open file error. error no " << err_no << endl;
+		cerr << "Open file error. error no " << errno << endl;
 	}
 
 	return m_pFile != nullptr;

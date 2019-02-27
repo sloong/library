@@ -94,11 +94,12 @@ wstring CUniversal::trim(const wstring& str)
 	return str.substr(pos);
 }
 
-int CUniversal::splitString(const string& str, vector<string>& ret_, string sep /* = "," */)
+vector<string> CUniversal::split(const string& str, string sep /* = "," */)
 {
+	vector<string> res;
 	if (str.empty())
 	{
-		return 0;
+		return res;
 	}
 
 	string tmp;
@@ -121,11 +122,11 @@ int CUniversal::splitString(const string& str, vector<string>& ret_, string sep 
 
 		if (!tmp.empty())
 		{
-			ret_.push_back(tmp);
+			res.push_back(tmp);
 			tmp.clear();
 		}
 	}
-	return 0;
+	return res;
 }
 
 string CUniversal::replace(const string& str, const string& src, const string& dest)
@@ -175,11 +176,19 @@ wstring CUniversal::replace(const wstring& str, const wstring& src, const wstrin
 	0 : path error
 	-1 : No write access.
 */
-int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath, char spliter)
+int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath)
 {
 	if (filePath == "")
 		return 0;
 
+#ifndef _WINDOWS
+	char spliter = '/';
+	replace(filePath,"\\","/");
+#else
+	char spliter = '\\';
+	replace(filePath,"/","\\");
+#endif
+	
 	auto find_index = filePath.find_last_of(spliter);
 	if( string::npos == find_index )
 		return 0;
@@ -191,7 +200,7 @@ int Sloong::Universal::CUniversal::CheckFileDirectory(string filePath, char spli
 		RunSystemCmd(CUniversal::Format("mkdir %s",path));
 	#endif
 
-	// 没有写权�?
+	// no have write access.
 	if (0 != ACCESS(path.c_str(), W_OK))
 	{
 		return -1;
@@ -423,10 +432,10 @@ int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int n
 				return -1;
 #else
 				// 在非阻塞模式下，socket可能会收到EAGAIN和EINTR这两个错误，
-				// 不过这两个错误不应该直接返回�?
+				// 不过这两个错误不应该直接返回�?
 				if (errno == EAGAIN || errno == EINTR)
 				{
-					// 如果bAgain为true，并且已经在接收数据，那么开始重�?
+					// 如果bAgain为true，并且已经在接收数据，那么开始重�?
 					if (bAgain == true && nIsRecv != 0)
 					{
 						continue;
@@ -436,7 +445,7 @@ int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int n
 						return -1;
 					}
 				}
-				// 如果是其他错误，则直接返�?
+				// 如果是其他错误，则直接返�?
 				else
 				{
 					return -1;

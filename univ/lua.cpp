@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "lua.h"
 #include "exception.h"
 #include <boost/algorithm/string.hpp>
@@ -75,7 +75,6 @@ std::string CLua::findScript(std::string strFullName)
 
 bool CLua::RunScript(std::string strFileName)
 {
-	LOCK_GUARD(m_oMutex);
 	std::string strFullName = findScript(strFileName);
 
 	if ( 0 != luaL_loadfile(m_pScriptContext, strFullName.c_str()))
@@ -113,7 +112,6 @@ bool CLua::RunBuffer( LPCSTR pBuffer,size_t sz)
 
 bool CLua::RunString(std::string strCommand)
 {
-	LOCK_GUARD(m_oMutex);
 	if (0 != luaL_loadstring(m_pScriptContext, strCommand.c_str()))
 	{
 		HandlerError("String Load", strCommand);

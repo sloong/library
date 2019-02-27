@@ -37,3 +37,4 @@ libuniv_debug
 univ/libuniv.so
 /.vs/config
 libuniv_*
+.vscode/launch.json

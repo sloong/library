@@ -1,4 +1,4 @@
-﻿#ifdef _WINDOWS
+#ifdef _WINDOWS
 	#ifdef SLOONGUNIVERSAL_EXPORTS
 		#define UNIVERSAL_API __declspec(dllexport)
 	#else
@@ -71,12 +71,12 @@ namespace Sloong
 				0 : path error
 				-1 : No write access.
 			*/
-			static int CheckFileDirectory(string filepath, char spliter = '\\');
+			static int CheckFileDirectory(string filepath);
 			/// Move file 
 			/// Return values
 			///   return true if move file succeeded. else return false.
 			static bool MoveFile(string lpExistingFileName, string lpNewFileName);
-			static int splitString(const string& str, vector<string>& res, string sep = ",");
+			static vector<string> split(const string& str, string sep = ",");
 			static string trim(const string& str);
 			static wstring trim(const wstring& str);
 			static string replace(const string& str, const string& src, const string& dest);

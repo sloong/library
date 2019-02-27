@@ -16,6 +16,9 @@ const string g_strConnect = "-------Network log system connected-------";
 #include <errno.h>
 #define INVALID_SOCKET -1
 #define closesocket close
+#define PATH_SEPARATOR '/'
+#else
+#define PATH_SEPARATOR '\\'
 #endif // !_WINDOWS
 
 WCHAR g_szFormatBuffer[2048];
@@ -225,7 +228,7 @@ int Sloong::Universal::CLog::EnableNetworkLog(int port)
     address.sin_addr.s_addr=htonl(INADDR_ANY);
     address.sin_port=htons(port);
 
-    // 绑定端口
+    // 缁戝畾绔彛
     errno = bind(m_nNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
     errno = listen(m_nNetLogListenSocket,10);
 #endif
@@ -376,11 +379,12 @@ void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pL
 	{
 		if ( m_emType != LOGTYPE::ONEFILE)
 		{
-			szFileName = CUniversal::replace(szFileName, "/", "\\");
+			szFileName = CUniversal::replace(szFileName, "/", CUniversal::ntos(PATH_SEPARATOR));
+			szFileName = CUniversal::replace(szFileName, "\\", CUniversal::ntos(PATH_SEPARATOR));
 			char pLast = szFileName.c_str()[szFileName.length() - 1];
-			if (pLast != '\\')
+			if (pLast != PATH_SEPARATOR)
 			{
-				szFileName += "\\";
+				szFileName += PATH_SEPARATOR;
 			}
 			m_szFilePath = szFileName;
 		}

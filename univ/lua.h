@@ -97,7 +97,6 @@ namespace Sloong
 		private:
 			lua_State *m_pScriptContext;
             ErrorHandleType m_pErrorHandler;
-			mutex	m_oMutex;
 			string m_strScriptFolder;
 		};
 

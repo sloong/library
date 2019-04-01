@@ -1,4 +1,4 @@
-#ifdef _WINDOWS
+﻿#ifdef _WINDOWS
 	#ifdef SLOONGUNIVERSAL_EXPORTS
 		#define UNIVERSAL_API __declspec(dllexport)
 	#else
@@ -87,17 +87,30 @@ namespace Sloong
 			static bool RunSystemCmd(const string& cmd);
 			static string BinaryToHex(const unsigned char* buf,int len);
 
-			static inline void LongToBytes(long long l, char* pBuf)
+			static inline void Int64ToBytes(uint64_t l, char* pBuf)
 			{
 				auto ul_MessageLen = htonll(l);
 				memcpy(pBuf, (void*)&ul_MessageLen, 8);
 			}
 
-			static inline long long BytesToLong(char* point)
+			static inline void Int32ToBytes(uint32_t l, char* buf)
 			{
-				long long netLen = 0;
+				auto ul_len = htonl(l);
+				memcpy(buf, (void*)&ul_len, 4);
+			}
+
+			static inline uint64_t BytesToInt64(char* point)
+			{
+				uint64_t netLen = 0;
 				memcpy(&netLen, point, 8);
 				return ntohll(netLen);
+			}
+
+			static inline uint32_t ByteToInt32(char* buf)
+			{
+				uint32_t netLen = 0;
+				memcpy(&netLen, point, 4);
+				return ntohl(netLen);
 			}
 
 			/************************************************************************/

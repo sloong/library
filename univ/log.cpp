@@ -282,7 +282,7 @@ LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
 			continue;
 		}
         char pLen[8] = {0};
-        CUniversal::LongToBytes(nLen,pLen);
+        CUniversal::Int64ToBytes(nLen,pLen);
         CUniversal::SendEx(sClient,pLen,8);
         CUniversal::SendEx(sClient,pData,nLen);
 		pThis->m_vLogSocketList.push_back(sClient);

@@ -131,7 +131,7 @@ void CLog::ProcessLogList()
 		{
 			char pBufLen[8] = { 0 };
 			auto len = str.length() + 1;
-			CUniversal::LongToBytes(len, pBufLen);
+			CUniversal::Int64ToBytes(len, pBufLen);
 			// send log message to socket
 			BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
 			{
@@ -148,6 +148,7 @@ void CLog::ProcessLogList()
 			fflush(m_pFile);
 		}
 	}
+	fflush(m_pFile);
 }
 
 void CLog::LogSystemWorkLoop()
@@ -248,7 +249,7 @@ bool Sloong::Universal::CLog::OpenFile()
 	if (m_bOpenFileFirst){
 		m_bOpenFileFirst = true;
 	}else{
-		cout << "File no open , try open file. file path is :" << m_szFileName << endl;
+		cout << "Open log file. Path>>" << m_szFileName << endl;
 	}
 	CUniversal::CheckFileDirectory(m_szFileName);
 	auto flag = "a+";
@@ -264,7 +265,6 @@ bool Sloong::Universal::CLog::OpenFile()
 	{
 		cerr << "Open file error. error no " << errno << endl;
 	}
-
 	return m_pFile != nullptr;
 }
 

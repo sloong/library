@@ -325,26 +325,24 @@ bool Sloong::Universal::CUniversal::RunSystemCmd(const string& cmd)
 	signal(SIGCHLD, old_handler);  
 	if (-1 == res)
 	{
-		printf("system error!");
+		cerr << "Run cmd error, system return -1. cmd:[" << cmd << "]" << endl;
 	}
 	else
 	{
-		printf("exit status value = [0x%x]\n", res);
 		if (WIFEXITED(res))
 		{
 			if (0 == WEXITSTATUS(res))
 			{
-				printf("run shell script successfully.\n");
 				return true;
 			}
 			else
 			{
-				printf("run shell script fail, script exit code: %d\n", WEXITSTATUS(res));
+				cerr << "run shell script fail, script exit code: " << WEXITSTATUS(res) << endl;
 			}
 		}
 		else
 		{
-			printf("exit status = [%d]\n", WEXITSTATUS(res));
+			cerr << "exit status = " << WEXITSTATUS(res) << endl;
 		}
 	}
 	return false;
@@ -483,231 +481,7 @@ std::string Sloong::Universal::CUniversal::Replace(const string& str, const stri
 }
 
 
-#ifndef _WINDOWS
-/*
-static int compressString(const char* apData, int auDataSize, char* apOutBuf, int auOutBufSize, int* apOutBufLen)
-{
-	int ret = -1;
-	*apOutBufLen = 0;
-
-	zip_t *za;
-	zip_source_t *zs;
-	zip_stat_t zst;
-	struct stat st;
-	zip_source_t *src;
-	zip_error_t error;
-	int err;
-
-
-	do
-	{
-		src = zip_source_buffer_create(NULL, 0, 0, &error);
-		if (src == NULL) {
-			err = zip_error_code_zip(&error);
-			errno = zip_error_code_system(&error);
-			fprintf(stderr, "zip_source_buffer_create faild: %d\n", err);
-			break;
-		}
-
-		za = zip_open_from_source(src, 1, &error);
-		if (za == NULL) {
-			err = zip_error_code_zip(&error);
-			errno = zip_error_code_system(&error);
-			fprintf(stderr, "zip_open_from_source faild: %d\n", err);
-			break;
-		}
-
-		zip_source_keep(src);
-
-		if ((zs = zip_source_buffer(za, apData, auDataSize, 0)) == NULL) {
-			fprintf(stderr, "can't create zip_source from buffer: %s\n", zip_strerror(za));
-			break;
-		}
-
-		if (zip_add(za, archive, zs) == -1) {
-			fprintf(stderr, "can't add file '%s': %s\n", archive, zip_strerror(za));
-			break;
-		}
-
-		if (zip_close(za) == -1) {
-			fprintf(stderr, "can't close zip archive '%s': %s\n", archive, zip_strerror(za));
-			break;
-		}
-
-		za = NULL;
-
-		if (zip_source_stat(src, &zst) < 0) {
-			fprintf(stderr, "zip_source_stat on buffer failed: %s\n", zip_error_strerror(zip_source_error(src)));
-			break;
-		}
-
-		if (zst.size <= 0) {
-			printf(" size error 000\n");
-			break;
-		}
-
-		if (zst.size >= auOutBufSize) {
-			printf(" size error 111\n");
-			break;
-		}
-
-		if (zip_source_open(src) < 0) {
-			if (zip_error_code_zip(zip_source_error(src)) == ZIP_ER_DELETED) {
-				if (unlink(archive) < 0 && errno != ENOENT) {
-					fprintf(stderr, "unlink failed: %s\n", strerror(errno));
-					break;
-				}
-				break;
-			}
-			fprintf(stderr, "zip_source_open on buffer failed: %s\n", zip_error_strerror(zip_source_error(src)));
-			break;
-		}
-
-
-		if (zip_source_read(src, apOutBuf, zst.size) < (zip_int64_t)zst.size) {
-			fprintf(stderr, "zip_source_read on buffer failed: %s\n", zip_error_strerror(zip_source_error(src)));
-			zip_source_close(src);
-			break;
-		}
-
-		zip_source_close(src);
-		*apOutBufLen = (int)(zst.size);
-		ret = 0;
-
-		//saveZip(apOutBuf,*apOutBufLen );
-
-	} while (0);
-
-	if (NULL != src)
-	{
-		zip_source_free(src);
-		src = NULL;
-	}
-
-	if (NULL != za)
-	{
-		zip_close(za);
-		za = NULL;
-	}
-
-
-	return ret;
-}
-
-
-static int uncompressString(const char* apData, int auDataSize, char* apOutBuf, int auOutBufSize, int* apOutBufLen)
-{
-	int ret = -1;
-
-	*apOutBufLen = 0;
-	zip_error_t error;
-	int err = 0;
-	char* buf = apOutBuf;
-	int   totalSize = 0;
-	zip_int64_t n = 0;
-	zip_source_t *src = NULL;
-	zip_t *za = NULL;
-	struct zip_file *f = NULL;
-
-
-	do
-	{
-		zip_error_init(&error);
-
-		// create source from buffer
-		if ((src = zip_source_buffer_create(apData, auDataSize, 1, &error)) == NULL) {
-			fprintf(stderr, "can't create source: %s\n", zip_error_strerror(&error));
-			zip_error_fini(&error);
-			break;
-		}
-
-		// open zip archive from source
-		if ((za = zip_open_from_source(src, 0, &error)) == NULL) {
-			fprintf(stderr, "can't open zip from source: %s\n", zip_error_strerror(&error));
-			zip_error_fini(&error);
-			break;
-		}
-
-
-		zip_error_fini(&error);
-		zip_source_keep(src);
-
-		zip_int64_t  c = zip_get_num_entries(za, ZIP_FL_UNCHANGED);
-		if (c != 1)
-		{
-			printf("zip_get_num_entries 0 \n");
-			break;
-		}
-
-		const char * name = zip_get_name(za, 0, ZIP_FL_ENC_GUESS);
-		if (NULL == name)
-		{
-			printf("zip_get_name 0 \n");
-			break;
-		}
-
-		f = zip_fopen(za, name, 0);
-		if (NULL == f)
-		{
-			printf("zip_fopen 0 \n");
-			break;
-		}
-
-		if (auOutBufSize < 4096)
-		{
-			printf("auOutBufSize < 4096 \n");
-			break;
-		}
-
-		totalSize = 0;
-		while (totalSize < auOutBufSize)
-		{
-			buf = apOutBuf + totalSize;
-			n = zip_fread(f, buf, 4096);
-			if (n <= 0)
-			{
-				break;
-			}
-
-			totalSize += n;
-		}
-
-		if (totalSize >= auOutBufSize)
-		{
-			printf("totalSize too big \n");
-			break;
-		}
-
-		*apOutBufLen = totalSize;
-		ret = 0;
-
-	} while (0);
-
-
-	if (NULL != f)
-	{
-		zip_fclose(f);
-		f = NULL;
-	}
-
-	if (NULL != za)
-	{
-		//lt-in-memory: free(): invalid pointer: 0x00007fff9c75c6d0 ***
-		//zip_close(za);
-		za = NULL;
-	}
-
-	if (NULL != src)
-	{
-		zip_source_free(src);
-		src = NULL;
-	}
-
-	return ret;
-}
-*/
-#else
-
+#ifdef _WINDOWS
 // Remarks:
 //		Format the windows error message
 wstring CUniversal::FormatWindowsErrorMessage(DWORD dwErrCode)
@@ -720,9 +494,6 @@ wstring CUniversal::FormatWindowsErrorMessage(DWORD dwErrCode)
 	strError = szErr;
 	return strError;
 }
-
-
-
 
 // CSize
 inline CSize::CSize() throw()

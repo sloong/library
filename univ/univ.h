@@ -106,7 +106,7 @@ namespace Sloong
 				return ntohll(netLen);
 			}
 
-			static inline uint32_t ByteToInt32(char* buf)
+			static inline uint32_t BytesToInt32(char* point)
 			{
 				uint32_t netLen = 0;
 				memcpy(&netLen, point, 4);

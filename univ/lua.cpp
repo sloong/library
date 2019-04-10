@@ -63,7 +63,7 @@ std::string CLua::findScript(std::string strFullName)
 	int len = g_SearchList.size();
     for (int i = 0; i< len; i++)
 	{
-        testFile = CUniversal::Replace(CUniversal::Replace(g_SearchList[i], "%pathdir%", m_strScriptFolder), "%filename%", strFullName);;
+        testFile = CUniversal::Replace(CUniversal::Replace(g_SearchList[i], "%pathdir%", m_strScriptFolder), "%filename%", strFullName);
 		if (0 == access(testFile.c_str(), ACC_R))
 		{
 			res = testFile;

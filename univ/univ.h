@@ -141,9 +141,10 @@ namespace Sloong
 			Return:
 				如果请求成功，返回等于nSize的数据长度。
 				如果接收超时，返回0或者小于nSize的已接收长度。
-				如果发生EINTR,EAGAIN错误且eagain为false，返回-1。 *Only LinuxOS
-				如果发生EINTR,EAGAIN错误且已接收数据为0，返回-1
-				如果发生EINTR,EAGAIN错误且eagain为true且已接收数据大于0，持续接收数据。
+				如果接收中发生错误，直接返回-1  *for Windows
+				如果发生EINTR,EAGAIN错误且eagain为false，返回-1。 *for Linux
+				如果发生EINTR,EAGAIN错误且已接收数据为0，返回-1		*for Linux
+				如果发生EINTR,EAGAIN错误且eagain为true且已接收数据大于0，持续接收数据。	*for Linux
 				如果发生其他错误，返回-1。			*/
 			/************************************************************************/
 			static int RecvEx(int sock, char* buf, int nSize, int nTimeout, bool bAgain = false );

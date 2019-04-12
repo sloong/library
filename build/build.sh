@@ -28,11 +28,9 @@ cd $SCRIPTFOLDER
 # default value is debug
 VERSION_STR=$(cat $SCRIPTFOLDER/../version)
 PROJECT=libuniv
+MAKEFLAG=debug
+CMAKE_FILE_PATH=$SCRIPTFOLDER/../univ
 
-init(){
-	MAKEFLAG=debug
-	CMAKE_FILE_PATH=$SCRIPTFOLDER/../univ
-}
 
 clean(){
 	rm -rdf $MAKEFLAG

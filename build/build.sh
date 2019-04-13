@@ -10,13 +10,13 @@
 
 
 show_help(){
-	echo -e "build.sh [module] [operation]
-module: proxy|control|firewall|process|data
+	echo -e "build.sh [operation]
 operation:
 	-r: to build release version 
 	-d: to build debug version 
 	-rz: build release to tar.gz
-	-dz: build debug to tar.gz"
+	-dz: build debug to tar.gz
+	-i: build debug and install"
 }
 
 
@@ -30,7 +30,7 @@ VERSION_STR=$(cat $SCRIPTFOLDER/../version)
 PROJECT=libuniv
 MAKEFLAG=debug
 CMAKE_FILE_PATH=$SCRIPTFOLDER/../univ
-
+OUTPATH=$SCRIPTFOLDER/$MAKEFLAG/v$VERSION_STR
 
 clean(){
 	rm -rdf $MAKEFLAG
@@ -44,27 +44,40 @@ build(){
 	cmake -DCMAKE_BUILD_TYPE=$MAKEFLAG $CMAKE_FILE_PATH
 	make
 	cd ../
+	copy_file
+}
+
+copy_file(){
+	rm -rdf $OUTPATH
+	mkdir -p $OUTPATH
+	cp -f $SCRIPTFOLDER/$MAKEFLAG/libuniv.so $OUTPATH/libuniv.so
+	mkdir -p $OUTPATH/include/univ/
+	cp -f $SCRIPTFOLDER/../univ/*.h $OUTPATH/include/univ/
+	cp -f $SCRIPTFOLDER/../univ/sloong.conf $OUTPATH/sloong.conf
+	cp -f $SCRIPTFOLDER/install.sh $OUTPATH/install.sh
 }
 
 build_debug(){
-	OUTPATH=$PROJECT-debug-v$VERSION_STR
 	MAKEFLAG=debug
 	clean
 	build
 }
 
 build_release(){
-	OUTPATH=$PROJECT-v$VERSION_STR
 	MAKEFLAG=release
 	clean
 	build
 }
 
 zip(){
-	tar -cf $OUTPATH.tar -C $MAKEFLAG/ $PROJECT.so
-
+	tar -czf libuniv_v$VERSION_STR.tar.gz $OUTPATH/*
 }
 
+
+install(){
+	cd $OUTPATH
+	sudo ./install.sh
+}
 
 # -eq 等于,
 # -ne 不等于
@@ -87,7 +100,7 @@ if [ $# -ge 1 ]; then
 		-dz) 
 			build_debug
 			zip;;
+		-i) install;;
 		* ) show_help;;
 	esac
 fi
-

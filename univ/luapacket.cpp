@@ -7,6 +7,11 @@
 #include "log.h"
 #include <iostream>
 
+#include <boost/serialization/map.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #define LOCK_GUARD(m) {lock_guard<mutex> lck(m);}
 
 
@@ -22,12 +27,15 @@ using namespace Sloong::Universal;
 
 #define PAS(L,n) (lua_gettop(L) >= abs(n) && lua_isstring(L,n) ? luaL_checkstring((L),(n)) : "") // get string param
 
+#define PASD(L,n,def) (lua_gettop(L) >= abs(n) && lua_isstring(L,n) ? luaL_checkstring((L),(n)) : def) // get string param
+
 #define PAD(L,n) (double)(lua_gettop(L) >= abs(n) && lua_isnumber(L,n) ? luaL_checknumber((L),(n)) : 0.0f) // get float param
 
 const char CLuaPacket::className[] =  "LuaPacket";
 
 CLuaPacket::CLuaPacket()
 {
+	m_oChangeList = make_shared<vector<string>>();
 }
 
 CLuaPacket::CLuaPacket(lua_State* L)
@@ -38,10 +46,10 @@ CLuaPacket::~CLuaPacket()
 {
 }
 
-int CLuaPacket::empty(lua_State *L)
+int CLuaPacket::clear(lua_State *L)
 {
     m_oDataMap.clear();
-    return 1;
+    return 0;
 }
 
 int CLuaPacket::setdata(lua_State *L)
@@ -49,8 +57,8 @@ int CLuaPacket::setdata(lua_State *L)
     int nType = lua_type(L,2);
     if( nType == LUA_TUSERDATA || nType == LUA_TTABLE )
     {
-        lua_pushboolean(L,0);
-        return 0;
+        lua_pushboolean(L,false);
+        return 1;
     }
     string key, value;
     if(lua_isnumber(L,1))
@@ -76,6 +84,18 @@ void CLuaPacket::SetData(string key, string value)
         return;
     }
 
+	bool bChanged = true;
+	for (auto item = m_oChangeList->begin(); item != m_oChangeList->end(); item++) {
+		if (key.compare(*item) == 0)
+		{
+			bChanged = false;
+			break;
+		}
+	}
+
+	if (bChanged)
+		m_oChangeList->push_back(key);
+
     LOCK_GUARD(m_oMutex);
     m_oDataMap[key] = value;
 }
@@ -90,52 +110,75 @@ int CLuaPacket::getdata(lua_State *L)
     else
         key = string(PAS(L,1));
 
-    try
-    {
-        string value = GetData(key);
+    
+    if( !Exist(key) ) {
+        if(lua_gettop(L) < 2 ){
+            lua_pushnil(L);
+        }else{
+            lua_pushstring(L,PAS(L,2));
+        }
+    }else{
+        auto value = m_oDataMap[key];
         lua_pushlstring(L,value.c_str(),value.length());
-    }
-    catch(CExceptKeyNoFound ex)
-    {
-        cerr << CUniversal::Format("get data fiald.%s",ex.what());
-        lua_pushnil(L);
     }
 
     return 1;
 }
 
 
-string CLuaPacket::GetData(string key, bool except /* = false */ )
+string CLuaPacket::GetData(string key, string def )
 {
-    if( true == Exist(key) )
-    {
+    if( true == Exist(key) ){
         return m_oDataMap[key];
-    }
-    else
-    {
-        if( except )
-        {
-            // TODO: message should be have the key name.
-            //throw CExceptKeyNoFound((boost::format("key is not find in maps, key name is :%s")%key.c_str()).str());
-            throw CExceptKeyNoFound(CUniversal::Format("key is not find in maps, key name is :%s",key));
-        }
-        else
-        {
-            return "";
-        }
+    }else{
+       return def;
     }
 }
 
+
+shared_ptr<vector<string>> Sloong::Universal::CLuaPacket::GetChangedItems()
+{
+	return m_oChangeList;
+}
 
 bool CLuaPacket::Exist(string key)
 {
-    if( m_oDataMap.find(key) != m_oDataMap.end() )
-    {
+    if( m_oDataMap.find(key) != m_oDataMap.end() ){
         return true;
-    }
-    else
-    {
+    }else{
         return false;
     }
 }
+
+//binary_iarchive
+void CLuaPacket::ParseFromString( string& str )
+{
+    std::stringstream ss;
+    ss << str;
+    boost::archive::text_iarchive iarch(ss);
+    //boost::archive::binary_iarchive iarch(ss);
+    iarch >> m_oDataMap;
+}
+
+int Sloong::Universal::CLuaPacket::IsChanged()
+{
+	return m_oChangeList->size();
+}
+
+void Sloong::Universal::CLuaPacket::ConfirmChange()
+{
+	m_oChangeList->clear();
+}
+ 
+
+//binary_oarchive
+string CLuaPacket::SerializeToString()
+{
+    std::stringstream ss;
+    boost::archive::text_oarchive oarch(ss);
+    //boost::archive::binary_oarchive oarch(ss);
+    oarch << m_oDataMap;
+    return ss.str();
+}
+
 

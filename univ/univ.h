@@ -110,10 +110,11 @@ namespace Sloong
 				eagain	-> continue when the EINTR,EAGAIN error if value is true.
 							else return direct. in default is false.  *Only LinuxOS
 			Return:
-				如果请求成功，返回大于0的接收数据长度。
-				如果接收超时，返回0。
-				如果发生EINTR,EAGAIN错误且eagain为true，返回0。 *Only LinuxOS
-				如果发生其他错误，返回-1。			*/
+				If succeed, return the sent data length. it always bigger than 0.
+				If timeout, return 0.
+				If have EINTR\EAGAIN error, and the param 'eagain' as true, return 0. 
+				If have other error, return -1.
+			*/
 			/************************************************************************/
 			static int SendEx(SOCKET sock, const char* buf, int nSize, int nStart=0, bool eagain=false);
 			/************************************************************************/
@@ -126,12 +127,13 @@ namespace Sloong
 				eagain	-> continue when the EINTR,EAGAIN error if value is true.
 							else return direct. in default is false.    *Only LinuxOS
 			Return:
-				如果请求成功，返回等于nSize的数据长度。
-				如果接收超时，返回0或者小于nSize的已接收长度。
-				如果发生EINTR,EAGAIN错误且eagain为false，返回-1。 *Only LinuxOS
-				如果发生EINTR,EAGAIN错误且已接收数据为0，返回-1
-				如果发生EINTR,EAGAIN错误且eagain为true且已接收数据大于0，持续接收数据。
-				如果发生其他错误，返回-1。			*/
+				If succeed, return value same as the nSize param.
+				If timeout, return received data length. it less than nSize and bigger than 0.
+				If have EINTR\EAGAIN error, and received data length is 0, return -1.
+				If have EINTR\EAGAIN error, and param 'bAgain' as false, return -1.
+				If have EINTR\EAGAIN error, and param 'bAgain' as true, and receive data length bigger than 0, no return and retry again. until happened other case.
+				If have other error, return -1.
+			*/
 			/************************************************************************/
 			static int RecvEx(int sock, char* buf, int nSize, int nTimeout, bool bAgain = false );
 

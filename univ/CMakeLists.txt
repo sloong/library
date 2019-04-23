@@ -37,3 +37,6 @@ file(GLOB_RECURSE SRC_LIST "*.c*")
 
 #生成可执行文件
 add_library(${PROJECT_NAME} SHARED ${SRC_LIST}) 
+
+target_link_libraries(${PROJECT_NAME} crypto)
+target_link_libraries(${PROJECT_NAME} lua5.3)

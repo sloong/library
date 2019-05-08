@@ -386,7 +386,7 @@ int Sloong::Universal::CUniversal::SendEx(SOCKET sock, const char * buf, int nSi
 				return nAllSent;
 #endif // _WINDOWS
 		}
-		// socket 已经关闭
+		// socket is closed
 		else if ( nSentSize == 0 )
 		{
 			return -1;
@@ -429,28 +429,25 @@ int Sloong::Universal::CUniversal::RecvEx(int sock, char * buf, int nSize, int n
 #ifdef _WINDOWS
 				return -1;
 #else
-				// 在非阻塞模式下，socket可能会收到EAGAIN和EINTR这两个错误，
-				// 不过这两个错误不应该直接返回�?
+				// On non-blocking mode, socket will make EAGAIN and EINTR two erros,
+				// but these two erros should no be returned directly.
 				if (errno == EAGAIN || errno == EINTR)
 				{
-					// 如果bAgain为true，并且已经在接收数据，那么开始重�?
-					if (bAgain == true && nIsRecv != 0)
-					{
+					// If bAgain as true, and was receiving data, retry again.
+					if (bAgain == true && nIsRecv != 0){
 						continue;
-					}
-					else
-					{
+					}else{
 						return -1;
 					}
 				}
-				// 如果是其他错误，则直接返�?
+				// In other erros case, return directly.
 				else
 				{
 					return -1;
 				}
 #endif // _WINDOWS
 			}
-			// socket 已经关闭
+			// socket is closed
 			else if ( nRecv == 0 )
 			{
 				return -1;

@@ -33,8 +33,8 @@ tlog
 *.log
 *.db
 /.vs/library/v15
-libuniv_debug
-univ/libuniv.so
 /.vs/config
 libuniv_*
 .vscode/launch.json
+build/debug
+build/release

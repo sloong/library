@@ -21,3 +21,8 @@
 如果有任何问题，请联系我们。
 
 * [Email](wcb@sloong.com)
+
+* Develop Request
+```
+sudo apt installl make gcc g++ libboost-dev libssl-dev liblua5.3-dev
+```

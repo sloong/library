@@ -23,7 +23,7 @@ extern "C" {
 
 Lunar<CLuaPacket>::RegType g_methods[] =
 {
-    METHOD(CLuaPacket,empty),
+    METHOD(CLuaPacket,clear),
     METHOD(CLuaPacket,setdata),
     METHOD(CLuaPacket,getdata),
     {0,0}

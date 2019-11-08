@@ -161,7 +161,11 @@ void CLog::LogSystemWorkLoop()
 			continue;
 		}
 
-		IsOpen();
+		if( !IsOpen())
+		{
+			m_CV.wait_for(lck,chrono::milliseconds(500));
+			continue;
+		}
 
 		if (m_waitWriteList.empty() && m_logList.empty())
 		{
@@ -340,11 +344,14 @@ void Sloong::Universal::CLog::End()
 	}
 	m_emStatus = RUN_STATUS::Exit;
 	WriteLine(g_strEnd);
-	IsOpen();
-	ProcessWaitList();
-	ProcessLogList();
-	Flush();
-	Close();
+	if(IsOpen())
+	{
+		ProcessWaitList();
+		ProcessLogList();
+		Flush();
+		Close();
+	}
+	
 	BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
 	{
 		closesocket(sock);

@@ -70,7 +70,9 @@ build_release(){
 }
 
 zip(){
-	tar -czf libuniv_v$VERSION_STR.tar.gz $OUTPATH/*
+	ZIPOUTPUTPATH=$SCRIPTFOLDER/libuniv_v$VERSION_STR.tar.gz
+	cd $OUTPATH/../
+	tar -czf $ZIPOUTPUTPATH ./*
 }
 
 

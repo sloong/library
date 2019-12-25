@@ -14,8 +14,6 @@ const string g_strConnect = "-------Network log system connected-------";
 
 #ifndef _WINDOWS
 #include <errno.h>
-#define INVALID_SOCKET -1
-#define closesocket close
 #define PATH_SEPARATOR '/'
 #else
 #define PATH_SEPARATOR '\\'
@@ -26,11 +24,9 @@ WCHAR g_szFormatBuffer[2048];
 Sloong::Universal::CLog::CLog()
 {
 	m_bInit = false;
-    m_bDebug = true;
 	m_nLastDate = 0;
-	m_bOpenFileFirst = false;
 	m_pFile = nullptr;
-	m_nNetLogListenSocket = INVALID_SOCKET;
+	m_pCustomFunction = nullptr;
 }
 
 
@@ -125,30 +121,15 @@ void CLog::ProcessLogList()
 		// get log message from queue.
 		string str = m_logList.front();
 		m_logList.pop();
-		// write log message to file
-		fputs(str.c_str(), m_pFile);
-		if (m_nNetLogListenSocket != INVALID_SOCKET )
-		{
-			char pBufLen[8] = { 0 };
-			auto len = str.length() + 1;
-			CUniversal::Int64ToBytes(len, pBufLen);
-			// send log message to socket
-			BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
-			{
-				CUniversal::SendEx(sock, pBufLen, 8);
-				CUniversal::SendEx(sock, str.c_str(), len);
-			}
-		}
-		
-		// in debug mode, flush the message when write down. 
-		// for issue #8 [https://git.sloong.com/public/library/issues/8]
-		if (m_bDebug)
-		{
+		if( m_emOperation & LOGOPT::WriteToSTDOut)
 			cout << str;
-			fflush(m_pFile);
-		}
+		if( (m_emOperation & LOGOPT::WriteToFile )&& m_pFile != nullptr )
+			fputs(str.c_str(), m_pFile);
+		if( m_emOperation & LOGOPT::ImmediatelyFlush)
+			Flush();
+		if( (m_emOperation & LOGOPT::WriteToCustomFunction) && m_pCustomFunction != nullptr )
+			m_pCustomFunction(str);
 	}
-	fflush(m_pFile);
 }
 
 void CLog::LogSystemWorkLoop()
@@ -157,9 +138,7 @@ void CLog::LogSystemWorkLoop()
 	while (m_emStatus != RUN_STATUS::Exit)
 	{
 		if (m_emStatus == RUN_STATUS::Created)
-		{
 			continue;
-		}
 
 		if( !IsOpen())
 		{
@@ -181,83 +160,32 @@ void CLog::LogSystemWorkLoop()
 
 void CLog::ProcessWaitList()
 {
-
-		if (!m_waitWriteList.empty())
+	if (!m_waitWriteList.empty())
+	{
+		unique_lock <mutex> list_lock(m_oLogListMutex);
+		while (!m_waitWriteList.empty())
 		{
-			unique_lock <mutex> list_lock(m_oLogListMutex);
-			while (!m_waitWriteList.empty())
-			{
-				m_logList.push(m_waitWriteList.front());
-				m_waitWriteList.pop();
-			}
-			list_lock.unlock();
+			m_logList.push(m_waitWriteList.front());
+			m_waitWriteList.pop();
 		}
-}
-
-/************************************************************************
-			               Enable Network Log 
-		Create by wcb in 2017/09/27											
-	Params:
-		port : the log system will license in this port,
-	Return: 
-		S_OK if listen succeed. 
-		else return error code.
-	Remarks: 
-		 when connect down,	the log system will send the log data to this port.
-*************************************************************************/
-int Sloong::Universal::CLog::EnableNetworkLog(int port)
-{
-	m_nNetLogListenSocket = socket(AF_INET, SOCK_STREAM, 0);
-
-#ifdef _WINDOWS
-    if (m_nNetLogListenSocket == INVALID_SOCKET)
-    {
-        return GetLastError();
-    }
-    struct sockaddr_in sin;
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-	sin.sin_addr.S_un.S_addr = INADDR_ANY; 
-	if(SOCKET_ERROR == ::bind(m_nNetLogListenSocket, (LPSOCKADDR)&sin, sizeof(sin)))
-	{
-		return GetLastError();
+		list_lock.unlock();
 	}
-
-    if (listen(m_nNetLogListenSocket, 10) == SOCKET_ERROR)
-	{
-		return GetLastError();
-	}
-#else
-    struct sockaddr_in address;
-    memset(&address,0,sizeof(address));
-    address.sin_addr.s_addr=htonl(INADDR_ANY);
-    address.sin_port=htons(port);
-
-    // 缁戝畾绔彛
-    errno = bind(m_nNetLogListenSocket,(struct sockaddr*)&address,sizeof(address));
-    errno = listen(m_nNetLogListenSocket,10);
-#endif
-	CThreadPool::AddWorkThread(AcceptNetlogLoop, this, 1);
-    return 0;
 }
-
-
 
 bool Sloong::Universal::CLog::OpenFile()
 {
-	if (m_pFile != nullptr)
+	if(!(m_emOperation & LOGOPT::WriteToFile))
+		return true;
+	if (m_pFile != nullptr )
 		return true;
 	if (m_szFileName.empty())
 		throw normal_except("Open log file failed.file name is empty.");
 
-	if (m_bOpenFileFirst){
-		m_bOpenFileFirst = true;
-	}else{
-		cout << "Open log file. Path>>" << m_szFileName << endl;
-	}
+	cout << "Open log file. Path>>" << m_szFileName << endl;
+	
 	CUniversal::CheckFileDirectory(m_szFileName);
 	auto flag = "a+";
-	if (!m_bIsCoverPrev)
+	if ( m_emOperation & LOGOPT::AlwaysCreate )
 		flag = "w+";
 
 	int err_code;
@@ -274,26 +202,13 @@ bool Sloong::Universal::CLog::OpenFile()
 	return m_pFile != nullptr;
 }
 
-LPVOID Sloong::Universal::CLog::AcceptNetlogLoop(LPVOID param)
+void Sloong::Universal::CLog::RegisterCustomFunction( pCustomLogFunction func )
 {
-	CLog* pThis = (CLog*)param;
-	SOCKET sClient;
-    const char* pData = g_strConnect.c_str();
-    int nLen = g_strConnect.length()+1;
-	while (pThis->m_emStatus != RUN_STATUS::Exit)
+	if( func != nullptr )
 	{
-        sClient = accept(pThis->m_nNetLogListenSocket, NULL,NULL);
-		if (sClient == INVALID_SOCKET)
-		{
-			continue;
-		}
-        char pLen[8] = {0};
-        CUniversal::Int64ToBytes(nLen,pLen);
-        CUniversal::SendEx(sClient,pLen,8);
-        CUniversal::SendEx(sClient,pData,nLen);
-		pThis->m_vLogSocketList.push_back(sClient);
+		m_pCustomFunction = func;
+		m_emOperation = (LOGOPT)(m_emOperation | LOGOPT::WriteToCustomFunction);
 	}
-	return NULL;
 }
 
 std::string Sloong::Universal::CLog::GetFileName()
@@ -305,15 +220,16 @@ bool Sloong::Universal::CLog::IsOpen()
 {
 	if (!m_bInit)
 		throw normal_except("No Initialize!");
-	if (m_emType != LOGTYPE::ONEFILE)
+	if(!(m_emOperation & LOGOPT::WriteToFile))
+		return true;
+	if ( m_emType != LOGTYPE::ONEFILE)
 	{
-		
 		time_t now;
 		struct tm* tmNow;
 		time(&now);
 		tmNow = localtime(&now);
 		
-		if (m_nLastDate == 0 || (m_nLastDate != tmNow->tm_mday))
+		if ((m_nLastDate != tmNow->tm_mday) || m_nLastDate == 0 )
 		{
 			char szCurrentDate[10];
 			static const char format[3][10] = { ("%Y"), ("%Y-%m"), ("%Y%m%d") };
@@ -351,14 +267,6 @@ void Sloong::Universal::CLog::End()
 		Flush();
 		Close();
 	}
-	
-	BOOST_FOREACH(SOCKET sock, m_vLogSocketList)
-	{
-		closesocket(sock);
-	}
-	m_vLogSocketList.clear();
-	closesocket(m_nNetLogListenSocket);
-	m_nNetLogListenSocket = INVALID_SOCKET;
 }
 
 
@@ -374,14 +282,16 @@ std::string Sloong::Universal::CLog::GetPath()
 /************************************************************************/
 void Sloong::Universal::CLog::Flush()
 {
-	fflush(m_pFile);
+	if( m_pFile != nullptr)
+		fflush(m_pFile);
 }
 
-void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, bool bDebug , string strExtendName )
+void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pLevel, LOGOPT* pOpt , string* strExtendName )
 {
 	if (pType)
 	{
 		m_emType = *pType;
+		WriteLine(CUniversal::Format("[Info]:[Set log file type to %d]",m_emType));
 	}
 
 	if (!szFileName.empty())
@@ -404,15 +314,26 @@ void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pL
 			m_szFileName = szFileName;
 		}
 	}
-	m_strExtendName = strExtendName;
+
+	if( strExtendName)
+	{
+		m_strExtendName = *strExtendName;
+		WriteLine(CUniversal::Format("[Info]:[Set extend name to %d]",strExtendName));
+	}
+	
 
 	if (pLevel)
 	{
 		m_emLevel = *pLevel;
-		WriteLine(CUniversal::Format("[Info]:[Set Log Level To %d]",m_emLevel));
+		WriteLine(CUniversal::Format("[Info]:[Set log level to %d]",m_emLevel));
 	}
 
-    m_bDebug = bDebug;
+	if( pOpt )
+	{
+		m_emOperation = *pOpt;
+		WriteLine(CUniversal::Format("[Info]:[Set Operation to %d]",m_emOperation));
+	}
+
 }
 
 void Sloong::Universal::CLog::Initialize()
@@ -420,17 +341,14 @@ void Sloong::Universal::CLog::Initialize()
 	Initialize("./log.log");
 }
 
-void Sloong::Universal::CLog::Initialize(string szPathName, string strExtendName /*= ""*/, bool bDebug /*= true */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/, bool bIsCoverPrev /*= false*/)
+void Sloong::Universal::CLog::Initialize(string szPathName, string strExtendName /*= ""*/, LOGOPT emOpt /*= WriteToFile */, LOGLEVEL emLevel /*= LOGLEVEL::All*/, LOGTYPE emType /*= LOGTYPE::ONEFILE*/)
 {
 	// All value init
 	m_bInit = true;
 	m_szFilePath.clear();
 	m_szFileName.clear();
-
-	// Set value
-	m_bIsCoverPrev = bIsCoverPrev;
 	
-    SetConfiguration( szPathName, &emType, &emLevel, bDebug, strExtendName);
+    SetConfiguration( szPathName, &emType, &emLevel, &emOpt, &strExtendName);
 
 	Start();
 }

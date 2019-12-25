@@ -32,8 +32,7 @@ tlog
 *.o
 *.log
 *.db
-/.vs/library/v15
-/.vs/config
+/.vs/
 libuniv_*
 .vscode/launch.json
 build/debug

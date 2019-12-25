@@ -32,7 +32,7 @@ char base64decode_lut[] = {	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	0,  0
 string CBase64::Encode(const string& strEncode)
 {
 	auto src = (const unsigned char*)strEncode.data();
-	int len = strEncode.length();
+	size_t len = strEncode.length();
 	unsigned char *out, *pos;
     const unsigned char *end, *in;
 
@@ -79,7 +79,7 @@ string CBase64::Encode(const string& strEncode)
 string CBase64::Decode(const string& strDecode)
 {
 	unsigned char* p = (unsigned char*)strDecode.data();
-	int len = strDecode.length();
+	size_t len = strDecode.length();
     int pad = len > 0 && (len % 4 || p[len - 1] == '=');
     const size_t L = ((len + 3) / 4 - pad) * 4;
     std::string str(L / 4 * 3 + pad, '\0');

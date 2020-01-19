@@ -255,9 +255,8 @@ void Sloong::Universal::CLog::Close()
 
 void Sloong::Universal::CLog::End()
 {
-	if ( !m_bInit )	{
+	if ( !m_bInit || m_emStatus == RUN_STATUS::Exit )
 		return;
-	}
 	m_emStatus = RUN_STATUS::Exit;
 	WriteLine(g_strEnd);
 	if(IsOpen())
@@ -318,7 +317,7 @@ void CLog::SetConfiguration(std::string szFileName, LOGTYPE* pType, LOGLEVEL* pL
 	if( strExtendName)
 	{
 		m_strExtendName = *strExtendName;
-		WriteLine(CUniversal::Format("[Info]:[Set extend name to %d]",strExtendName));
+		WriteLine(CUniversal::Format("[Info]:[Set extend name to %d]",m_strExtendName));
 	}
 	
 

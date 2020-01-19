@@ -120,11 +120,8 @@ vector<string> CUniversal::split(const string& str, string sep /* = "," */)
 			pos_begin = comma_pos;
 		}
 
-		if (!tmp.empty())
-		{
-			res.push_back(tmp);
-			tmp.clear();
-		}
+		res.push_back(tmp);
+		tmp.clear();
 	}
 	return res;
 }

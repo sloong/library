@@ -94,35 +94,29 @@ wstring CUniversal::trim(const wstring& str)
 	return str.substr(pos);
 }
 
-vector<string> CUniversal::split(const string& str, string sep /* = "," */)
+vector<string> CUniversal::split(const string& str, const char& sep)
 {
 	vector<string> res;
 	if (str.empty())
 	{
 		return res;
 	}
+	string buff{ "" };
+	buff.resize(str.length());
 
-	string tmp;
-	string::size_type pos_begin = str.find_first_not_of(sep);
-	string::size_type comma_pos = 0;
-
-	while (pos_begin != string::npos)
+	for (auto n : str)
 	{
-		comma_pos = str.find(sep, pos_begin);
-		if (comma_pos != string::npos)
-		{
-			tmp = str.substr(pos_begin, comma_pos - pos_begin);
-			pos_begin = comma_pos + sep.length();
+		if (n != sep)
+			buff.push_back(n); 
+		else if (n == sep) 
+		{ 
+			res.push_back(buff); 
+			buff.clear(); 
 		}
-		else
-		{
-			tmp = str.substr(pos_begin);
-			pos_begin = comma_pos;
-		}
-
-		res.push_back(tmp);
-		tmp.clear();
 	}
+	res.push_back(buff);
+
+	
 	return res;
 }
 

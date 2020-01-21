@@ -102,20 +102,18 @@ vector<string> CUniversal::split(const string& str, const char& sep)
 		return res;
 	}
 	string buff{ "" };
-	buff.resize(str.length());
 
 	for (auto n : str)
 	{
 		if (n != sep)
-			buff.push_back(n); 
+			buff += (n); 
 		else if (n == sep) 
 		{ 
 			res.push_back(buff); 
-			buff.clear(); 
+			buff = (""); 
 		}
 	}
 	res.push_back(buff);
-
 	
 	return res;
 }
